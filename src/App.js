@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { ThemeProvider, useTheme } from "./ThemeContext";
 
 const projectsData = [
   {
@@ -197,7 +198,8 @@ const languageSkillsMap = {
   ]
 };
 
-export default function Portfolio() {
+function PortfolioContent() {
+  const theme = useTheme();
   const [currentLang, setCurrentLang] = useState(0);
   const [expandCerts, setExpandCerts] = useState(false);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
@@ -387,40 +389,54 @@ Facebook: https://www.facebook.com/JohnRemyxD
     window.URL.revokeObjectURL(url);
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#020617] to-black text-white font-sans overflow-hidden">
+    <motion.div
+      className={`min-h-screen bg-gradient-to-br ${theme.bgGradient} ${theme.textColor} font-sans overflow-hidden transition-colors duration-500`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* NAVBAR */}
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1 }}
-        className="fixed top-6 left-1/2 -translate-x-1/2 backdrop-blur-xl bg-white/10 rounded-full px-10 py-4 flex gap-8 shadow-xl z-50 border border-white/20"
+        className={`fixed top-6 left-1/2 -translate-x-1/2 backdrop-blur-xl ${theme.navbarBg} rounded-full px-10 py-4 flex gap-8 shadow-xl z-50 border ${theme.navbarBorder} transition-all duration-500`}
       >
         {["Home", "About", "Projects", "Skills", "Contact"].map((item) => (
           <motion.a
             key={item}
             href={`#${item.toLowerCase()}`}
             whileHover={{ scale: 1.1, color: "#06b6d4" }}
-            className="text-sm text-gray-300 hover:text-cyan-400 transition"
+            className={`text-sm transition ${theme.isDark ? "text-gray-300 hover:text-cyan-400" : "text-gray-700 hover:text-blue-600"}`}
           >
             {item}
           </motion.a>
         ))}
+        <motion.button
+          onClick={theme.toggleTheme}
+          whileHover={{ scale: 1.2, rotate: 20 }}
+          whileTap={{ scale: 0.95 }}
+          className={`text-xl transition-transform ${theme.isDark ? "text-yellow-300" : "text-blue-600"}`}
+          title={theme.isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          {theme.isDark ? "☀️" : "🌙"}
+        </motion.button>
       </motion.nav>
 
       {/* HERO */}
       <section id="home" className="relative h-screen flex items-center justify-center">
-        <motion.div//via.placeholder.com/300
+        <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.2 }}
-          className="relative bg-white/10 backdrop-blur-2xl rounded-[3rem] p-20 max-w-5xl w-full shadow-2xl"
+          className={`relative ${theme.cardBg} backdrop-blur-2xl rounded-[3rem] p-20 max-w-5xl w-full shadow-2xl transition-colors duration-500`}
         >
-          <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-r from-cyan-400/20 to-purple-500/20 blur-3xl" />
+          <div className={`absolute inset-0 rounded-[3rem] bg-gradient-to-r ${theme.accentGradient} opacity-20 blur-3xl transition-colors duration-500`} />
           <div className="relative z-10 grid md:grid-cols-2 gap-12">
             <div>
               <h1 className="text-5xl font-bold leading-tight">John Remy Gonzales</h1>
-              <p className="mt-4 text-cyan-400">BSIT 3rd Year • University of Mindanao Digos College</p>
-              <p className="mt-6 text-gray-300">
+              <p className={`mt-4 bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>BSIT 3rd Year • University of Mindanao Digos College</p>
+              <p className={`mt-6 ${theme.secondaryText}`}>
                 A passionate Information Technology student focused on web development, UI/UX design,
                 automation, and modern JavaScript technologies.
               </p>
@@ -443,9 +459,9 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 
                 <motion.button
                   onClick={handleDownloadCV}
-                  whileHover={{ scale: 1.05, x: -5, borderColor: "#06b6d4" }}
+                  whileHover={{ scale: 1.05, x: -5 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 rounded-full border border-white/30 hover:bg-white/10 transition font-semibold flex items-center gap-2 group cursor-pointer"
+                  className={`px-6 py-3 rounded-full border ${theme.cardBorder} ${theme.cardHoverBg} transition font-semibold flex items-center gap-2 group cursor-pointer ${theme.cardText}`}
                 >
                   <motion.span
                     animate={{ x: [0, -4, 0] }}
@@ -497,8 +513,8 @@ Facebook: https://www.facebook.com/JohnRemyxD
               {/* Content */}
               <div className="relative z-10">
                 <img src={cert.image} alt={cert.title} className="h-40 w-full object-cover rounded-xl mb-4 group-hover:shadow-lg transition-shadow" />
-                <h3 className="text-lg font-semibold group-hover:text-cyan-300 transition-colors">{cert.title}</h3>
-                <p className="text-sm text-gray-300 mt-2">{cert.issuer} • {cert.date}</p>
+                <h3 className={`text-lg font-semibold group-hover:text-cyan-300 transition-colors ${theme.cardText}`}>{cert.title}</h3>
+                <p className={`text-sm ${theme.smallText} mt-2`}>{cert.issuer} • {cert.date}</p>
               </div>
             </motion.div>
           ))}
@@ -593,16 +609,16 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className="space-y-6"
                 >
-                  <p className="text-lg text-gray-300 leading-relaxed">
-                    I'm <span className="text-cyan-300 font-semibold">John Remy Gonzales</span>, a passionate BSIT student at the University of Mindanao Digos College. My journey in tech started with curiosity about how things work, which evolved into a deep passion for building beautiful, functional digital experiences.
+                  <p className={`text-lg ${theme.secondaryText} leading-relaxed`}>
+                    I'm <span className={`font-semibold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>John Remy Gonzales</span>, a passionate BSIT student at the University of Mindanao Digos College. My journey in tech started with curiosity about how things work, which evolved into a deep passion for building beautiful, functional digital experiences.
                   </p>
 
-                  <p className="text-lg text-gray-300 leading-relaxed">
-                    I specialize in <span className="text-purple-300 font-semibold">full-stack web development</span>, crafting everything from responsive frontends using React and Tailwind CSS to robust backends with Node.js and REST APIs. What truly drives me is creating <span className="text-cyan-300 font-semibold">futuristic interfaces with smooth animations</span> that not only look impressive but provide exceptional user experiences.
+                  <p className={`text-lg ${theme.secondaryText} leading-relaxed`}>
+                    I specialize in <span className={`font-semibold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>full-stack web development</span>, crafting everything from responsive frontends using React and Tailwind CSS to robust backends with Node.js and REST APIs. What truly drives me is creating <span className={`font-semibold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>futuristic interfaces with smooth animations</span> that not only look impressive but provide exceptional user experiences.
                   </p>
 
-                  <p className="text-lg text-gray-300 leading-relaxed">
-                    Beyond coding, I'm deeply interested in <span className="text-purple-300 font-semibold">UI/UX design</span>, <span className="text-cyan-300 font-semibold">problem-solving</span>, and automation. I believe in continuous learning and constantly explore new technologies to stay ahead in this ever-evolving field.
+                  <p className={`text-lg ${theme.secondaryText} leading-relaxed`}>
+                    Beyond coding, I'm deeply interested in <span className={`font-semibold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>UI/UX design</span>, <span className={`font-semibold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>problem-solving</span>, and automation. I believe in continuous learning and constantly explore new technologies to stay ahead in this ever-evolving field.
                   </p>
 
                   {/* Highlight badges */}
@@ -617,10 +633,10 @@ Facebook: https://www.facebook.com/JohnRemyxD
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.4 + index * 0.1 }}
-                        className="flex items-center gap-2 bg-white/10 backdrop-blur-xl rounded-full px-4 py-2 border border-white/20 hover:border-cyan-400/50 transition-all group cursor-pointer hover:bg-white/20"
+                        className={`flex items-center gap-2 ${theme.cardBg} backdrop-blur-xl rounded-full px-4 py-2 border ${theme.cardBorder} transition-all group cursor-pointer ${theme.hoverEffect}`}
                       >
                         <span className="text-xl">{item.icon}</span>
-                        <span className="text-sm text-gray-300 group-hover:text-cyan-300 transition-colors">{item.label}</span>
+                        <span className={`text-sm ${theme.smallText} group-hover:text-cyan-300 transition-colors`}>{item.label}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -643,7 +659,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                       className="relative"
                     >
                       <div className="w-56 h-56 rounded-2xl p-1 mx-auto shadow-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/15">
-                        <div className="bg-white/5 rounded-xl overflow-hidden w-full h-full">
+                        <div className={`rounded-xl overflow-hidden w-full h-full ${theme.cardBg} ${theme.cardBackdrop} ${theme.cardText}`}>
                           <motion.img
                             src="/images/profile3.jpg"
                             alt="Profile"
@@ -708,7 +724,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-purple-500/10 rounded-3xl blur-2xl" />
 
                   {/* Content card */}
-                  <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 space-y-6">
+                  <div className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-3xl p-8 border ${theme.cardBorder} space-y-6 ${theme.cardText}`}>
                     {/* Passion areas */}
                     <div>
                       <motion.h3
@@ -736,7 +752,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                             initial={{ opacity: 0, x: -10 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.4 + index * 0.05 }}
-                            className="flex items-start gap-3 text-gray-300"
+                            className={`flex items-start gap-3 ${theme.smallText}`}
                           >
                             <motion.span
                               animate={{ scale: [1, 1.2, 1] }}
@@ -761,7 +777,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                       >
                         <span className="text-2xl">🎯</span> Quick Facts
                       </motion.h3>
-                      <div className="space-y-2 text-sm text-gray-300">
+                      <div className={`space-y-2 text-sm ${theme.smallText}`}>
                         <motion.p
                           initial={{ opacity: 0 }}
                           whileInView={{ opacity: 1 }}
@@ -821,7 +837,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
             {/* Drag hint text */}
             {!isDragging && (
               <motion.div
-                className="absolute top-4 right-4 text-xs text-gray-400 pointer-events-none"
+                className={`absolute top-4 right-4 text-xs ${theme.faintText} pointer-events-none`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.6 }}
                 transition={{ delay: 1 }}
@@ -875,14 +891,10 @@ Facebook: https://www.facebook.com/JohnRemyxD
             {/* Dot Indicators */}
             <div className="flex gap-3 items-center">
               {languagesData.map((_, index) => (
-                <motion.button
+                  <motion.button
                   key={index}
                   onClick={() => handleDotClick(index)}
-                  className={`rounded-full transition-all ${
-                    currentLang === index
-                      ? "bg-gradient-to-r from-cyan-400 to-purple-500"
-                      : "bg-white/30 hover:bg-white/50"
-                  }`}
+                  className={`rounded-full transition-all ${currentLang === index ? 'bg-gradient-to-r from-cyan-400 to-purple-500' : (theme.isDark ? 'bg-white/30 hover:bg-white/50' : 'bg-gray-200 hover:bg-gray-300')}`}
                   style={{ height: "6px" }}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
@@ -895,15 +907,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
 
           {/* Autoplay Toggle & Info */}
           <div className="flex items-center justify-center gap-4 mt-8">
-            <motion.button
+              <motion.button
               onClick={handleAutoPlayToggle}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`px-6 py-2 rounded-full font-semibold text-sm transition-all flex items-center gap-2 ${
-                isAutoPlay
-                  ? "bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg"
-                  : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
-              }`}
+              className={`px-6 py-2 rounded-full font-semibold text-sm transition-all flex items-center gap-2 ${isAutoPlay ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg' : `${theme.cardBg} ${theme.smallText} border ${theme.cardBorder} ${theme.cardHoverBg}`}`}
             >
               <motion.span
                 animate={{ rotate: isAutoPlay ? 360 : 0 }}
@@ -914,7 +922,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
               {isAutoPlay ? "Auto-Playing" : "Paused"}
             </motion.button>
 
-            <span className="text-gray-400 text-sm">
+            <span className={`${theme.faintText} text-sm`}>
               {currentLang + 1} / {languagesData.length} • {languagesData[currentLang].name}
             </span>
           </div>
@@ -934,7 +942,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
             className={`relative bg-gradient-to-r ${languagesData[currentLang].color} rounded-3xl p-8 mb-12 shadow-2xl overflow-hidden`}
           >
             {/* Background glow */}
-            <div className="absolute inset-0 bg-white/10 blur-3xl" />
+            <div className={`absolute inset-0 ${theme.cardBg} blur-3xl`} />
             
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-4">
@@ -956,7 +964,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8, y: -20 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all group overflow-hidden"
+                className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-6 border ${theme.cardBorder} ${theme.cardHoverBg} transition-all group overflow-hidden`}
               >
                 {/* Animated gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -978,17 +986,15 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
+                  <div className={`h-2 ${theme.cardBg} rounded-full overflow-hidden`}>
                       animate={{ width: `${skill.percentage}%` }}
                       transition={{ delay: index * 0.1 + 0.3, duration: 0.8, ease: "easeOut" }}
-                      className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full shadow-lg"
+                      className={`h-full bg-gradient-to-r ${theme.accentGradient} rounded-full shadow-lg`}
                     />
                   </div>
 
                   {/* Skill Level Text */}
-                  <p className="text-xs text-gray-400 mt-3">
+                  <p className={`text-xs ${theme.faintText} mt-3`}>
                     {skill.percentage >= 90
                       ? "Expert"
                       : skill.percentage >= 80
@@ -1005,7 +1011,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
       </section>
 
       {/* STATS SECTION */}
-      <section className="py-24 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-cyan-500/10 border-y border-white/10">
+      <section className={`py-24 ${theme.isDark ? 'bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-cyan-500/10 border-white/10' : 'bg-gradient-to-r from-blue-100 via-purple-100 to-blue-100 border-gray-300'} border-y transition-colors duration-500`}>
         <div className="max-w-6xl mx-auto px-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {statsData.map((stat, index) => (
@@ -1017,7 +1023,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 className="relative group"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity" />
-                <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 group-hover:border-cyan-400/50 transition-colors text-center">
+                <div className={`relative ${theme.cardBg} backdrop-blur-xl rounded-2xl p-6 border ${theme.cardBorder} transition-all duration-500 text-center`}>
                   <motion.div
                     className="text-4xl mb-3"
                     animate={{ scale: [1, 1.1, 1] }}
@@ -1026,14 +1032,14 @@ Facebook: https://www.facebook.com/JohnRemyxD
                     {stat.icon}
                   </motion.div>
                   <motion.div
-                    className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
+                    className={`text-3xl font-bold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 + 0.2 }}
                   >
                     {stat.value}
                   </motion.div>
-                  <p className="text-sm text-gray-400 mt-2">{stat.label}</p>
+                  <p className={`text-sm ${theme.faintText} mt-2`}>{stat.label}</p>
                 </div>
               </motion.div>
             ))}
@@ -1064,7 +1070,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
               {/* Gradient background */}
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-3xl blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
               
-              <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 group-hover:border-white/30 transition-all overflow-hidden">
+              <div className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-3xl p-8 border ${theme.cardBorder} group-hover:border-white/30 transition-all overflow-hidden ${theme.cardText}`}>
                 {/* Animated gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
@@ -1081,7 +1087,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                     {service.title}
                   </h3>
                   
-                  <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+                  <p className={`${theme.smallText} mb-4 text-sm leading-relaxed`}>
                     {service.description}
                   </p>
                   
@@ -1420,6 +1426,14 @@ Facebook: https://www.facebook.com/JohnRemyxD
           </div>
         </div>
       </footer>
-    </div>
+    </motion.div>
+  );
+}
+
+export default function Portfolio() {
+  return (
+    <ThemeProvider>
+      <PortfolioContent />
+    </ThemeProvider>
   );
 }
