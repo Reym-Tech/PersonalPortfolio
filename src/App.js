@@ -987,6 +987,8 @@ Facebook: https://www.facebook.com/JohnRemyxD
 
                   {/* Progress Bar */}
                   <div className={`h-2 ${theme.cardBg} rounded-full overflow-hidden`}>
+                    <motion.div
+                      initial={{ width: 0 }}
                       animate={{ width: `${skill.percentage}%` }}
                       transition={{ delay: index * 0.1 + 0.3, duration: 0.8, ease: "easeOut" }}
                       className={`h-full bg-gradient-to-r ${theme.accentGradient} rounded-full shadow-lg`}
