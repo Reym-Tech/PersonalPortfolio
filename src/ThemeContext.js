@@ -38,15 +38,17 @@ export function ThemeProvider({ children }) {
     cardBg: isDark ? "bg-white/10" : "bg-white/80",
     cardBorder: isDark ? "border-white/20" : "border-gray-200",
     cardText: isDark ? "text-white" : "text-gray-900",
-    smallText: isDark ? "text-gray-300" : "text-gray-600",
-    faintText: isDark ? "text-gray-400" : "text-gray-500",
-    navbarBg: isDark ? "bg-white/10" : "bg-white/90",
+    smallText: isDark ? "text-gray-300" : "text-gray-700",
+    faintText: isDark ? "text-gray-400" : "text-gray-600",
+    navbarBg: isDark ? "bg-white/10" : "bg-white/95",
     navbarBorder: isDark ? "border-white/20" : "border-gray-300",
     accentGradient: isDark ? "from-cyan-400 to-purple-500" : "from-blue-500 to-purple-600",
+    accentGradientHover: isDark ? "from-cyan-300 to-purple-400" : "from-blue-400 to-purple-500",
     hoverEffect: isDark ? "hover:bg-white/20" : "hover:bg-gray-100",
-    cardHoverBg: isDark ? "hover:bg-white/20" : "hover:bg-gray-50",
+    cardHoverBg: isDark ? "hover:bg-white/20" : "hover:bg-blue-50",
+    cardShadow: isDark ? "shadow-lg shadow-cyan-500/20" : "shadow-lg shadow-blue-200/30",
     // subtle backdrop for cards in light mode
-    cardBackdrop: isDark ? "backdrop-blur-xl" : "",
+    cardBackdrop: isDark ? "backdrop-blur-xl" : "backdrop-blur-sm",
   };
 
   return (

@@ -140,10 +140,10 @@ const servicesData = [
 
 // Stats data
 const statsData = [
-  { label: "Projects Completed", value: "3+", icon: "🚀" },
+  { label: "Projects Completed", value: "2", icon: "🚀" },
   { label: "Certificates Earned", value: "5", icon: "🏆" },
   { label: "Technologies", value: "8+", icon: "⚙️" },
-  { label: "Years Coding", value: "2+", icon: "💻" }
+  { label: "Years Coding", value: "3+", icon: "💻" }
 ];
 
 // Social links
@@ -399,7 +399,8 @@ Facebook: https://www.facebook.com/JohnRemyxD
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 1, type: "spring", stiffness: 100 }}
+        whileHover={{ boxShadow: "0 0 30px rgba(6, 182, 212, 0.3)" }}
         className={`fixed top-6 left-1/2 -translate-x-1/2 backdrop-blur-xl ${theme.navbarBg} rounded-full px-10 py-4 flex gap-8 shadow-xl z-50 border ${theme.navbarBorder} transition-all duration-500`}
       >
         {["Home", "About", "Projects", "Skills", "Contact"].map((item) => (
@@ -426,12 +427,17 @@ Facebook: https://www.facebook.com/JohnRemyxD
       {/* HERO */}
       <section id="home" className="relative h-screen flex items-center justify-center">
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.2 }}
+          initial={{ scale: 0.8, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, type: "spring", stiffness: 100 }}
+          whileHover={{ scale: 1.02 }}
           className={`relative ${theme.cardBg} backdrop-blur-2xl rounded-[3rem] p-20 max-w-5xl w-full shadow-2xl transition-colors duration-500`}
         >
-          <div className={`absolute inset-0 rounded-[3rem] bg-gradient-to-r ${theme.accentGradient} opacity-20 blur-3xl transition-colors duration-500`} />
+          <motion.div
+            className={`absolute inset-0 rounded-[3rem] bg-gradient-to-r ${theme.accentGradient} opacity-20 blur-3xl transition-colors duration-500`}
+            animate={{ opacity: [0.15, 0.3, 0.15] }}
+            transition={{ duration: 4, repeat: Infinity }}
+          />
           <div className="relative z-10 grid md:grid-cols-2 gap-12">
             <div>
               <h1 className="text-5xl font-bold leading-tight">John Remy Gonzales</h1>
@@ -459,9 +465,9 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 
                 <motion.button
                   onClick={handleDownloadCV}
-                  whileHover={{ scale: 1.05, x: -5 }}
+                  whileHover={{ scale: 1.05, x: -5, boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)" }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-6 py-3 rounded-full border ${theme.cardBorder} ${theme.cardHoverBg} transition font-semibold flex items-center gap-2 group cursor-pointer ${theme.cardText}`}
+                  className={`px-6 py-3 rounded-full border ${theme.cardBorder} ${theme.cardHoverBg} transition font-semibold flex items-center gap-2 group cursor-pointer ${theme.cardText} shadow-lg`}
                 >
                   <motion.span
                     animate={{ x: [0, -4, 0] }}
@@ -479,7 +485,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
               transition={{ repeat: Infinity, duration: 6 }}
               className="flex items-center justify-center"
             >
-              <div className="w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 blur-xl absolute" />
+              <motion.div
+                className="w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 blur-xl absolute"
+                animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
+                transition={{ duration: 5, repeat: Infinity }}
+              />
               <img
                 src="/images/profile1.jpg"
                 alt="profile"
@@ -502,9 +512,9 @@ Facebook: https://www.facebook.com/JohnRemyxD
               key={cert.id}
               initial={{ opacity: 0, scale: 0.8, y: 20 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              whileHover={{ y: -12, scale: 1.02 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-6 shadow-xl cursor-pointer hover:shadow-2xl hover:from-white/20 hover:to-white/10 transition-all border border-white/10 hover:border-cyan-400/50 group overflow-hidden"
+              whileHover={{ y: -16, scale: 1.05, rotateX: 5 }}
+              transition={{ duration: 0.4, delay: index * 0.1, type: "spring", stiffness: 200 }}
+              className={`relative bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-6 cursor-pointer hover:shadow-2xl hover:from-white/20 hover:to-white/10 transition-all border border-white/10 hover:border-cyan-400/50 group overflow-hidden ${theme.cardShadow}`}
               onClick={() => window.open(cert.link, '_blank')}
             >
               {/* Animated gradient overlay */}
@@ -963,8 +973,9 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 initial={{ opacity: 0, scale: 0.8, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8, y: -20 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-6 border ${theme.cardBorder} ${theme.cardHoverBg} transition-all group overflow-hidden`}
+                whileHover={{ y: -8, scale: 1.05 }}
+                transition={{ duration: 0.4, delay: index * 0.1, type: "spring", stiffness: 200 }}
+                className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-6 border ${theme.cardBorder} ${theme.cardHoverBg} transition-all group overflow-hidden ${theme.cardShadow}`}
               >
                 {/* Animated gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -976,22 +987,29 @@ Facebook: https://www.facebook.com/JohnRemyxD
                       {skill.name}
                     </h4>
                     <motion.span
-                      className="text-sm font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: index * 0.1 + 0.2, type: "spring" }}
+                      className={`text-sm font-bold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ delay: index * 0.1 + 0.2, type: "spring", stiffness: 300 }}
                     >
                       {skill.percentage}%
                     </motion.span>
                   </div>
 
                   {/* Progress Bar */}
-                  <div className={`h-2 ${theme.cardBg} rounded-full overflow-hidden`}>
+                  <div className={`h-2 ${theme.cardBg} rounded-full overflow-hidden relative`}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${skill.percentage}%` }}
                       transition={{ delay: index * 0.1 + 0.3, duration: 0.8, ease: "easeOut" }}
                       className={`h-full bg-gradient-to-r ${theme.accentGradient} rounded-full shadow-lg`}
+                    />
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${skill.percentage}%` }}
+                      transition={{ delay: index * 0.1 + 0.3, duration: 0.8, ease: "easeOut" }}
+                      className={`absolute top-0 left-0 h-full bg-gradient-to-r ${theme.accentGradient} rounded-full blur-md opacity-50`}
                     />
                   </div>
 
