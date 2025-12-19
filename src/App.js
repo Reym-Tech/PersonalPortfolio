@@ -891,14 +891,14 @@ Facebook: https://www.facebook.com/JohnRemyxD
             {/* Dot Indicators */}
             <div className="flex gap-3 items-center">
               {languagesData.map((_, index) => (
-                  <motion.button
+                <motion.button
                   key={index}
                   onClick={() => handleDotClick(index)}
-                  className={`rounded-full transition-all ${currentLang === index ? 'bg-gradient-to-r from-cyan-400 to-purple-500' : (theme.isDark ? 'bg-white/30 hover:bg-white/50' : 'bg-gray-200 hover:bg-gray-300')}`}
-                  style={{ height: "6px" }}
+                  className={`rounded-full transition-all ${currentLang === index ? 'bg-gradient-to-r from-cyan-400 to-purple-500' : (theme.isDark ? 'bg-white/30 hover:bg-white/50' : 'bg-gray-200 hover:bg-gray-300')} ${currentLang === index ? 'w-8' : 'w-3'}`}
+                  style={{ height: 6 }}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
-                  animate={currentLang === index ? { width: 32 } : { width: 12 }}
+                  animate={currentLang === index ? { scale: 1.15 } : { scale: 1 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 />
               ))}
