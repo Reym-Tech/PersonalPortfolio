@@ -16,7 +16,7 @@ const projectsData = [
     title: "BrewTrack",
     description: "BrewTrack is a simple web-based POS and inventory system for cafés that manages sales, tracks stock, and provides basic analytics in one dashboard.",
     image: "/images/project2.jpg",
-    link: "https://github.com/Reym-Tech/BrewTrack",
+    link: "https://github.com/Reym-Tech/BrewTrack_Latest",
     technologies: ["HTML", "CSS", "JavaScript", "Supabase", "POSTgreSQL"]
   },
 ];
@@ -209,6 +209,7 @@ function PortfolioContent() {
   const [photoLikes, setPhotoLikes] = useState(() => Number(localStorage.getItem("photoLikes")) || 0);
   const [photoLiked, setPhotoLiked] = useState(() => localStorage.getItem("photoLiked") === "true");
   const [loopHeartCount, setLoopHeartCount] = useState(22);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isAutoPlay) return;
@@ -395,13 +396,25 @@ Facebook: https://www.facebook.com/JohnRemyxD
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* NAVBAR */}
+      {/* Mobile Hamburger Button - fixed to top left */}
+      <motion.button
+        initial={{ x: -80, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, type: "spring", stiffness: 100 }}
+        onClick={() => setSidebarOpen(true)}
+        whileTap={{ scale: 0.95 }}
+        className={`fixed top-6 left-6 md:hidden backdrop-blur-xl ${theme.navbarBg} rounded-full p-3 shadow-xl z-50 border ${theme.navbarBorder} text-xl ${theme.isDark ? "text-gray-300" : "text-gray-700"}`}
+      >
+        ☰
+      </motion.button>
+
+      {/* NAVBAR - Desktop only, centered */}
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, type: "spring", stiffness: 100 }}
         whileHover={{ boxShadow: "0 0 30px rgba(6, 182, 212, 0.3)" }}
-        className={`fixed top-6 left-1/2 -translate-x-1/2 backdrop-blur-xl ${theme.navbarBg} rounded-full px-10 py-4 flex gap-8 shadow-xl z-50 border ${theme.navbarBorder} transition-all duration-500`}
+        className={`fixed top-6 left-1/2 -translate-x-1/2 backdrop-blur-xl ${theme.navbarBg} rounded-full px-10 py-4 hidden md:flex items-center justify-center gap-8 shadow-xl z-50 border ${theme.navbarBorder} transition-all duration-500`}
       >
         {["Home", "About", "Projects", "Skills", "Contact"].map((item) => (
           <motion.a
@@ -423,6 +436,62 @@ Facebook: https://www.facebook.com/JohnRemyxD
           {theme.isDark ? "☀️" : "🌙"}
         </motion.button>
       </motion.nav>
+
+      {/* Mobile Theme Toggle - fixed to top right */}
+      <motion.button
+        initial={{ x: 80, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, type: "spring", stiffness: 100 }}
+        onClick={theme.toggleTheme}
+        whileTap={{ scale: 0.95 }}
+        className={`fixed top-6 right-6 md:hidden backdrop-blur-xl ${theme.navbarBg} rounded-full p-3 shadow-xl z-50 border ${theme.navbarBorder} text-xl ${theme.isDark ? "text-yellow-300" : "text-blue-600"}`}
+        title={theme.isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      >
+        {theme.isDark ? "☀️" : "🌙"}
+      </motion.button>
+
+      {/* Mobile Sidebar */}
+      {sidebarOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 z-50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <motion.div
+        initial={{ x: "-100%" }}
+        animate={{ x: sidebarOpen ? 0 : "-100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className={`fixed top-0 left-0 h-full w-64 ${theme.isDark ? "bg-slate-900" : "bg-white"} z-50 md:hidden shadow-2xl`}
+      >
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-8">
+            <span className={`text-xl font-bold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>Menu</span>
+            <motion.button
+              onClick={() => setSidebarOpen(false)}
+              whileTap={{ scale: 0.95 }}
+              className={`text-2xl ${theme.isDark ? "text-gray-300" : "text-gray-700"}`}
+            >
+              ✕
+            </motion.button>
+          </div>
+          <div className="flex flex-col gap-4">
+            {["Home", "About", "Projects", "Skills", "Contact"].map((item) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                onClick={() => setSidebarOpen(false)}
+                whileHover={{ x: 10, color: "#06b6d4" }}
+                className={`text-lg py-2 transition ${theme.isDark ? "text-gray-300 hover:text-cyan-400" : "text-gray-700 hover:text-blue-600"}`}
+              >
+                {item}
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </motion.div>
 
       {/* HERO */}
       <section id="home" className="relative h-screen flex items-center justify-center">
