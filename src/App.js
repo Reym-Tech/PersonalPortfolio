@@ -16,7 +16,7 @@ const projectsData = [
     title: "BrewTrack",
     description: "BrewTrack is a simple web-based POS and inventory system for cafés that manages sales, tracks stock, and provides basic analytics in one dashboard.",
     image: "/images/project2.jpg",
-    link: "bt-hitnotes.vercel.app",
+    link: "https://bt-hitnotes.vercel.app",
     technologies: ["HTML", "CSS", "JavaScript", "Supabase", "POSTgreSQL"]
   },
 ];
