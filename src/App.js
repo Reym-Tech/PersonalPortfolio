@@ -75,6 +75,20 @@ const languagesData = [
   { name: "Firebase", icon: "🔥", color: "from-orange-400 to-red-500" }
 ];
 
+<<<<<<< HEAD
+=======
+const skillsData = [
+  { name: "JavaScript", percentage: 90 },
+  { name: "React", percentage: 85 },
+  { name: "Tailwind CSS", percentage: 88 },
+  { name: "Node.js", percentage: 75 },
+  { name: "HTML/CSS", percentage: 95 },
+  { name: "UI/UX Design", percentage: 80 },
+  { name: "REST APIs", percentage: 82 },
+  { name: "Problem Solving", percentage: 88 }
+];
+
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
 // Education and Experience data
 const educationData = [
   {
@@ -116,9 +130,15 @@ const servicesData = [
     title: "Database Design",
     description: "Robust database architecture and optimization for scalable applications",
     icon: "🗄️",
+<<<<<<< HEAD
     skills: ["MySQL", "PostgreSQL", "Supabase", "Database Design"]
   },
   { 
+=======
+    skills: ["MySQL", "PostgreSQL", "Firebase", "Database Design"]
+  },
+  {
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
     id: 4,
     title: "Problem Solving",
     description: "Analytical approach to complex problems with clean, efficient code solutions",
@@ -513,11 +533,19 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 >
                   View Projects
                   <motion.span
+<<<<<<< HEAD
                     animate={{ x: [0, 0, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                     className="inline-block"
                   >
                     
+=======
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="inline-block"
+                  >
+                    →
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                   </motion.span>
                 </motion.button>
                 
@@ -528,10 +556,18 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   className={`px-6 py-3 rounded-full border ${theme.cardBorder} ${theme.cardHoverBg} transition font-semibold flex items-center gap-2 group cursor-pointer ${theme.cardText} shadow-lg`}
                 >
                   <motion.span
+<<<<<<< HEAD
                     animate={{ x: [0, 0, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                     className="inline-block"
                   >
+=======
+                    animate={{ x: [0, -4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="inline-block"
+                  >
+                    ↓
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                   </motion.span>
                   Download CV
                 </motion.button>
@@ -628,18 +664,30 @@ Facebook: https://www.facebook.com/JohnRemyxD
                       transition={{ rotate: { duration: 0.3 }, y: { duration: 1.5, repeat: Infinity } }}
                       className="inline-block"
                     >
+<<<<<<< HEAD
                       
+=======
+                      ↓
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                     </motion.span>
                   </>
                 ) : (
                   <>
                     <span>See More</span>
                     <motion.span
+<<<<<<< HEAD
                       animate={{ y: [0, 0, 0], scale: [1, 1, 1] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
                       className="inline-block"
                     >
                       
+=======
+                      animate={{ y: [0, 5, 0], scale: [1, 1.2, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="inline-block"
+                    >
+                      ↓
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                     </motion.span>
                   </>
                 )}
@@ -984,7 +1032,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 animate={{ rotate: isAutoPlay ? 360 : 0 }}
                 transition={{ duration: 2, repeat: isAutoPlay ? Infinity : 0 }}
               >
+<<<<<<< HEAD
                 
+=======
+                ▶
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
               </motion.span>
               {isAutoPlay ? "Auto-Playing" : "Paused"}
             </motion.button>
@@ -1154,7 +1206,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 <div className="relative z-10">
                   <motion.div
                     className="text-5xl mb-4"
+<<<<<<< HEAD
                     animate={{ rotate: [0, 0, 0, 0] }}
+=======
+                    animate={{ rotate: [0, 5, -5, 0] }}
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                     transition={{ duration: 4, repeat: Infinity }}
                   >
                     {service.icon}
@@ -1353,7 +1409,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 group-hover:border-blue-400/50 transition-all">
                     <motion.div
                       className="text-4xl mb-4"
+<<<<<<< HEAD
                       // animate={{ scale: [1, 1.1, 1], rotate: [0, 360] }}
+=======
+                      animate={{ scale: [1, 1.1, 1], rotate: [0, 360] }}
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                       transition={{ duration: 3, repeat: Infinity }}
                     >
                       💼
@@ -1414,7 +1474,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   <motion.span
                     animate={{ 
                       x: [0, 6, 0],
+<<<<<<< HEAD
                       scale: [1, 1, 1],
+=======
+                      scale: [1, 1.3, 1],
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                       rotate: [0, 5, 0]
                     }}
                     transition={{ 
@@ -1424,7 +1488,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
                     }}
                     className="inline-block"
                   >
+<<<<<<< HEAD
                     
+=======
+                    →
+>>>>>>> 1bb6c962c18a12b7642006e491fe580f3da0b076
                   </motion.span>
                 </span>
               </motion.a>
