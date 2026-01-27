@@ -1154,7 +1154,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 <div className="relative z-10">
                   <motion.div
                     className="text-5xl mb-4"
-                    animate={{ rotate: [0, , 0, 0] }}
+                    animate={{ rotate: [0, 0, 0] }}
                     transition={{ duration: 4, repeat: Infinity }}
                   >
                     {service.icon}
