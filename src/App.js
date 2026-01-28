@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ThemeProvider, useTheme } from "./ThemeContext";
+import jsPDF from "jspdf";
 
 const projectsData = [
   {
@@ -18,6 +19,15 @@ const projectsData = [
     image: "/images/project2.jpg",
     link: "https://bt-hitnotes.vercel.app",
     technologies: ["HTML", "CSS", "JavaScript", "Supabase", "POSTgreSQL"]
+  },
+  {
+    id: 3,
+    title: "Tagalog Fried Chicken POS",
+    description: "A comprehensive mobile POS system designed for restaurant operations. Features real-time order management, inventory tracking, sales reporting, and payment processing optimized for quick-service restaurants.",
+    image: "/images/project3.png",
+    link: "https://github.com/Reym-Tech/Tagalog_FC_POS",
+    apkLink: "https://drive.google.com/file/d/13mClr8Gk6Y4M6r1Q6IrfrKFbeoKLDzKC/view?usp=sharing",
+    technologies: ["Dart", "Java", "Makefile", "C++", "CMake"]
   },
 ];
 
@@ -136,12 +146,12 @@ const statsData = [
 ];
 
 // Social links
-const socialLinks = [
-  { name: "GitHub", url: "https://github.com/Reym-Tech", icon: "🐙", color: "from-gray-600 to-gray-800" },
-  { name: "LinkedIn", url: "#", icon: "💼", color: "from-blue-600 to-blue-800" },
-  { name: "Gmail", url: "mailto:johnremygonzales20@gmail.com", icon: "📧", color: "from-red-500 to-red-700" },
-  { name: "Facebook", url: "https://www.facebook.com/JohnRemyxD", icon: "f", color: "from-blue-500 to-blue-700" }
-];
+  const socialLinks = [
+    { name: "GitHub", url: "https://github.com/Reym-Tech", icon: "/images/github-icon.svg", color: "from-gray-600 to-gray-800" },
+    { name: "LinkedIn", url: "#", icon: "/images/linkedin-icon.svg", color: "from-blue-600 to-blue-800" },
+    { name: "Gmail", url: "mailto:johnremygonzales20@gmail.com", icon: "/images/gmail-icon.svg", color: "from-red-500 to-red-700" },
+    { name: "Facebook", url: "https://www.facebook.com/JohnRemyxD", icon: "/images/facebook-icon.svg", color: "from-blue-500 to-blue-700" }
+  ];
 
 // Mapping languages to related skills
 const languageSkillsMap = {
@@ -316,110 +326,248 @@ function PortfolioContent() {
     }
   };
 
-  // Handler for Download CV button
+  // Handler for Download Resume button
   const handleDownloadCV = () => {
-    // Create a simple CV file or link to actual CV
-    const cvContent = `
-JOHN REMY GONZALES
-BSIT 3rd Year | University of Mindanao Digos College
-johnremygonzales20@gmail.com | GitHub: github.com/Reym-Tech
+    const doc = new jsPDF("p", "mm", "a4");
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let yPosition = 15;
+    const margin = 12;
+    const lineHeight = 5.5;
+    const textWidth = pageWidth - 2 * margin;
 
-PROFESSIONAL SUMMARY
-Passionate Information Technology student focused on web development, UI/UX design, automation, and modern JavaScript technologies. Experienced in full-stack development with proven ability to create engaging user interfaces and robust backend systems.
+    // Set colors
+    const primaryColor = [0, 93, 216]; // School Bus Yellow-700 equivalent
+    const secondaryColor = [0, 29, 61]; // Prussian Blue
+    const textColor = [0, 8, 20]; // Ink Black
 
-EDUCATION
-Bachelor of Science in Information Technology (BSIT) - 3rd Year
-University of Mindanao - Digos College (2023 - Present)
-Focus: Web Development & Software Engineering
+    // Helper function for text with automatic wrapping
+    const addWrappedText = (text, fontSize, isBold = false, color = textColor) => {
+      doc.setFontSize(fontSize);
+      doc.setTextColor(...color);
+      if (isBold) {
+        doc.setFont(undefined, "bold");
+      } else {
+        doc.setFont(undefined, "normal");
+      }
+      const lines = doc.splitTextToSize(text, textWidth);
+      lines.forEach((line) => {
+        if (yPosition > pageHeight - 10) {
+          doc.addPage();
+          yPosition = 15;
+        }
+        doc.text(line, margin, yPosition);
+        yPosition += lineHeight * 0.7;
+      });
+      yPosition += 2;
+    };
 
-Senior High School - HUMSS Track
-Matti National High School (2021 - 2023)
+    // Title
+    doc.setFontSize(24);
+    doc.setTextColor(...primaryColor);
+    doc.setFont(undefined, "bold");
+    doc.text("JOHN REMY GONZALES", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 8;
 
-TECHNICAL SKILLS
-Languages: JavaScript, PHP, Java, HTML/CSS
-Frontend: React, Tailwind CSS, Framer Motion
-Backend: Node.js, REST APIs
-Databases: MySQL, PostgreSQL, Firebase
-Tools: Git, Figma, VS Code
+    doc.setFontSize(12);
+    doc.setTextColor(...secondaryColor);
+    doc.setFont(undefined, "normal");
+    doc.text("BSIT 3rd Year Student & Web Developer", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 8;
 
-PROJECTS COMPLETED
-1. Ancient Crafts - Full-stack e-commerce mobile application
-2. BrewTrack - Web-based POS and inventory system
+    // Contact Info
+    doc.setFontSize(10);
+    doc.setTextColor(...textColor);
+    doc.text("Email: johnremygonzales20@gmail.com | GitHub: github.com/Reym-Tech | Facebook: facebook.com/JohnRemyxD", pageWidth / 2, yPosition, {
+      align: "center",
+    });
+    yPosition += 10;
 
-CERTIFICATIONS
-- Installing and Configuring Computer Systems (TESDA 2025)
-- Introduction to CSS (TESDA 2025)
-- Maintaining Computer Systems and Networks (TESDA 2025)
-- Setting Up Computer Networks (TESDA 2025)
-- Setting Up Computer Servers (TESDA 2025)
+    // Divider
+    doc.setDrawColor(...primaryColor);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 8;
 
-EXPERTISE
-✓ Full-Stack Web Development
-✓ UI/UX Design & Animations
-✓ Database Architecture & Optimization
-✓ Problem Solving & Debugging
-✓ Responsive Web Design
-✓ REST API Development
+    // Professional Profile Section
+    doc.setFontSize(11);
+    doc.setTextColor(...primaryColor);
+    doc.setFont(undefined, "bold");
+    doc.text("PROFESSIONAL PROFILE", margin, yPosition);
+    yPosition += 7;
 
-CONTACT
-Email: johnremygonzales20@gmail.com
-GitHub: https://github.com/Reym-Tech
-Facebook: https://www.facebook.com/JohnRemyxD
-    `;
+    const profileText =
+      "Passionate and skilled Information Technology student with 3+ years of coding experience, specialized in full-stack web development and UI/UX design. Proven track record of delivering high-quality projects with responsive interfaces and robust backend systems.";
+    addWrappedText(profileText, 10);
+    yPosition += 3;
 
-    // Create a blob and download
-    const blob = new Blob([cvContent], { type: "text/plain" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "John_Remy_Gonzales_CV.txt";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    // Core Competencies
+    doc.setFontSize(11);
+    doc.setTextColor(...primaryColor);
+    doc.setFont(undefined, "bold");
+    doc.text("CORE COMPETENCIES", margin, yPosition);
+    yPosition += 7;
+
+    const competencies = [
+      "Languages & Frameworks: JavaScript, PHP, Java, HTML/CSS, React, Node.js",
+      "Frontend: React, Tailwind CSS, Framer Motion, Responsive Design, UI/UX",
+      "Backend: REST APIs, Express.js, Database Design, Server Configuration",
+      "Databases & Tools: MySQL, PostgreSQL, Firebase, Supabase, Git, VS Code, Figma",
+    ];
+
+    doc.setFontSize(10);
+    doc.setTextColor(...textColor);
+    competencies.forEach((comp) => {
+      addWrappedText(comp, 10);
+    });
+    yPosition += 2;
+
+    // Projects
+    doc.setFontSize(11);
+    doc.setTextColor(...primaryColor);
+    doc.setFont(undefined, "bold");
+    doc.text("PROFESSIONAL EXPERIENCE & PROJECTS", margin, yPosition);
+    yPosition += 7;
+
+    doc.setFontSize(10);
+    doc.setTextColor(...textColor);
+    doc.setFont(undefined, "bold");
+    doc.text("ANCIENT CRAFTS - Full-Stack E-Commerce Application", margin, yPosition);
+    yPosition += 6;
+    doc.setFont(undefined, "normal");
+    addWrappedText(
+      "• Developed comprehensive mobile e-commerce platform with product catalog, shopping cart, and checkout\n• Tech Stack: MySQL, PHP, Firebase, XML, Java",
+      9
+    );
+
+    doc.setFont(undefined, "bold");
+    doc.text("BREWTRACK - Web-Based POS & Inventory System", margin, yPosition);
+    yPosition += 6;
+    doc.setFont(undefined, "normal");
+    addWrappedText(
+      "• Created intuitive point-of-sale system with real-time inventory tracking and analytics\n• Tech Stack: HTML, CSS, JavaScript, Supabase, PostgreSQL | Live: bt-hitnotes.vercel.app",
+      9
+    );
+
+    // Education
+    doc.setFontSize(11);
+    doc.setTextColor(...primaryColor);
+    doc.setFont(undefined, "bold");
+    doc.text("EDUCATION", margin, yPosition);
+    yPosition += 7;
+
+    doc.setFontSize(10);
+    doc.setTextColor(...textColor);
+    doc.setFont(undefined, "bold");
+    doc.text("Bachelor of Science in Information Technology (BSIT)", margin, yPosition);
+    yPosition += 5;
+    doc.setFont(undefined, "normal");
+    addWrappedText("University of Mindanao - Digos College (2023 - Present) | Expected Graduation: 2026", 9);
+
+    // Certifications
+    doc.setFontSize(11);
+    doc.setTextColor(...primaryColor);
+    doc.setFont(undefined, "bold");
+    doc.text("PROFESSIONAL CERTIFICATIONS", margin, yPosition);
+    yPosition += 7;
+
+    const certifications = [
+      "• Installing and Configuring Computer Systems (TESDA, 2025)",
+      "• Introduction to CSS (TESDA, 2025)",
+      "• Maintaining Computer Systems and Networks (TESDA, 2025)",
+      "• Setting Up Computer Networks (TESDA, 2025)",
+      "• Setting Up Computer Servers (TESDA, 2025)",
+    ];
+
+    doc.setFontSize(10);
+    doc.setTextColor(...textColor);
+    certifications.forEach((cert) => {
+      addWrappedText(cert, 9);
+    });
+
+    // Skills Summary
+    doc.setFontSize(11);
+    doc.setTextColor(...primaryColor);
+    doc.setFont(undefined, "bold");
+    doc.text("KEY SKILLS", margin, yPosition);
+    yPosition += 7;
+
+    const skills = [
+      "• Full-Stack Web Development         • Problem Solving & Debugging",
+      "• UI/UX Design & Animations          • Responsive Web Design",
+      "• Database Architecture & Design     • REST API Development",
+    ];
+
+    doc.setFontSize(10);
+    doc.setTextColor(...textColor);
+    skills.forEach((skill) => {
+      addWrappedText(skill, 9);
+    });
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text(
+      `Generated: January 2026 | Portfolio: john-remy-gonzales-portfolio`,
+      pageWidth / 2,
+      pageHeight - 8,
+      { align: "center" }
+    );
+
+    // Save PDF
+    doc.save("John_Remy_Gonzales_Resume.pdf");
   };
   return (
     <motion.div
-      className={`min-h-screen bg-gradient-to-br ${theme.bgGradient} ${theme.textColor} font-sans overflow-hidden transition-colors duration-500`}
+      className={`min-h-screen bg-gradient-to-br ${theme.bgGradient} ${theme.textColor} font-sans overflow-x-hidden transition-colors duration-500`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.6 }}
     >
       {/* Mobile Hamburger Button - fixed to top left */}
       <motion.button
         initial={{ x: -80, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 1, type: "spring", stiffness: 100 }}
+        transition={{ duration: 0.8, type: "spring", stiffness: 100, delay: 0.1 }}
         onClick={() => setSidebarOpen(true)}
-        whileTap={{ scale: 0.95 }}
-        className={`fixed top-6 left-6 md:hidden backdrop-blur-xl ${theme.navbarBg} rounded-full p-3 shadow-xl z-50 border ${theme.navbarBorder} text-xl ${theme.isDark ? "text-gray-300" : "text-gray-700"}`}
+        whileTap={{ scale: 0.92 }}
+        whileHover={{ scale: 1.08 }}
+        className={`fixed top-6 left-6 md:hidden backdrop-blur-md ${theme.navbarBg} rounded-lg p-3 shadow-lg z-50 border ${theme.navbarBorder} text-xl ${theme.isDark ? "text-gray-300" : "text-gray-700"} hover:shadow-xl transition-shadow`}
       >
         ☰
       </motion.button>
 
       {/* NAVBAR - Desktop only, centered */}
       <motion.nav
-        initial={{ y: -80, opacity: 0 }}
+        initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1, type: "spring", stiffness: 100 }}
-        whileHover={{ boxShadow: "0 0 30px rgba(6, 182, 212, 0.3)" }}
-        className={`fixed top-6 left-1/2 -translate-x-1/2 backdrop-blur-xl ${theme.navbarBg} rounded-full px-10 py-4 hidden md:flex items-center justify-center gap-8 shadow-xl z-50 border ${theme.navbarBorder} transition-all duration-500`}
+        transition={{ duration: 0.8, type: "spring", stiffness: 80, delay: 0.2 }}
+        whileHover={{ boxShadow: "0 12px 40px rgba(255, 195, 0, 0.15)" }}
+        className={`fixed top-8 left-1/2 -translate-x-1/2 backdrop-blur-lg ${theme.navbarBg} rounded-xl px-10 py-3 hidden md:flex items-center justify-center gap-10 shadow-lg z-50 border ${theme.navbarBorder} transition-all duration-300`}
       >
-        {["Home", "About", "Projects", "Skills", "Contact"].map((item) => (
+        {["Home", "About", "Projects", "Skills", "Contact"].map((item, idx) => (
           <motion.a
             key={item}
             href={`#${item.toLowerCase()}`}
-            whileHover={{ scale: 1.1, color: "#06b6d4" }}
-            className={`text-sm transition ${theme.isDark ? "text-gray-300 hover:text-cyan-400" : "text-gray-700 hover:text-blue-600"}`}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + idx * 0.05, duration: 0.4, ease: "easeOut" }}
+            className={`text-sm font-medium transition-colors duration-200 ${theme.isDark ? "text-regal_navy-900 hover:text-school_bus_yellow-400" : "text-gold-600 hover:text-school_bus_yellow-300"}`}
           >
             {item}
           </motion.a>
         ))}
+        <motion.div className="w-px h-6 bg-white/20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} />
         <motion.button
           onClick={theme.toggleTheme}
-          whileHover={{ scale: 1.2, rotate: 20 }}
+          whileHover={{ scale: 1.12, rotate: 15 }}
           whileTap={{ scale: 0.95 }}
-          className={`text-xl transition-transform ${theme.isDark ? "text-yellow-300" : "text-blue-600"}`}
+          initial={{ opacity: 0, rotate: -30 }}
+          animate={{ opacity: 1, rotate: 0 }}
+          transition={{ delay: 0.65, duration: 0.4, type: "spring", stiffness: 150, damping: 12, ease: "easeOut" }}
+          className={`text-lg transition-transform ${theme.isDark ? "text-school_bus_yellow-400" : "text-gold-500"}`}
           title={theme.isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
           {theme.isDark ? "☀️" : "🌙"}
@@ -430,10 +578,11 @@ Facebook: https://www.facebook.com/JohnRemyxD
       <motion.button
         initial={{ x: 80, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 1, type: "spring", stiffness: 100 }}
+        transition={{ duration: 0.8, type: "spring", stiffness: 100, delay: 0.1 }}
         onClick={theme.toggleTheme}
-        whileTap={{ scale: 0.95 }}
-        className={`fixed top-6 right-6 md:hidden backdrop-blur-xl ${theme.navbarBg} rounded-full p-3 shadow-xl z-50 border ${theme.navbarBorder} text-xl ${theme.isDark ? "text-yellow-300" : "text-blue-600"}`}
+        whileTap={{ scale: 0.92 }}
+        whileHover={{ scale: 1.08 }}
+        className={`fixed top-6 right-6 md:hidden backdrop-blur-md ${theme.navbarBg} rounded-lg p-3 shadow-lg z-50 border ${theme.navbarBorder} text-xl ${theme.isDark ? "text-yellow-300" : "text-blue-600"} hover:shadow-xl transition-shadow`}
         title={theme.isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       >
         {theme.isDark ? "☀️" : "🌙"}
@@ -445,35 +594,41 @@ Facebook: https://www.facebook.com/JohnRemyxD
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 md:hidden"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
       <motion.div
         initial={{ x: "-100%" }}
         animate={{ x: sidebarOpen ? 0 : "-100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className={`fixed top-0 left-0 h-full w-64 ${theme.isDark ? "bg-slate-900" : "bg-white"} z-50 md:hidden shadow-2xl`}
+        transition={{ type: "spring", damping: 20, stiffness: 300 }}
+        className={`fixed top-0 left-0 h-full w-64 ${theme.isDark ? "bg-slate-900/95" : "bg-white/95"} z-50 md:hidden shadow-2xl backdrop-blur-md`}
       >
         <div className="p-6">
           <div className="flex justify-between items-center mb-8">
             <span className={`text-xl font-bold bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>Menu</span>
             <motion.button
               onClick={() => setSidebarOpen(false)}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ rotate: 90 }}
+              transition={{ duration: 0.2 }}
               className={`text-2xl ${theme.isDark ? "text-gray-300" : "text-gray-700"}`}
             >
               ✕
             </motion.button>
           </div>
-          <div className="flex flex-col gap-4">
-            {["Home", "About", "Projects", "Skills", "Contact"].map((item) => (
+          <div className="flex flex-col gap-3">
+            {["Home", "About", "Projects", "Skills", "Contact"].map((item, idx) => (
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase()}`}
                 onClick={() => setSidebarOpen(false)}
-                whileHover={{ x: 10, color: "#06b6d4" }}
-                className={`text-lg py-2 transition ${theme.isDark ? "text-gray-300 hover:text-cyan-400" : "text-gray-700 hover:text-blue-600"}`}
+                whileHover={{ x: 8 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className={`text-base py-3 px-4 rounded-lg transition-colors font-medium ${theme.isDark ? "text-regal_navy-900 hover:text-school_bus_yellow-400 hover:bg-white/10" : "text-gold-600 hover:text-school_bus_yellow-300 hover:bg-blue-50"}`}
               >
                 {item}
               </motion.a>
@@ -483,83 +638,140 @@ Facebook: https://www.facebook.com/JohnRemyxD
       </motion.div>
 
       {/* HERO */}
-      <section id="home" className="relative h-screen flex items-center justify-center">
+      <section id="home" className="relative min-h-screen flex items-center justify-center pt-32 pb-20 md:pt-20 md:pb-0">
         <motion.div
-          initial={{ scale: 0.8, opacity: 0, y: 20 }}
+          initial={{ scale: 0.9, opacity: 0, y: 30 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, type: "spring", stiffness: 100 }}
-          whileHover={{ scale: 1.02 }}
-          className={`relative ${theme.cardBg} backdrop-blur-2xl rounded-[3rem] p-20 max-w-5xl w-full shadow-2xl transition-colors duration-500`}
+          transition={{ duration: 0.7, type: "spring", stiffness: 80, damping: 12, delay: 0.3, ease: "easeOut" }}
+          whileHover={{ scale: 1.01 }}
+          className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-3xl p-12 md:p-20 max-w-5xl w-full mx-4 shadow-2xl transition-all duration-500`}
         >
+          {/* Enhanced gradient background */}
           <motion.div
-            className={`absolute inset-0 rounded-[3rem] bg-gradient-to-r ${theme.accentGradient} opacity-20 blur-3xl transition-colors duration-500`}
-            animate={{ opacity: [0.15, 0.3, 0.15] }}
-            transition={{ duration: 4, repeat: Infinity }}
+            className={`absolute inset-0 rounded-3xl bg-gradient-to-r ${theme.accentGradient} opacity-10 blur-2xl transition-colors duration-500`}
+            animate={{ opacity: [0.06, 0.11, 0.06] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           />
-          <div className="relative z-10 grid md:grid-cols-2 gap-12">
-            <div>
-              <h1 className="text-5xl font-bold leading-tight">John Remy Gonzales</h1>
-              <p className={`mt-4 bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}>BSIT 3rd Year • University of Mindanao Digos College</p>
-              <p className={`mt-6 ${theme.secondaryText}`}>
-                A passionate Information Technology student focused on web development, UI/UX design,
-                automation, and modern JavaScript technologies.
-              </p>
-              <div className="mt-8 flex gap-4">
+            <motion.div
+              className={`absolute -top-20 -right-20 w-40 h-40 bg-school_bus_yellow-400/15 rounded-full blur-3xl`}
+            />
+            <motion.div
+              className={`absolute -bottom-20 -left-20 w-40 h-40 bg-gold-500/10 rounded-full blur-3xl`}
+            />
+          
+          <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
+            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className="inline-block mb-6"
+              >
+                <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${theme.isDark ? "bg-school_bus_yellow-500/20 text-school_bus_yellow-400 border border-school_bus_yellow-400/30" : "bg-school_bus_yellow-100 text-ink_black-700 border border-school_bus_yellow-300"}`}>
+                  <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-lg">✨</motion.span>
+                  Welcome to my portfolio
+                </span>
+              </motion.div>
+              
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.7 }}
+                className="text-5xl md:text-6xl font-bold leading-tight mb-4"
+              >
+                John Remy <motion.span 
+                  className={`bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent`}
+                  initial={{ backgroundPosition: "0%" }}
+                  animate={{ backgroundPosition: "100%" }}
+                  transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+                >
+                  Gonzales
+                </motion.span>
+              </motion.h1>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.7 }}
+                className={`mt-4 text-lg ${theme.secondaryText} leading-relaxed`}
+              >
+                BSIT 3rd Year • University of Mindanao Digos College
+              </motion.p>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.7 }}
+                className={`mt-6 text-lg ${theme.secondaryText} leading-relaxed max-w-md`}
+              >
+                A passionate developer crafting beautiful, responsive web experiences with modern technologies and smooth animations.
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.7 }}
+                className="mt-10 flex gap-4 flex-wrap"
+              >
                 <motion.button
                   onClick={handleViewProjects}
-                  whileHover={{ scale: 1.05, x: 5, boxShadow: "0 0 20px rgba(6, 182, 212, 0.5)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 rounded-full bg-cyan-500 hover:bg-cyan-400 transition font-semibold flex items-center gap-2 group cursor-pointer shadow-lg"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className={`px-8 py-3 rounded-xl bg-gradient-to-r ${theme.accentGradient} text-white font-semibold cursor-pointer shadow-lg transition-all`}
                 >
-                  View Projects
-                  <motion.span
-                    animate={{ x: [0, 0, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="inline-block"
-                  >
-                    
-                  </motion.span>
+                  View My Work
                 </motion.button>
                 
                 <motion.button
                   onClick={handleDownloadCV}
-                  whileHover={{ scale: 1.05, x: -5, boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-6 py-3 rounded-full border ${theme.cardBorder} ${theme.cardHoverBg} transition font-semibold flex items-center gap-2 group cursor-pointer ${theme.cardText} shadow-lg`}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className={`px-8 py-3 rounded-xl border-2 ${theme.cardBorder} ${theme.cardHoverBg} font-semibold cursor-pointer transition-all`}
                 >
-                  <motion.span
-                    animate={{ x: [0, 0, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="inline-block"
-                  >
-                  </motion.span>
-                  Download CV
+                  Download Resume
                 </motion.button>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
+            
             <motion.div
-              animate={{ y: [0, -20, 0] }}
-              transition={{ repeat: Infinity, duration: 6 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.4, type: "spring", stiffness: 120, damping: 14, ease: "easeOut" }}
+              whileHover={{ scale: 1.02 }}
               className="flex items-center justify-center"
             >
-              <motion.div
-                className="w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 blur-xl absolute"
-                animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
-                transition={{ duration: 5, repeat: Infinity }}
-              />
-              <img
-                src="/images/profile1.jpg"
-                alt="profile"
-                className="relative w-56 h-56 object-cover rounded-full border-4 border-white/30"
-              />
+              <div className="relative">
+                <img
+                  src="/images/profile1.jpg"
+                  alt="profile"
+                  className="relative w-64 h-64 object-cover rounded-3xl border-4 border-school_bus_yellow-400/50 shadow-2xl shadow-school_bus_yellow-500/20"
+                />
+              </div>
             </motion.div>
           </div>
         </motion.div>
       </section>
 
       {/* CERTIFICATES */}
-      <section id="certificates" className="py-24 max-w-6xl mx-auto px-10 bg-gradient-to-b from-transparent via-white/5 to-transparent">
-        <h2 className="text-4xl font-bold mb-12">Certificates</h2>
+      <section id="certificates" className="py-32 max-w-6xl mx-auto px-10 bg-gradient-to-b from-transparent via-white/5 to-transparent">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Certifications</h2>
+          <motion.div
+            className={`h-1 w-20 rounded-full bg-gradient-to-r ${theme.accentGradient}`}
+            initial={{ width: 0 }}
+            whileInView={{ width: 80 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          />
+          <p className={`mt-4 text-lg ${theme.secondaryText}`}>Professional certifications and achievements</p>
+        </motion.div>
+        
         <motion.div
           layout
           className="grid md:grid-cols-3 gap-8"
@@ -569,19 +781,29 @@ Facebook: https://www.facebook.com/JohnRemyxD
               key={cert.id}
               initial={{ opacity: 0, scale: 0.8, y: 20 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              whileHover={{ y: -16, scale: 1.05, rotateX: 5 }}
-              transition={{ duration: 0.4, delay: index * 0.1, type: "spring", stiffness: 200 }}
-              className={`relative bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-6 cursor-pointer hover:shadow-2xl hover:from-white/20 hover:to-white/10 transition-all border border-white/10 hover:border-cyan-400/50 group overflow-hidden ${theme.cardShadow}`}
+              whileHover={{ y: -6, scale: 1.02, boxShadow: "0 16px 32px rgba(255, 195, 0, 0.15)" }}
+              transition={{ duration: 0.35, delay: index * 0.08, type: "spring", stiffness: 140, damping: 13, ease: "easeOut" }}
+              className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-6 cursor-pointer border ${theme.cardBorder} hover:border-school_bus_yellow-400/60 transition-all duration-300 group overflow-hidden`}
               onClick={() => window.open(cert.link, '_blank')}
             >
               {/* Animated gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-school_bus_yellow-400/0 via-school_bus_yellow-400/8 to-gold-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
               
               {/* Content */}
               <div className="relative z-10">
-                <img src={cert.image} alt={cert.title} className="h-40 w-full object-cover rounded-xl mb-4 group-hover:shadow-lg transition-shadow" />
-                <h3 className={`text-lg font-semibold group-hover:text-cyan-300 transition-colors ${theme.cardText}`}>{cert.title}</h3>
+                <motion.img
+                  src={cert.image}
+                  alt={cert.title}
+                  className="h-40 w-full object-cover rounded-xl mb-4 shadow-lg"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2, type: "spring", stiffness: 210, damping: 15, ease: "easeOut" }}
+                />
+                <h3 className={`text-lg font-semibold group-hover:text-orange-400 transition-colors ${theme.cardText}`}>{cert.title}</h3>
                 <p className={`text-sm ${theme.smallText} mt-2`}>{cert.issuer} • {cert.date}</p>
+                
+                <div className="mt-4 text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs font-semibold uppercase tracking-wider">View Certificate</span>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -597,53 +819,25 @@ Facebook: https://www.facebook.com/JohnRemyxD
           >
             <motion.button
               onClick={() => setExpandCerts(!expandCerts)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative px-8 py-3 rounded-full font-semibold text-white overflow-hidden group"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 200, damping: 14 }}
+              className={`relative px-10 py-3 rounded-xl font-semibold overflow-hidden group transition-all`}
             >
               {/* Button background with gradient */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-500 opacity-100 group-hover:opacity-80 transition-opacity rounded-full" />
+              <div className={`absolute inset-0 bg-gradient-to-r ${theme.accentGradient} opacity-100 group-hover:opacity-90 transition-opacity rounded-xl`} />
               
               {/* Animated glow effect */}
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full blur opacity-0 group-hover:opacity-50"
-                animate={{ scale: [0.8, 1.2] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                className={`absolute inset-0 bg-gradient-to-r ${theme.accentGradient} rounded-xl blur opacity-0 group-hover:opacity-50`}
+                animate={{ scale: [0.9, 1.1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               />
               
               {/* Button text */}
-              <motion.span
-                className="relative z-10 flex items-center justify-center gap-2"
-                key={expandCerts ? "less" : "more"}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                {expandCerts ? (
-                  <>
-                    <span>See Less</span>
-                    <motion.span
-                      animate={{ rotate: 180, y: [0, -3, 0] }}
-                      transition={{ rotate: { duration: 0.3 }, y: { duration: 1.5, repeat: Infinity } }}
-                      className="inline-block"
-                    >
-                      
-                    </motion.span>
-                  </>
-                ) : (
-                  <>
-                    <span>See More</span>
-                    <motion.span
-                      animate={{ y: [0, 0, 0], scale: [1, 1, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="inline-block"
-                    >
-                      
-                    </motion.span>
-                  </>
-                )}
-              </motion.span>
+              <span className="relative z-10 text-white font-semibold">
+                {expandCerts ? "See Less" : "See More"}
+              </span>
             </motion.button>
           </motion.div>
         )}
@@ -1154,7 +1348,7 @@ Facebook: https://www.facebook.com/JohnRemyxD
                 <div className="relative z-10">
                   <motion.div
                     className="text-5xl mb-4"
-                    animate={{ rotate: [0, , 0, 0] }}
+                    animate={{ rotate: [0, 0, 0] }}
                     transition={{ duration: 4, repeat: Infinity }}
                   >
                     {service.icon}
@@ -1243,25 +1437,93 @@ Facebook: https://www.facebook.com/JohnRemyxD
 
       {/* PROJECTS */}
       <section id="projects" className="py-32 max-w-6xl mx-auto px-10">
-        <h2 className="text-4xl font-bold mb-12">Projects</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {projectsData.map((project) => (
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Projects</h2>
+          <motion.div
+            className={`h-1 w-20 rounded-full bg-gradient-to-r ${theme.accentGradient}`}
+            initial={{ width: 0 }}
+            whileInView={{ width: 80 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          />
+          <p className={`mt-4 text-lg ${theme.secondaryText}`}>Showcasing my latest work and technical expertise</p>
+        </motion.div>
+        
+        <div className="grid md:grid-cols-2 gap-8">
+          {projectsData.map((project, idx) => (
             <motion.div
               key={project.id}
-              whileHover={{ y: -10 }}
-              className="bg-white/10 rounded-3xl p-6 shadow-xl cursor-pointer hover:bg-white/20 transition-colors"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: idx * 0.15 }}
+              whileHover={{ y: -12, transition: { duration: 0.3 } }}
+              className="group cursor-pointer"
               onClick={() => window.open(project.link, '_blank')}
             >
-              <img src={project.image} alt={project.title} className="h-40 w-full object-cover rounded-xl mb-4" />
-              <h3 className="text-xl font-semibold">{project.title}</h3>
-              <p className="text-sm text-gray-300 mt-2">{project.description}</p>
-              <div className="mt-4 flex gap-2 flex-wrap">
-                {project.technologies.map(tech => (
-                  <span key={tech} className="text-xs bg-cyan-500/20 px-2 py-1 rounded">
-                    {tech}
-                  </span>
-                ))}
+              <div className="relative overflow-hidden rounded-2xl">
+                <motion.div className="absolute inset-0 bg-gradient-to-br from-cyan-400/0 to-purple-500/0 group-hover:from-cyan-400/20 group-hover:to-purple-500/20 transition-all duration-500 z-10" />
+                <motion.img
+                  src={project.image}
+                  alt={project.title}
+                  className="h-56 w-full object-cover"
+                  whileHover={{ scale: 1.08 }}
+                  transition={{ duration: 0.5 }}
+                />
               </div>
+              
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: idx * 0.15 + 0.2, duration: 0.4 }}
+                className={`mt-6 ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-6 border ${theme.cardBorder} group-hover:border-cyan-400/50 transition-all duration-300`}
+              >
+                <h3 className="text-2xl font-bold mb-2 group-hover:text-cyan-300 transition-colors">{project.title}</h3>
+                <p className={`${theme.smallText} mb-4 leading-relaxed`}>{project.description}</p>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.technologies.map((tech) => (
+                    <span
+                      key={tech}
+                      className={`text-xs px-3 py-1 rounded-full font-medium ${theme.isDark ? "bg-orange-500/20 text-orange-400 border border-orange-400/30" : "bg-orange-100 text-orange-700 border border-orange-200"}`}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex gap-3 flex-wrap">
+                  <motion.button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(project.link, '_blank');
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-school_bus_yellow-400 to-gold-500 text-white font-semibold text-sm hover:shadow-lg transition-all"
+                  >
+                    GitHub Repository
+                  </motion.button>
+                  
+                  {project.apkLink && (
+                    <motion.button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(project.apkLink, '_blank');
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 rounded-lg border-2 border-school_bus_yellow-400/60 text-school_bus_yellow-400 font-semibold text-sm hover:bg-school_bus_yellow-400/10 transition-all"
+                    >
+                      Download APK
+                    </motion.button>
+                  )}
+                </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
@@ -1277,38 +1539,51 @@ Facebook: https://www.facebook.com/JohnRemyxD
             className="relative"
           >
             {/* Background glow */}
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-3xl blur-3xl opacity-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-500/20 rounded-3xl blur-3xl opacity-0 group-hover:opacity-20 transition-opacity" />
             
-            <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-white/10 text-center">
-              <h2 className="text-4xl font-bold mb-4">Let's Work Together</h2>
-              <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-                I'm always interested in hearing about new projects and opportunities. Whether you have a question or just want to say hi, feel free to reach out!
-              </p>
+            <div className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-3xl p-12 md:p-16 border ${theme.cardBorder} text-center`}>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6 }}
+                className="text-4xl md:text-5xl font-bold mb-4 leading-tight"
+              >
+                Let's Create Something
+                <motion.span className={`block bg-gradient-to-r ${theme.accentGradient} bg-clip-text text-transparent leading-tight`}>
+                  Amazing Together
+                </motion.span>
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className={`${theme.secondaryText} mb-10 max-w-2xl mx-auto text-lg`}
+              >
+                I'm always interested in hearing about new projects and opportunities. Let's collaborate and build something incredible!
+              </motion.p>
 
               {/* Contact Methods Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="grid md:grid-cols-2 gap-6 mb-12">
                 <motion.a
                   href="mailto:johnremygonzales20@gmail.com"
                   whileHover={{ scale: 1.05, y: -8 }}
+                  whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
                   className="relative group overflow-hidden"
                 >
                   {/* Gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 group-hover:border-red-400/50 transition-all">
-                    <motion.div
-                      className="text-4xl mb-4"
-                      animate={{ rotate: [0, -5, 5, 0] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    >
-                      📧
-                    </motion.div>
-                    <p className="font-semibold text-lg text-red-300 group-hover:text-red-200 transition-colors mb-2">Gmail</p>
-                    <p className="text-sm text-gray-300 font-mono break-all">johnremygonzales20@gmail.com</p>
-                    <p className="text-xs text-gray-400 mt-3">Send me a message</p>
+                  <div className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-8 border ${theme.cardBorder} group-hover:border-red-400/50 transition-all`}>
+                    <div className="w-14 h-14 mb-6 bg-gradient-to-br from-red-100 to-red-50 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                      <img src="/images/gmail-icon.svg" alt="Gmail" className="w-8 h-8" />
+                    </div>
+                    <p className={`font-semibold text-lg ${theme.isDark ? "text-red-300 group-hover:text-red-200" : "text-red-600 group-hover:text-red-500"} transition-colors mb-2`}>Gmail</p>
+                    <p className={`text-sm ${theme.faintText} font-mono break-all`}>johnremygonzales20@gmail.com</p>
+                    <p className={`text-xs ${theme.faintText} mt-3`}>Send me a message</p>
                   </div>
                 </motion.a>
 
@@ -1317,50 +1592,22 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, y: -8 }}
+                  whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
                   className="relative group overflow-hidden"
                 >
                   {/* Gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-gray-600/20 to-gray-800/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 group-hover:border-gray-400/50 transition-all">
-                    <motion.div
-                      className="text-4xl mb-4"
-                      animate={{ y: [0, -5, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      🐙
-                    </motion.div>
-                    <p className="font-semibold text-lg text-gray-300 group-hover:text-gray-200 transition-colors mb-2">GitHub</p>
-                    <p className="text-sm text-gray-400 break-all">github.com/Reym-Tech</p>
-                    <p className="text-xs text-gray-500 mt-3">View my projects</p>
-                  </div>
-                </motion.a>
-
-                <motion.a
-                  href="#"
-                  whileHover={{ scale: 1.05, y: -8 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="relative group overflow-hidden"
-                >
-                  {/* Gradient background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-blue-800/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 group-hover:border-blue-400/50 transition-all">
-                    <motion.div
-                      className="text-4xl mb-4"
-                      // animate={{ scale: [1, 1.1, 1], rotate: [0, 360] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    >
-                      💼
-                    </motion.div>
-                    <p className="font-semibold text-lg text-blue-300 group-hover:text-blue-200 transition-colors mb-2">LinkedIn</p>
-                    <p className="text-sm text-gray-400">Coming Soon</p>
-                    <p className="text-xs text-gray-500 mt-3">Connect with me</p>
+                  <div className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-8 border ${theme.cardBorder} group-hover:border-gray-400/50 transition-all`}>
+                    <div className="w-14 h-14 mb-6 bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                      <img src="/images/github-icon.svg" alt="GitHub" className="w-8 h-8" />
+                    </div>
+                    <p className={`font-semibold text-lg ${theme.isDark ? "text-gray-300 group-hover:text-gray-200" : "text-gray-700 group-hover:text-gray-600"} transition-colors mb-2`}>GitHub</p>
+                    <p className={`text-sm ${theme.faintText} break-all`}>github.com/Reym-Tech</p>
+                    <p className={`text-xs ${theme.faintText} mt-3`}>View my projects</p>
                   </div>
                 </motion.a>
 
@@ -1369,25 +1616,44 @@ Facebook: https://www.facebook.com/JohnRemyxD
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, y: -8 }}
+                  whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
                   className="relative group overflow-hidden"
                 >
                   {/* Gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 group-hover:border-blue-400/50 transition-all">
-                    <motion.div
-                      className="text-4xl mb-4"
-                      animate={{ x: [0, 5, 0], y: [0, -3, 0] }}
-                      transition={{ duration: 2.5, repeat: Infinity }}
-                    >
-                      f
-                    </motion.div>
-                    <p className="font-semibold text-lg text-blue-300 group-hover:text-blue-200 transition-colors mb-2">Facebook</p>
-                    <p className="text-sm text-gray-400">JohnRemyxD</p>
-                    <p className="text-xs text-gray-500 mt-3">Follow me on Facebook</p>
+                  <div className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-8 border ${theme.cardBorder} group-hover:border-blue-400/50 transition-all`}>
+                    <div className="w-14 h-14 mb-6 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                      <img src="/images/facebook-icon.svg" alt="Facebook" className="w-8 h-8" />
+                    </div>
+                    <p className={`font-semibold text-lg ${theme.isDark ? "text-blue-300 group-hover:text-blue-200" : "text-blue-600 group-hover:text-blue-500"} transition-colors mb-2`}>Facebook</p>
+                    <p className={`text-sm ${theme.faintText}`}>JohnRemyxD</p>
+                    <p className={`text-xs ${theme.faintText} mt-3`}>Follow me on Facebook</p>
+                  </div>
+                </motion.a>
+
+                <motion.a
+                  href="#"
+                  whileHover={{ scale: 1.05, y: -8 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                  className="relative group overflow-hidden"
+                >
+                  {/* Gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-blue-800/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  <div className={`relative ${theme.cardBg} ${theme.cardBackdrop} rounded-2xl p-8 border ${theme.cardBorder} group-hover:border-blue-400/50 transition-all opacity-60 cursor-not-allowed`}>
+                    <div className="w-14 h-14 mb-6 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                      <img src="/images/linkedin-icon.svg" alt="LinkedIn" className="w-8 h-8" />
+                    </div>
+                    <p className={`font-semibold text-lg ${theme.isDark ? "text-blue-300/60" : "text-blue-600/60"} transition-colors mb-2`}>LinkedIn</p>
+                    <p className={`text-sm ${theme.faintText}`}>Coming Soon</p>
+                    <p className={`text-xs ${theme.faintText} mt-3`}>Connect with me</p>
                   </div>
                 </motion.a>
               </div>
@@ -1395,38 +1661,14 @@ Facebook: https://www.facebook.com/JohnRemyxD
               {/* Primary CTA Button */}
               <motion.a
                 href="mailto:johnremygonzales20@gmail.com"
-                whileHover={{ scale: 1.08, boxShadow: "0 0 30px rgba(6, 182, 212, 0.5)" }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="inline-flex items-center gap-2 px-12 py-4 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 hover:from-cyan-400 hover:via-purple-400 hover:to-pink-400 transition-all font-semibold shadow-lg hover:shadow-2xl text-white relative overflow-hidden group"
+                transition={{ delay: 0.7, duration: 0.6 }}
+                className={`inline-flex items-center gap-3 px-10 py-4 rounded-xl bg-gradient-to-r ${theme.accentGradient} text-white font-semibold shadow-lg hover:shadow-xl transition-all`}
               >
-                {/* Animated background shine */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 opacity-0 group-hover:opacity-100"
-                  animate={{ x: ["-100%", "100%"] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                
-                <span className="relative z-10 flex items-center gap-2">
-                  <span>Get In Touch via Gmail</span>
-                  <motion.span
-                    animate={{ 
-                      x: [0, 6, 0],
-                      scale: [1, 1, 1],
-                      rotate: [0, 5, 0]
-                    }}
-                    transition={{ 
-                      duration: 1.8,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="inline-block"
-                  >
-                    
-                  </motion.span>
-                </span>
+                Get In Touch
               </motion.a>
             </div>
           </motion.div>
@@ -1434,37 +1676,38 @@ Facebook: https://www.facebook.com/JohnRemyxD
       </section>
 
       {/* FOOTER */}
-      <footer className="py-12 border-t border-white/10 bg-black/40 backdrop-blur-xl">
+      <footer className={`py-16 border-t ${theme.cardBorder} ${theme.isDark ? "bg-black/50" : "bg-white/50"} backdrop-blur-md transition-colors duration-500`}>
         <div className="max-w-6xl mx-auto px-10">
           {/* Social Links */}
-          <div className="flex justify-center gap-8 mb-8 flex-wrap">
+          <div className="flex justify-center gap-6 mb-12 flex-wrap">
             {socialLinks.map((link, index) => (
               <motion.a
                 key={link.name}
                 href={link.url}
                 target={link.url.startsWith("http") && !link.url.startsWith("mailto:") ? "_blank" : undefined}
                 rel={link.url.startsWith("http") && !link.url.startsWith("mailto:") ? "noopener noreferrer" : undefined}
-                whileHover={{ scale: 1.3, rotate: 15, y: -5 }}
-                whileTap={{ scale: 0.9 }}
-                initial={{ opacity: 0, y: 20 }}
+                whileHover={{ scale: 1.1, y: -4 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.08, type: "spring", stiffness: 200 }}
                 className={`relative group`}
                 title={link.name}
               >
                 {/* Gradient halo background */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${link.color} rounded-full blur-lg opacity-0 group-hover:opacity-75 transition-opacity duration-500 w-14 h-14 flex items-center justify-center`} />
+                <div className={`absolute inset-0 bg-gradient-to-r ${link.color} rounded-full blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-300 w-16 h-16`} />
                 
                 {/* Icon container */}
-                <div className={`relative w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r ${link.color} border-2 border-white/20 group-hover:border-white/40 transition-all shadow-lg`}>
-                  <span className="text-white text-lg font-bold">{link.icon}</span>
+                <div className={`relative w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-r ${link.color} border-2 border-white/30 group-hover:border-white/70 transition-all shadow-lg group-hover:shadow-2xl`}>
+                  <img src={link.icon} alt={link.name} className="w-7 h-7" />
                 </div>
                 
                 {/* Tooltip */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileHover={{ opacity: 1, y: 0 }}
-                  className="absolute top-full mt-2 whitespace-nowrap bg-white/10 backdrop-blur-xl rounded-lg px-3 py-1 text-xs border border-white/20 pointer-events-none"
+                  transition={{ duration: 0.2 }}
+                  className={`absolute top-full mt-3 whitespace-nowrap ${theme.cardBg} ${theme.cardBackdrop} rounded-lg px-3 py-1 text-xs border ${theme.cardBorder} pointer-events-none font-medium`}
                 >
                   {link.name}
                 </motion.div>
@@ -1473,32 +1716,22 @@ Facebook: https://www.facebook.com/JohnRemyxD
           </div>
 
           {/* Footer text */}
-          <div className="text-center border-t border-white/10 pt-8">
-            <p className="text-sm text-gray-400 mb-2">
-              © 2025 John Remy Gonzales • BSIT • UM Digos College
-            </p>
+          <div className={`text-center border-t ${theme.cardBorder} pt-10`}>
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              className="text-xs text-gray-500"
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className={`text-sm ${theme.smallText} mb-3 font-medium`}
             >
-              Designed & Built with{" "}
-              <motion.span
-                animate={{
-                  scale: [1, 1.3, 1],
-                  rotate: [0, 10, -10, 0],
-                  y: [0, -5, 0]
-                }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="inline-block"
-              >
-                ❤️
-              </motion.span>
-              {" "}using React & Framer Motion
+              © 2025 John Remy Gonzales • BSIT • University of Mindanao Digos College
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className={`text-xs ${theme.faintText}`}
+            >
+              Designed & Built with <span className="inline-block">❤️</span> using React, Tailwind & Framer Motion
             </motion.p>
           </div>
         </div>

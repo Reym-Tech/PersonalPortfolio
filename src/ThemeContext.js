@@ -19,36 +19,26 @@ export function ThemeProvider({ children }) {
   const theme = {
     isDark,
     toggleTheme,
-    // Dark mode colors
-    darkBg: "from-[#0f172a] via-[#020617] to-black",
-    darkText: "text-white",
-    darkCard: "bg-white/10",
-    darkBorder: "border-white/20",
-    darkHover: "hover:bg-white/20",
-    // Light mode colors
-    lightBg: "from-gray-50 via-white to-gray-100",
-    lightText: "text-gray-900",
-    lightCard: "bg-gray-100/80",
-    lightBorder: "border-gray-300",
-    lightHover: "hover:bg-gray-200/50",
-    // Responsive/colors tokens
-    bgGradient: isDark ? "from-[#0f172a] via-[#020617] to-black" : "from-gray-50 via-white to-gray-100",
-    textColor: isDark ? "text-white" : "text-gray-900",
-    // Card backgrounds and borders
-    cardBg: isDark ? "bg-white/10" : "bg-white/80",
-    cardBorder: isDark ? "border-white/20" : "border-gray-200",
-    cardText: isDark ? "text-white" : "text-gray-900",
-    smallText: isDark ? "text-gray-300" : "text-gray-700",
-    faintText: isDark ? "text-gray-400" : "text-gray-600",
-    navbarBg: isDark ? "bg-white/10" : "bg-white/95",
-    navbarBorder: isDark ? "border-white/20" : "border-gray-300",
-    accentGradient: isDark ? "from-cyan-400 to-purple-500" : "from-blue-500 to-purple-600",
-    accentGradientHover: isDark ? "from-cyan-300 to-purple-400" : "from-blue-400 to-purple-500",
-    hoverEffect: isDark ? "hover:bg-white/20" : "hover:bg-gray-100",
-    cardHoverBg: isDark ? "hover:bg-white/20" : "hover:bg-blue-50",
-    cardShadow: isDark ? "shadow-lg shadow-cyan-500/20" : "shadow-lg shadow-blue-200/30",
-    // subtle backdrop for cards in light mode
-    cardBackdrop: isDark ? "backdrop-blur-xl" : "backdrop-blur-sm",
+    // Background gradients - dark blue to black
+    bgGradient: isDark ? "from-ink_black-600 via-prussian_blue-500 to-ink_black-500" : "from-gold-100 via-regal_navy-50 to-school_bus_yellow-50",
+    // Text colors
+    textColor: isDark ? "text-regal_navy-900" : "text-ink_black-500",
+    cardText: isDark ? "text-regal_navy-900" : "text-ink_black-500",
+    smallText: isDark ? "text-regal_navy-800" : "text-ink_black-600",
+    faintText: isDark ? "text-regal_navy-700" : "text-ink_black-700",
+    // Card styling
+    cardBg: isDark ? "bg-prussian_blue-700/30" : "bg-white/70",
+    cardBorder: isDark ? "border-regal_navy-700/40" : "border-school_bus_yellow-300/60",
+    cardHoverBg: isDark ? "hover:bg-prussian_blue-600/40" : "hover:bg-white/90",
+    cardShadow: isDark ? "shadow-lg shadow-school_bus_yellow-500/15" : "shadow-lg shadow-school_bus_yellow-300/20",
+    cardBackdrop: "backdrop-blur-lg",
+    // Navigation
+    navbarBg: isDark ? "bg-prussian_blue-700/35" : "bg-white/70",
+    navbarBorder: isDark ? "border-regal_navy-700/40" : "border-school_bus_yellow-300/40",
+    // Accent colors - school bus yellow as primary accent
+    accentGradient: "from-school_bus_yellow-400 to-gold-500",
+    accentGradientHover: "from-school_bus_yellow-300 to-gold-400",
+    hoverEffect: isDark ? "hover:bg-prussian_blue-600/40" : "hover:bg-white/80",
   };
 
   return (
