@@ -10,6 +10,12 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem("portfolioTheme", isDark ? "dark" : "light");
+    // Apply theme class to document
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, [isDark]);
 
   const toggleTheme = () => {
@@ -19,26 +25,53 @@ export function ThemeProvider({ children }) {
   const theme = {
     isDark,
     toggleTheme,
-    // Background gradients - dark blue to black
-    bgGradient: isDark ? "from-ink_black-600 via-prussian_blue-500 to-ink_black-500" : "from-gold-100 via-regal_navy-50 to-school_bus_yellow-50",
-    // Text colors
-    textColor: isDark ? "text-regal_navy-900" : "text-ink_black-500",
-    cardText: isDark ? "text-regal_navy-900" : "text-ink_black-500",
-    smallText: isDark ? "text-regal_navy-800" : "text-ink_black-600",
-    faintText: isDark ? "text-regal_navy-700" : "text-ink_black-700",
-    // Card styling
-    cardBg: isDark ? "bg-prussian_blue-700/30" : "bg-white/70",
-    cardBorder: isDark ? "border-regal_navy-700/40" : "border-school_bus_yellow-300/60",
-    cardHoverBg: isDark ? "hover:bg-prussian_blue-600/40" : "hover:bg-white/90",
-    cardShadow: isDark ? "shadow-lg shadow-school_bus_yellow-500/15" : "shadow-lg shadow-school_bus_yellow-300/20",
+    
+    // Background gradients - clean professional look
+    bgGradient: isDark 
+      ? "from-primary-900 via-primary-800 to-primary-900" 
+      : "from-white via-primary-50 to-white",
+    
+    // Text colors - high contrast for readability
+    textColor: isDark ? "text-primary-100" : "text-primary-900",
+    secondaryText: isDark ? "text-primary-400" : "text-primary-500",
+    
+    // Card styling - subtle and professional
+    cardBg: isDark 
+      ? "bg-primary-700/30 dark:bg-primary-700/30" 
+      : "bg-white/70",
+    cardBorder: isDark 
+      ? "border-primary-700/40" 
+      : "border-primary-200/60",
+    cardHoverBg: isDark 
+      ? "hover:bg-primary-700/50" 
+      : "hover:bg-white/90",
     cardBackdrop: "backdrop-blur-lg",
-    // Navigation
-    navbarBg: isDark ? "bg-prussian_blue-700/35" : "bg-white/70",
-    navbarBorder: isDark ? "border-regal_navy-700/40" : "border-school_bus_yellow-300/40",
-    // Accent colors - school bus yellow as primary accent
-    accentGradient: "from-school_bus_yellow-400 to-gold-500",
-    accentGradientHover: "from-school_bus_yellow-300 to-gold-400",
-    hoverEffect: isDark ? "hover:bg-prussian_blue-600/40" : "hover:bg-white/80",
+    
+    // Navigation - clean and minimal
+    navbarBg: isDark 
+      ? "bg-primary-800/80 dark:bg-primary-800/80" 
+      : "bg-white/80",
+    navbarBorder: isDark 
+      ? "border-primary-700/40" 
+      : "border-primary-200/40",
+    
+    // Accent colors - professional blue
+    accentColor: isDark ? "text-accent-400" : "text-accent-600",
+    accentBg: isDark ? "bg-accent-400" : "bg-accent-600",
+    accentHover: isDark ? "hover:bg-accent-500" : "hover:bg-accent-500",
+    accentGradient: isDark 
+      ? "from-accent-400 to-accent-500" 
+      : "from-accent-500 to-accent-600",
+    
+    // Interactive elements
+    hoverEffect: isDark 
+      ? "hover:bg-primary-700/40 transition-colors duration-300" 
+      : "hover:bg-primary-50 transition-colors duration-300",
+    
+    // Shadows - subtle depth
+    cardShadow: isDark 
+      ? "shadow-lg shadow-primary-900/20" 
+      : "shadow-lg shadow-primary-900/10",
   };
 
   return (
