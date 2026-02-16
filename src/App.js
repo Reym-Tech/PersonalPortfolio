@@ -31,7 +31,7 @@ const projectsData = [
     title: "BrewTrack",
     description: "BrewTrack is a simple web-based POS and inventory system for cafés that manages sales, tracks stock, and provides basic analytics in one dashboard.",
     image: "/images/project2.jpg",
-    githubLink: "https://github.com/Reym-Tech/BrewTrack",
+    githubLink: "https://github.com/Reym-Tech/BrewTrack_Latest",
     websiteLink: "https://bt-hitnotes.vercel.app",
     technologies: ["HTML", "CSS", "JavaScript", "Supabase", "POSTgreSQL"]
   },
@@ -86,6 +86,14 @@ const certificatesData = [
     date: "2025",
     image: "/images/cert5.jpg",
     link: "https://drive.google.com/file/d/1d-8QAy4vShI5-yUt6ZuohGBGYpDWFoal/view?usp=sharing"
+  },
+  {
+    id: 6,
+    title: "Introduction to Java",
+    issuer: "Solo Learn",
+    date: "2026",
+    image: "/images/cert6_introjava.jpg",
+    link: "https://drive.google.com/file/d/1cHacDUTs5FLoITVVcRGobnVgwrhmDGSc/view?usp=sharing"
   },
 ];
 
@@ -152,7 +160,7 @@ const servicesData = [
 
 const statsData = [
   { label: "Projects Completed", value: "3", icon: "🚀" },
-  { label: "Certificates Earned", value: "5", icon: "🏆" },
+  { label: "Certificates Earned", value: "6", icon: "🏆" },
   { label: "Technologies", value: "8+", icon: "⚙️" },
   { label: "Years Coding", value: "3+", icon: "💻" }
 ];
@@ -166,44 +174,44 @@ const socialLinks = [
 
 const languageSkillsMap = {
   "JavaScript": [
-    { name: "JavaScript", percentage: 90 },
-    { name: "REST APIs", percentage: 82 },
-    { name: "Problem Solving", percentage: 88 }
+    { name: "JavaScript", percentage: 50 },
+    { name: "DOM Manipulation", percentage: 29 },
+    { name: "Async Programming", percentage: 35 }
   ],
   "React": [
-    { name: "React", percentage: 85 },
-    { name: "UI/UX Design", percentage: 80 },
-    { name: "Tailwind CSS", percentage: 88 }
+    { name: "React", percentage: 46 },
+    { name: "Component Design", percentage: 39 },
+    { name: "State Management", percentage: 40 }
   ],
   "PHP": [
-    { name: "REST APIs", percentage: 82 },
-    { name: "Problem Solving", percentage: 88 },
-    { name: "Node.js", percentage: 75 }
+    { name: "PHP", percentage: 60 },
+    { name: "Laravel/Symfony", percentage: 24 },
+    { name: "Server-side Logic", percentage: 90 }
   ],
   "Java": [
-    { name: "Problem Solving", percentage: 88 },
-    { name: "REST APIs", percentage: 82 },
-    { name: "Node.js", percentage: 75 }
+    { name: "Java", percentage: 75 },
+    { name: "OOP Design", percentage: 60 },
+    { name: "Spring Framework", percentage: 5 }
   ],
   "HTML/CSS": [
-    { name: "HTML/CSS", percentage: 95 },
-    { name: "UI/UX Design", percentage: 80 },
-    { name: "Tailwind CSS", percentage: 88 }
+    { name: "HTML/CSS", percentage: 60 },
+    { name: "Responsive Design", percentage: 90 },
+    { name: "CSS Frameworks", percentage: 75 }
   ],
   "Node.js": [
-    { name: "Node.js", percentage: 75 },
-    { name: "REST APIs", percentage: 82 },
-    { name: "JavaScript", percentage: 90 }
+    { name: "Node.js", percentage: 59 },
+    { name: "Express.js", percentage: 60 },
+    { name: "API Development", percentage: 82 }
   ],
   "MySQL": [
-    { name: "Problem Solving", percentage: 88 },
-    { name: "REST APIs", percentage: 82 },
-    { name: "Node.js", percentage: 75 }
+    { name: "MySQL", percentage: 65 },
+    { name: "Query Optimization", percentage: 50 },
+    { name: "Database Design", percentage: 70 }
   ],
   "Firebase": [
-    { name: "React", percentage: 85 },
-    { name: "JavaScript", percentage: 90 },
-    { name: "Problem Solving", percentage: 88 }
+    { name: "Firebase", percentage: 50 },
+    { name: "Firestore/Realtime DB", percentage: 75 },
+    { name: "Authentication", percentage: 80 }
   ]
 };
 
@@ -340,195 +348,260 @@ function PortfolioContent() {
   };
 
   const handleDownloadCV = () => {
-    const doc = new jsPDF("p", "mm", "a4");
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let yPosition = 15;
-    const margin = 12;
-    const lineHeight = 5.5;
-    const textWidth = pageWidth - 2 * margin;
+  const doc = new jsPDF("p", "mm", "a4");
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  let yPosition = 20;
+  const margin = 20;
+  const contentWidth = pageWidth - 2 * margin;
 
-    // Set colors
-    const primaryColor = [59, 130, 246]; // Blue-500
-    const secondaryColor = [15, 23, 42]; // Primary-900
-    const textColor = [51, 65, 85]; // Primary-600
-
-    // Helper function for text with automatic wrapping
-    const addWrappedText = (text, fontSize, isBold = false, color = textColor) => {
-      doc.setFontSize(fontSize);
-      doc.setTextColor(...color);
-      if (isBold) {
-        doc.setFont(undefined, "bold");
-      } else {
-        doc.setFont(undefined, "normal");
-      }
-      const lines = doc.splitTextToSize(text, textWidth);
-      lines.forEach((line) => {
-        if (yPosition > pageHeight - 10) {
-          doc.addPage();
-          yPosition = 15;
-        }
-        doc.text(line, margin, yPosition);
-        yPosition += lineHeight * 0.7;
-      });
-      yPosition += 2;
-    };
-
-    // Title
-    doc.setFontSize(24);
-    doc.setTextColor(...primaryColor);
-    doc.setFont(undefined, "bold");
-    doc.text("JOHN REMY GONZALES", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 8;
-
-    doc.setFontSize(12);
-    doc.setTextColor(...secondaryColor);
-    doc.setFont(undefined, "normal");
-    doc.text("BSIT 3rd Year Student & Web Developer", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 8;
-
-    // Contact Info
-    doc.setFontSize(10);
-    doc.setTextColor(...textColor);
-    doc.text("Email: johnremygonzales20@gmail.com | GitHub: github.com/Reym-Tech | Facebook: facebook.com/JohnRemyxD", pageWidth / 2, yPosition, {
-      align: "center",
-    });
-    yPosition += 10;
-
-    // Divider
-    doc.setDrawColor(...primaryColor);
-    doc.setLineWidth(0.5);
-    doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    yPosition += 8;
-
-    // Professional Profile Section
-    doc.setFontSize(11);
-    doc.setTextColor(...primaryColor);
-    doc.setFont(undefined, "bold");
-    doc.text("PROFESSIONAL PROFILE", margin, yPosition);
-    yPosition += 7;
-
-    const profileText =
-      "Passionate and skilled Information Technology student with 3+ years of coding experience, specialized in full-stack web development and UI/UX design. Proven track record of delivering high-quality projects with responsive interfaces and robust backend systems.";
-    addWrappedText(profileText, 10);
-    yPosition += 3;
-
-    // Core Competencies
-    doc.setFontSize(11);
-    doc.setTextColor(...primaryColor);
-    doc.setFont(undefined, "bold");
-    doc.text("CORE COMPETENCIES", margin, yPosition);
-    yPosition += 7;
-
-    const competencies = [
-      "Languages & Frameworks: JavaScript, PHP, Java, HTML/CSS, React, Node.js",
-      "Frontend: React, Tailwind CSS, Framer Motion, Responsive Design, UI/UX",
-      "Backend: REST APIs, Express.js, Database Design, Server Configuration",
-      "Databases & Tools: MySQL, PostgreSQL, Firebase, Supabase, Git, VS Code, Figma",
-    ];
-
-    doc.setFontSize(10);
-    doc.setTextColor(...textColor);
-    competencies.forEach((comp) => {
-      addWrappedText(comp, 10);
-    });
-    yPosition += 2;
-
-    // Projects
-    doc.setFontSize(11);
-    doc.setTextColor(...primaryColor);
-    doc.setFont(undefined, "bold");
-    doc.text("PROFESSIONAL EXPERIENCE & PROJECTS", margin, yPosition);
-    yPosition += 7;
-
-    doc.setFontSize(10);
-    doc.setTextColor(...textColor);
-    doc.setFont(undefined, "bold");
-    doc.text("ANCIENT CRAFTS - Full-Stack E-Commerce Application", margin, yPosition);
-    yPosition += 6;
-    doc.setFont(undefined, "normal");
-    addWrappedText(
-      "• Developed comprehensive mobile e-commerce platform with product catalog, shopping cart, and checkout\n• Tech Stack: MySQL, PHP, Firebase, XML, Java",
-      9
-    );
-
-    doc.setFont(undefined, "bold");
-    doc.text("BREWTRACK - Web-Based POS & Inventory System", margin, yPosition);
-    yPosition += 6;
-    doc.setFont(undefined, "normal");
-    addWrappedText(
-      "• Created intuitive point-of-sale system with real-time inventory tracking and analytics\n• Tech Stack: HTML, CSS, JavaScript, Supabase, PostgreSQL | Live: bt-hitnotes.vercel.app",
-      9
-    );
-
-    // Education
-    doc.setFontSize(11);
-    doc.setTextColor(...primaryColor);
-    doc.setFont(undefined, "bold");
-    doc.text("EDUCATION", margin, yPosition);
-    yPosition += 7;
-
-    doc.setFontSize(10);
-    doc.setTextColor(...textColor);
-    doc.setFont(undefined, "bold");
-    doc.text("Bachelor of Science in Information Technology (BSIT)", margin, yPosition);
-    yPosition += 5;
-    doc.setFont(undefined, "normal");
-    addWrappedText("University of Mindanao - Digos College (2023 - Present) | Expected Graduation: 2026", 9);
-
-    // Certifications
-    doc.setFontSize(11);
-    doc.setTextColor(...primaryColor);
-    doc.setFont(undefined, "bold");
-    doc.text("PROFESSIONAL CERTIFICATIONS", margin, yPosition);
-    yPosition += 7;
-
-    const certifications = [
-      "• Installing and Configuring Computer Systems (TESDA, 2025)",
-      "• Introduction to CSS (TESDA, 2025)",
-      "• Maintaining Computer Systems and Networks (TESDA, 2025)",
-      "• Setting Up Computer Networks (TESDA, 2025)",
-      "• Setting Up Computer Servers (TESDA, 2025)",
-    ];
-
-    doc.setFontSize(10);
-    doc.setTextColor(...textColor);
-    certifications.forEach((cert) => {
-      addWrappedText(cert, 9);
-    });
-
-    // Skills Summary
-    doc.setFontSize(11);
-    doc.setTextColor(...primaryColor);
-    doc.setFont(undefined, "bold");
-    doc.text("KEY SKILLS", margin, yPosition);
-    yPosition += 7;
-
-    const skills = [
-      "• Full-Stack Web Development         • Problem Solving & Debugging",
-      "• UI/UX Design & Animations          • Responsive Web Design",
-      "• Database Architecture & Design     • REST API Development",
-    ];
-
-    doc.setFontSize(10);
-    doc.setTextColor(...textColor);
-    skills.forEach((skill) => {
-      addWrappedText(skill, 9);
-    });
-
-    // Footer
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text(
-      `Generated: January 2026 | Portfolio: john-remy-gonzales-portfolio`,
-      pageWidth / 2,
-      pageHeight - 8,
-      { align: "center" }
-    );
-
-    // Save PDF
-    doc.save("John_Remy_Gonzales_Resume.pdf");
+  // Professional color scheme
+  const colors = {
+    primary: [0, 0, 0],
+    accent: [50, 50, 50],
+    dark: [20, 20, 20],
+    text: [60, 60, 60],
+    lightText: [120, 120, 120],
+    divider: [180, 180, 180]
   };
+
+  // Helper: Add section header with underline
+  const addSectionHeader = (text) => {
+    if (yPosition > pageHeight - 30) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    
+    doc.setFontSize(13);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(...colors.primary);
+    doc.text(text, margin, yPosition);
+    
+    // Underline with accent color
+    yPosition += 2;
+    doc.setDrawColor(...colors.accent);
+    doc.setLineWidth(0.8);
+    doc.line(margin, yPosition, margin + 50, yPosition);
+    yPosition += 8;
+  };
+
+  // Helper: Add wrapped text with proper spacing
+  const addText = (text, fontSize = 10, isBold = false, indent = 0) => {
+    doc.setFontSize(fontSize);
+    doc.setFont(undefined, isBold ? "bold" : "normal");
+    doc.setTextColor(...colors.text);
+    
+    const lines = doc.splitTextToSize(text, contentWidth - indent);
+    lines.forEach((line) => {
+      if (yPosition > pageHeight - 15) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.text(line, margin + indent, yPosition);
+      yPosition += fontSize * 0.4;
+    });
+  };
+
+  // Helper: Add bullet point
+  const addBullet = (text, fontSize = 9.5) => {
+    if (yPosition > pageHeight - 15) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    
+    doc.setFontSize(fontSize);
+    doc.setFont(undefined, "normal");
+    doc.setTextColor(...colors.text);
+    
+    // Bullet point
+    doc.setFillColor(...colors.accent);
+    doc.circle(margin + 2, yPosition - 1.5, 0.8, 'F');
+    
+    const lines = doc.splitTextToSize(text, contentWidth - 8);
+    lines.forEach((line, index) => {
+      doc.text(line, margin + 6, yPosition);
+      yPosition += fontSize * 0.42;
+    });
+  };
+
+  // Helper: Add spacing
+  const addSpace = (space = 4) => {
+    yPosition += space;
+  };
+
+  // ==================== HEADER ====================
+  doc.setFontSize(26);
+  doc.setFont(undefined, "bold");
+  doc.setTextColor(...colors.primary);
+  doc.text("JOHN REMY GONZALES", pageWidth / 2, yPosition, { align: "center" });
+  yPosition += 7;
+
+  doc.setFontSize(11);
+  doc.setFont(undefined, "normal");
+  doc.setTextColor(...colors.accent);
+  doc.text("Full-Stack Web Developer • BSIT Student", pageWidth / 2, yPosition, { align: "center" });
+  yPosition += 10;
+
+  // Contact bar with icons effect
+  doc.setFontSize(9);
+  doc.setTextColor(...colors.lightText);
+  const contactInfo = "johnremygonzales20@gmail.com  •  github.com/Reym-Tech  •  facebook.com/JohnRemyxD";
+  doc.text(contactInfo, pageWidth / 2, yPosition, { align: "center" });
+  yPosition += 8;
+
+  // Divider line
+  doc.setDrawColor(...colors.divider);
+  doc.setLineWidth(0.3);
+  doc.line(margin, yPosition, pageWidth - margin, yPosition);
+  yPosition += 10;
+
+  // ==================== PROFESSIONAL PROFILE ====================
+  addSectionHeader("PROFESSIONAL PROFILE");
+  addText(
+    "Passionate Information Technology student with 3+ years of hands-on coding experience, specializing in full-stack web development and modern UI/UX design. Demonstrated ability to build responsive, user-centric applications with clean architecture and robust backend systems. Committed to continuous learning and delivering excellence in every project.",
+    10
+  );
+  addSpace(6);
+
+  // ==================== TECHNICAL SKILLS ====================
+  addSectionHeader("TECHNICAL SKILLS");
+  
+  const skillCategories = [
+    { label: "Languages & Frameworks", skills: "JavaScript (ES6+), PHP, Java, HTML5/CSS3, React.js, Node.js" },
+    { label: "Frontend Technologies", skills: "React, Tailwind CSS, Framer Motion, Responsive Design, Component Architecture" },
+    { label: "Backend & APIs", skills: "REST API Development, Express.js, Database Design, Server Configuration" },
+    { label: "Databases & Tools", skills: "MySQL, PostgreSQL, Firebase, Supabase, Git/GitHub, VS Code, Figma" }
+  ];
+
+  skillCategories.forEach((category) => {
+    doc.setFontSize(10);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(...colors.dark);
+    doc.text(category.label + ":", margin, yPosition);
+    
+    doc.setFont(undefined, "normal");
+    doc.setTextColor(...colors.text);
+    const lines = doc.splitTextToSize(category.skills, contentWidth - 65);
+    lines.forEach((line, index) => {
+      doc.text(line, margin + 65, yPosition + (index * 4));
+    });
+    yPosition += 4 + (lines.length - 1) * 4 + 3;
+  });
+  addSpace(4);
+
+  // ==================== PROJECTS ====================
+  addSectionHeader("KEY PROJECTS & EXPERIENCE");
+
+  // Project 1
+  doc.setFontSize(11);
+  doc.setFont(undefined, "bold");
+  doc.setTextColor(...colors.dark);
+  doc.text("BrewTrack", margin, yPosition);
+  
+  doc.setFontSize(9);
+  doc.setFont(undefined, "italic");
+  doc.setTextColor(...colors.accent);
+  doc.text("Web-Based POS & Inventory Management System", margin + 30, yPosition);
+  yPosition += 5.5;
+
+  addBullet("Designed and developed a full-featured point-of-sale system with real-time inventory tracking and comprehensive sales analytics dashboard");
+  addBullet("Implemented responsive UI with seamless user experience across devices, reducing transaction time by 40%");
+  addBullet("Tech Stack: HTML5, CSS3, JavaScript, Supabase, PostgreSQL");
+  addBullet("Live Demo: bt-hitnotes.vercel.app");
+  addSpace(5);
+
+  // Project 2
+  doc.setFontSize(11);
+  doc.setFont(undefined, "bold");
+  doc.setTextColor(...colors.dark);
+  doc.text("Ancient Crafts", margin, yPosition);
+  
+  doc.setFontSize(9);
+  doc.setFont(undefined, "italic");
+  doc.setTextColor(...colors.accent);
+  doc.text("Mobile E-Commerce Application", margin + 36, yPosition);
+  yPosition += 5.5;
+
+  addBullet("Built comprehensive mobile e-commerce platform featuring product catalog, shopping cart, and secure checkout process");
+  addBullet("Integrated Firebase authentication and real-time database for seamless user experience and data synchronization");
+  addBullet("Tech Stack: Java (Android), PHP, MySQL, Firebase, XML");
+  addSpace(6);
+
+  // ==================== EDUCATION ====================
+  addSectionHeader("EDUCATION");
+  
+  doc.setFontSize(11);
+  doc.setFont(undefined, "bold");
+  doc.setTextColor(...colors.dark);
+  doc.text("Bachelor of Science in Information Technology", margin, yPosition);
+  yPosition += 5;
+
+  doc.setFontSize(9.5);
+  doc.setFont(undefined, "normal");
+  doc.setTextColor(...colors.text);
+  doc.text("University of Mindanao - Digos College", margin, yPosition);
+  yPosition += 4.5;
+
+  doc.setFontSize(9);
+  doc.setTextColor(...colors.lightText);
+  doc.text("2023 - Present  •  Expected Graduation: 2026", margin, yPosition);
+  yPosition += 8;
+
+  // ==================== CERTIFICATIONS ====================
+  addSectionHeader("PROFESSIONAL CERTIFICATIONS");
+
+  const certifications = [
+    "Installing and Configuring Computer Systems - TESDA National Certification (2025)",
+    "Introduction to CSS - TESDA (2025)",
+    "Maintaining Computer Systems and Networks - TESDA (2025)",
+    "Setting Up Computer Networks - TESDA (2025)",
+    "Setting Up Computer Servers - TESDA (2025)"
+  ];
+
+  certifications.forEach((cert) => {
+    addBullet(cert, 9.5);
+  });
+  addSpace(4);
+
+  // ==================== CORE COMPETENCIES ====================
+  addSectionHeader("CORE COMPETENCIES");
+
+  const competencies = [
+    ["Full-Stack Web Development", "Problem Solving & Debugging"],
+    ["UI/UX Design & Prototyping", "Responsive Web Design"],
+    ["Database Architecture", "RESTful API Development"],
+    ["Version Control (Git)", "Agile Methodologies"]
+  ];
+
+  competencies.forEach((row) => {
+    doc.setFontSize(9.5);
+    doc.setFont(undefined, "normal");
+    doc.setTextColor(...colors.text);
+    
+    // Left column
+    doc.setFillColor(...colors.accent);
+    doc.circle(margin + 2, yPosition - 1.5, 0.8, 'F');
+    doc.text(row[0], margin + 6, yPosition);
+    
+    // Right column
+    if (row[1]) {
+      doc.circle(pageWidth / 2 + 5, yPosition - 1.5, 0.8, 'F');
+      doc.text(row[1], pageWidth / 2 + 9, yPosition);
+    }
+    
+    yPosition += 5;
+  });
+
+  // ==================== FOOTER ====================
+  doc.setFontSize(8);
+  doc.setTextColor(...colors.lightText);
+  doc.setFont(undefined, "italic");
+  const footerText = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} • Portfolio: john-remy-gonzales-portfolio`;
+  doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: "center" });
+
+  // Save PDF
+  doc.save("John_Remy_Gonzales_Resume.pdf");
+};
 
   return (
     <motion.div
@@ -862,8 +935,10 @@ function PortfolioContent() {
                   <div className="flex flex-wrap gap-3 pt-4">
                     {[
                       { label: "Full-Stack Developer", icon: "🚀" },
+                      { label: "Can Cook Rice in under a minute", icon: "🍳" },
                       { label: "UI/UX Enthusiast", icon: "🎨" },
                       { label: "Problem Solver", icon: "⚡" }
+                      
                     ].map((item, index) => (
                       <motion.div
                         key={item.label}
@@ -1034,14 +1109,14 @@ function PortfolioContent() {
                           whileInView={{ opacity: 1 }}
                           transition={{ delay: 0.65 }}
                         >
-                          💻 2+ Years Coding Experience
+                          💻 3+ Years Coding Experience
                         </motion.p>
                         <motion.p
                           initial={{ opacity: 0 }}
                           whileInView={{ opacity: 1 }}
                           transition={{ delay: 0.7 }}
                         >
-                          🏆 5 Certifications Earned
+                          🏆 6 Certifications Earned
                         </motion.p>
                       </div>
                     </div>
