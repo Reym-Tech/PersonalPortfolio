@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# John Remy Gonzales — Portfolio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Personal portfolio for John Remy Gonzales, a full-stack web developer and BSIT
+student. The single-page site presents an about section, tech stack, featured
+projects, certifications, and contact links, and generates a downloadable
+resume as a PDF.
 
-## Available Scripts
+## Stack
 
-In the project directory, you can run:
+- **Framework:** Create React App (react-scripts 5) + React 19, plain JavaScript
+- **Styling:** Tailwind CSS 3 (PostCSS)
+- **Animation:** framer-motion — respects `prefers-reduced-motion`
+- **Resume export:** jsPDF (generated client-side)
 
-### `npm start`
+## Getting started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Node.js 18 or newer is recommended.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm install     # install dependencies
+npm start       # start the dev server at http://localhost:3000
+```
 
-### `npm test`
+## Scripts
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Command            | Description                                                |
+| ------------------ | ---------------------------------------------------------- |
+| `npm start`        | Run the dev server with hot reload at `localhost:3000`.    |
+| `npm run build`    | Build the production bundle to `build/`.                   |
+| `npm test`         | Run the test suite (Jest + Testing Library) in watch mode. |
+| `CI=true npm test` | Run the tests once, non-interactively.                     |
 
-### `npm run build`
+There is no separate lint script; ESLint runs through react-scripts during
+`start` and `build`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Project structure
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+| Path                                | Purpose                                                |
+| ----------------------------------- | ------------------------------------------------------ |
+| `src/App.js`                        | Full single-page portfolio UI and resume PDF generator.|
+| `src/elegant/`                      | Shared design-system helpers (button styles, icons).   |
+| `src/index.css`, `tailwind.config.js` | Tailwind setup and theme tokens.                     |
+| `public/`                           | Static assets and the HTML/manifest shell.             |

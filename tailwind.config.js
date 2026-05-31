@@ -6,6 +6,9 @@ module.exports = {
     extend: {
       fontFamily: {
         'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        // Elegant design system (DESIGN.md): primary/display=Google Sans, mono=Anonymous Pro
+        'display': ['"Google Sans"', 'Inter', 'system-ui', 'sans-serif'],
+        'mono': ['"Anonymous Pro"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       fontWeight: {
         'light': '300',
@@ -31,6 +34,16 @@ module.exports = {
           400: '#60a5fa',  // Dark mode accent
           500: '#3b82f6',  // Light mode accent & dark mode accent hover
           600: '#2563eb',  // Light mode accent hover
+        },
+        // Elegant design system tokens (DESIGN.md). Semantic, raw token values.
+        elegant: {
+          primary: '#3B82F6',
+          secondary: '#8B5CF6',
+          success: '#16A34A',
+          warning: '#D97706',
+          danger: '#DC2626',
+          surface: '#FFFFFF',
+          text: '#111827',
         }
       },
       animation: {
