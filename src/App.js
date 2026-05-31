@@ -10,6 +10,8 @@ import {
   focusRing,
 } from "./elegant/button-styles";
 import { ArrowRight, Mail, Close } from "./elegant/icons";
+import { EntryTransition } from "./elegant/EntryTransition";
+import { ScrollProgress, Parallax, ParallaxImage, CountUp } from "./elegant/scroll";
 
 // Data
 const projectsData = [
@@ -217,9 +219,11 @@ function Eyebrow({ children }) {
   );
 }
 
+// Scroll-linked drift via Parallax gives every section heading a shared sense of
+// depth as it passes through the viewport.
 function SectionHeading({ eyebrow, title, description, center = false }) {
   return (
-    <div className={center ? "text-center" : ""}>
+    <Parallax offset={18} className={center ? "text-center" : ""}>
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <h2 className="mt-3 text-[2rem] font-medium leading-tight tracking-tight md:text-[2.5rem]">
         {title}
@@ -233,7 +237,7 @@ function SectionHeading({ eyebrow, title, description, center = false }) {
           {description}
         </p>
       )}
-    </div>
+    </Parallax>
   );
 }
 
@@ -309,6 +313,7 @@ function PortfolioContent() {
   const [photoLiked, setPhotoLiked] = useState(() => localStorage.getItem("photoLiked") === "true");
   const [loopHeartCount, setLoopHeartCount] = useState(22);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
 
   // Subtle scroll-reveal preset; honors prefers-reduced-motion.
   const rise = (delay = 0) => ({
@@ -316,6 +321,14 @@ function PortfolioContent() {
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-80px" },
     transition: { duration: 0.5, delay, ease: "easeOut" },
+  });
+
+  // Hero entrance is gated on the entry transition so the section assembles
+  // exactly as the cinematic overlay lifts — a seamless handoff into the Hero.
+  const heroReveal = (delay = 0) => ({
+    initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
+    animate: introDone ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
+    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] },
   });
 
   // Persist photo likes
@@ -615,6 +628,10 @@ function PortfolioContent() {
 
   return (
     <div className="min-h-screen scroll-smooth bg-elegant-surface font-display text-elegant-text antialiased">
+      {!introDone && <EntryTransition onComplete={() => setIntroDone(true)} />}
+
+      <ScrollProgress />
+
       {/* NAVIGATION */}
       <nav
         aria-label="Primary"
@@ -717,7 +734,7 @@ function PortfolioContent() {
             </span>
 
             <div className="grid items-center gap-12 md:grid-cols-2">
-              <motion.div {...rise()}>
+              <motion.div {...heroReveal()}>
                 <p className="flex items-center gap-2 text-sm text-elegant-text/70">
                   <span aria-hidden="true" className="h-2 w-2 rounded-full bg-elegant-success" />
                   Available for work
@@ -747,13 +764,15 @@ function PortfolioContent() {
                 </div>
               </motion.div>
 
-              <motion.div {...rise(0.1)} className="flex justify-center md:justify-end">
-                <img
-                  src="/images/profile--.png"
-                  alt="John Remy Gonzales"
-                  loading="lazy"
-                  className={`w-64 rounded-[8px] border ${BORDER} object-cover`}
-                />
+              <motion.div {...heroReveal(0.12)} className="flex justify-center md:justify-end">
+                <Parallax offset={24}>
+                  <img
+                    src="/images/profile--.png"
+                    alt="John Remy Gonzales"
+                    loading="lazy"
+                    className={`w-64 rounded-[8px] border ${BORDER} object-cover`}
+                  />
+                </Parallax>
               </motion.div>
             </div>
           </div>
@@ -813,14 +832,12 @@ function PortfolioContent() {
             <motion.div {...rise(0.1)} className="space-y-6">
               <div className="flex justify-center">
                 <div className="relative">
-                  <div className={`w-56 overflow-hidden rounded-[8px] border ${BORDER}`}>
-                    <img
-                      src="/images/profile3.jpg"
-                      alt="John Remy Gonzales portrait"
-                      loading="lazy"
-                      className="h-56 w-full object-cover"
-                    />
-                  </div>
+                  <ParallaxImage
+                    src="/images/profile3.jpg"
+                    alt="John Remy Gonzales portrait"
+                    frameClassName={`w-56 rounded-[8px] border ${BORDER}`}
+                    imgClassName="h-56 w-full object-cover"
+                  />
                   <button
                     onClick={handleToggleLike}
                     aria-pressed={photoLiked}
@@ -883,7 +900,7 @@ function PortfolioContent() {
                 {...rise(index * 0.05)}
                 className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-6 text-center`}
               >
-                <div className="text-[2rem] font-medium text-elegant-primary">{stat.value}</div>
+                <CountUp value={stat.value} className="text-[2rem] font-medium text-elegant-primary" />
                 <p className="mt-2 font-mono text-sm uppercase tracking-widest text-elegant-text/50">
                   {stat.label}
                 </p>
@@ -911,11 +928,10 @@ function PortfolioContent() {
                 {...rise(idx * 0.05)}
                 className={`flex flex-col overflow-hidden rounded-[8px] border ${BORDER}`}
               >
-                <img
+                <ParallaxImage
                   src={project.image}
                   alt={project.title}
-                  loading="lazy"
-                  className={`h-56 w-full border-b ${BORDER} object-cover`}
+                  frameClassName={`h-56 w-full border-b ${BORDER}`}
                 />
                 <div className="flex flex-1 flex-col p-6">
                   <h3 className="text-lg font-medium">{project.title}</h3>
@@ -1091,11 +1107,10 @@ function PortfolioContent() {
                 onClick={() => window.open(cert.link, "_blank")}
                 className={`group flex flex-col overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface text-left transition-colors hover:bg-[#F9FAFB] ${focusLink}`}
               >
-                <img
+                <ParallaxImage
                   src={cert.image}
                   alt={cert.title}
-                  loading="lazy"
-                  className={`h-40 w-full border-b ${BORDER} object-cover`}
+                  frameClassName={`h-40 w-full border-b ${BORDER}`}
                 />
                 <div className="flex flex-1 flex-col p-6">
                   <h3 className="text-lg font-medium leading-snug">{cert.title}</h3>
