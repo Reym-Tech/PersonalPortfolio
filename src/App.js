@@ -723,9 +723,9 @@ function PortfolioContent() {
       </motion.aside>
 
       {/* HERO */}
-      <section id="home" className="scroll-mt-20">
+      <section id="home" className="scroll-mt-20 tile-bg">
         <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
-          <div className={`relative overflow-hidden rounded-[8px] border ${BORDER} p-8 md:p-12`}>
+          <div className={`relative overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface p-8 md:p-12`}>
             <span
               aria-hidden="true"
               className="absolute top-6 font-mono text-sm uppercase tracking-widest text-elegant-text/30"
@@ -891,7 +891,7 @@ function PortfolioContent() {
       </section>
 
       {/* STATS */}
-      <section className={`border-y ${BORDER} bg-[#FAFAFA]`}>
+      <section className={`border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
         <div className="mx-auto max-w-6xl px-6 py-16 md:px-8">
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {statsData.map((stat, index) => (
@@ -926,7 +926,7 @@ function PortfolioContent() {
               <motion.div
                 key={project.id}
                 {...rise(idx * 0.05)}
-                className={`flex flex-col overflow-hidden rounded-[8px] border ${BORDER}`}
+                className={`flex flex-col overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface`}
               >
                 <ParallaxImage
                   src={project.image}
@@ -988,7 +988,7 @@ function PortfolioContent() {
       </section>
 
       {/* SKILLS */}
-      <section id="skills" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA]`}>
+      <section id="skills" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
         <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
           <motion.div {...rise()}>
             <SectionHeading
@@ -1037,7 +1037,7 @@ function PortfolioContent() {
               <motion.div
                 key={service.id}
                 {...rise(index * 0.05)}
-                className={`rounded-[8px] border ${BORDER} p-8 transition-colors hover:bg-[#F9FAFB]`}
+                className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-8 transition-colors hover:bg-[#F9FAFB]`}
               >
                 <span aria-hidden="true" className="font-mono text-sm text-elegant-text/40">
                   {String(service.id).padStart(2, "0")}
@@ -1063,7 +1063,7 @@ function PortfolioContent() {
       </section>
 
       {/* EDUCATION */}
-      <section className={`border-y ${BORDER} bg-[#FAFAFA]`}>
+      <section className={`border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
         <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
           <motion.div {...rise()}>
             <SectionHeading eyebrow="Background" title="Education & Experience" center />
@@ -1136,7 +1136,7 @@ function PortfolioContent() {
       </section>
 
       {/* CONTACT */}
-      <section id="contact" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA]`}>
+      <section id="contact" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
         <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
           <motion.div {...rise()}>
             <SectionHeading
