@@ -16,7 +16,7 @@ export function ProjectsSection() {
           <SectionHeading
             eyebrow="Selected work"
             title="Featured Projects"
-            description="Recent projects spanning web and mobile development."
+            description="A selection of full-stack web and mobile projects built across academic coursework and independent study."
           />
         </motion.div>
 

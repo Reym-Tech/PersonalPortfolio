@@ -64,8 +64,8 @@ export function HeroSection({ introExiting }) {
               </p>
 
               <p className="mt-6 max-w-md text-base leading-relaxed text-elegant-text/70">
-                A developer crafting responsive, accessible web experiences with
-                clean, modern design.
+                Building full-stack web and mobile applications with a focus on
+                clean code, accessibility, and refined user experience.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">

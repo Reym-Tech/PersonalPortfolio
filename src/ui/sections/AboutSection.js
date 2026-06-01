@@ -126,10 +126,10 @@ export function AboutSection() {
               </h3>
               <ul className="mt-4 space-y-3">
                 {[
-                  "Creating interactive web experiences",
-                  "Designing intuitive user interfaces",
-                  "Writing clean, efficient code",
-                  "Solving complex problems creatively",
+                  "Building motion-driven, interactive web interfaces",
+                  "Prototyping and implementing accessible UI systems",
+                  "Writing maintainable, performant code",
+                  "Breaking down complex problems into clean, testable solutions",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-base text-elegant-text/80">
                     <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-elegant-primary" />

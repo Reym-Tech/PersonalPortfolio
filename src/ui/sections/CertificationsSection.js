@@ -20,7 +20,7 @@ export function CertificationsSection() {
           <SectionHeading
             eyebrow="Credentials"
             title="Certifications"
-            description="Professional certifications I've earned."
+            description="Verified credentials in IT infrastructure, web development, and programming."
           />
         </motion.div>
 
