@@ -5,12 +5,12 @@ import { useRise, ParallaxImage } from "../design-system/animations/scroll-primi
 import { focusLink } from "../design-system/button-styles";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
+import { certificates } from "../../domain/data/certificates";
 
 export function AboutSection() {
   const rise = useRise();
   const [photoLikes, setPhotoLikes] = useState(() => Number(localStorage.getItem("photoLikes")) || 0);
   const [photoLiked, setPhotoLiked] = useState(() => localStorage.getItem("photoLiked") === "true");
-  const [loopHeartCount, setLoopHeartCount] = useState(22);
 
   useEffect(() => {
     try {
@@ -18,19 +18,6 @@ export function AboutSection() {
       localStorage.setItem("photoLiked", String(photoLiked));
     } catch (e) { }
   }, [photoLikes, photoLiked]);
-
-  useEffect(() => {
-    let current = 22;
-    let mounted = true;
-    const interval = setInterval(() => {
-      current = current >= 69 ? 22 : current + 1;
-      if (mounted) setLoopHeartCount(current);
-    }, 200);
-    return () => {
-      mounted = false;
-      clearInterval(interval);
-    };
-  }, []);
 
   const handleToggleLike = () => {
     if (photoLiked) {
@@ -51,13 +38,13 @@ export function AboutSection() {
 
         <div className="mt-12 grid items-start gap-12 md:grid-cols-2">
           <motion.div {...rise(0.05)} className="space-y-6">
-            <p className="text-base leading-relaxed text-elegant-text/80 text-justify">
+            <p className="text-base leading-relaxed text-elegant-text/80">
               I'm <span className="font-medium text-elegant-text">John Remy Gonzales</span>, a
               BSIT student at the UM Digos College. My journey in tech began
               with curiosity about how things work, which grew into a passion for building
               functional, well-designed digital experiences.
             </p>
-            <p className="text-base leading-relaxed text-elegant-text/80 text-justify">
+            <p className="text-base leading-relaxed text-elegant-text/80">
               I specialize in{" "}
               <span className="font-medium text-elegant-text">full-stack web development</span>,
               building responsive frontends with React and Tailwind CSS and reliable
@@ -67,7 +54,7 @@ export function AboutSection() {
               </span>{" "}
               that are a pleasure to use.
             </p>
-            <p className="text-base leading-relaxed text-elegant-text/80 text-justify">
+            <p className="text-base leading-relaxed text-elegant-text/80">
               Beyond coding, I'm deeply interested in{" "}
               <span className="font-medium text-elegant-text">UI/UX design</span>,{" "}
               <span className="font-medium text-elegant-text">problem-solving</span>, and
@@ -85,7 +72,6 @@ export function AboutSection() {
                   key={item.label}
                   className={`inline-flex items-center gap-2 rounded-full border ${BORDER} bg-elegant-surface px-4 py-2 text-sm text-elegant-text/70`}
                 >
-                  <span aria-hidden="true">{item.icon}</span>
                   {item.label}
                 </span>
               ))}
@@ -115,7 +101,7 @@ export function AboutSection() {
                   >
                     {photoLiked ? "💖" : "🤍"}
                   </motion.span>
-                  <span className="font-mono text-sm text-elegant-text/70">{loopHeartCount}</span>
+                  <span className="font-mono text-sm text-elegant-text/70">{photoLikes}</span>
                 </button>
               </div>
             </div>
@@ -145,7 +131,7 @@ export function AboutSection() {
                 <li>· Based in Philippines</li>
                 <li>· BSIT 3rd Year Student</li>
                 <li>· 3+ Years Coding Experience</li>
-                <li>· 6 Certifications Earned</li>
+                <li>· {certificates.length} Certifications Earned</li>
               </ul>
             </div>
           </motion.div>

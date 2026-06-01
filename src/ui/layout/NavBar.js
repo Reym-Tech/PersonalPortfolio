@@ -17,10 +17,10 @@ export function NavBar() {
         className={`sticky top-0 z-30 border-b ${BORDER} bg-elegant-surface/80 backdrop-blur`}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-8">
-          <a href="#home" className={`flex items-center gap-3 ${focusLink}`}>
+          <a href="#home" aria-label="John Remy Gonzales — home" className={`flex items-center gap-3 ${focusLink}`}>
             <img
               src="/images/AppIcon.png"
-              alt="REM Logo"
+              alt=""
               className="h-10 w-10 object-contain"
             />
           </a>

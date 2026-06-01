@@ -4,18 +4,18 @@ import { primaryButton, outlineButton } from "../design-system/button-styles";
 import { ArrowRight } from "../design-system/icons";
 import { LineGrid } from "../design-system/canvas/LineGrid";
 import { Parallax } from "../design-system/animations/scroll-primitives";
-import { BORDER } from "../design-system/tokens";
+
 import { generateCv } from "../../application/use-cases/generate-cv";
 
-export function HeroSection({ introExiting }) {
+export function HeroSection({ introExiting, instantReveal }) {
   const reduceMotion = useReducedMotion();
 
   const heroReveal = (delay = 0) => ({
     initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
     animate: introExiting ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
     transition: {
-      duration: reduceMotion ? 0.3 : 0.65,
-      delay: reduceMotion ? delay * 0.1 : 2.0 + delay,
+      duration: reduceMotion ? 0.3 : instantReveal ? 0.5 : 0.65,
+      delay: reduceMotion ? delay * 0.1 : instantReveal ? 0.05 + delay * 0.5 : 0.5 + delay,
       ease: [0.22, 1, 0.36, 1],
     },
   });
@@ -32,18 +32,18 @@ export function HeroSection({ introExiting }) {
       <LineGrid />
       <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
         <motion.div
-          className={`relative overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface p-8 md:p-12`}
+          className="relative p-8 md:p-12"
           initial={{ opacity: 0 }}
           animate={introExiting ? { opacity: 1 } : { opacity: 0 }}
           transition={{
-            duration: reduceMotion ? 0.3 : 1.2,
-            delay: reduceMotion ? 0 : 1.5,
+            duration: reduceMotion ? 0.3 : instantReveal ? 0.5 : 0.8,
+            delay: reduceMotion ? 0 : instantReveal ? 0 : 0.3,
             ease: [0.22, 1, 0.36, 1],
           }}
         >
           <span
             aria-hidden="true"
-            className="absolute top-6 font-mono text-sm uppercase tracking-widest text-elegant-text/30"
+            className="absolute top-6 left-0 font-mono text-sm uppercase tracking-widest text-elegant-text/30"
           >
             Portfolio
           </span>
@@ -55,7 +55,7 @@ export function HeroSection({ introExiting }) {
                 Available for work
               </p>
 
-              <h1 className="mt-6 text-[2rem] font-medium leading-tight tracking-tight md:text-[2.5rem]">
+              <h1 className="mt-6 text-[2.5rem] font-semibold leading-tight tracking-tight md:text-[3.5rem] lg:text-[4.5rem]">
                 John Remy C. Gonzales
               </h1>
 
@@ -85,7 +85,7 @@ export function HeroSection({ introExiting }) {
                   src="/images/profile--.png"
                   alt="John Remy Gonzales"
                   loading="lazy"
-                  className={`w-64 rounded-[8px] border ${BORDER} object-cover`}
+                  className="w-64 rounded-[8px] border border-[#E5E7EB] object-cover"
                 />
               </Parallax>
             </motion.div>

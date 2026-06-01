@@ -16,20 +16,24 @@ import { ContactSection } from "./ui/sections/ContactSection";
 import { ContactFab } from "./ui/shared/ContactFab";
 
 export default function Portfolio() {
-  const [introExiting, setIntroExiting] = useState(false);
-  const [introDone, setIntroDone] = useState(false);
+  const seenIntro = sessionStorage.getItem("intro-seen") === "1";
+  const [introExiting, setIntroExiting] = useState(seenIntro);
+  const [introDone, setIntroDone] = useState(seenIntro);
 
   return (
     <div className="min-h-screen scroll-smooth bg-elegant-surface font-display text-elegant-text antialiased">
       {!introDone && (
         <EntryTransition
           onExitBegin={() => setIntroExiting(true)}
-          onComplete={() => setIntroDone(true)}
+          onComplete={() => {
+            sessionStorage.setItem("intro-seen", "1");
+            setIntroDone(true);
+          }}
         />
       )}
       <ScrollProgress />
       <NavBar />
-      <HeroSection introExiting={introExiting} />
+      <HeroSection introExiting={introExiting} instantReveal={seenIntro} />
       <AboutSection />
       <StatsSection />
       <ProjectsSection />

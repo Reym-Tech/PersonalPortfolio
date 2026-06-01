@@ -141,7 +141,7 @@ export function EntryTransition({ onComplete, onExitBegin }) {
       onCompleteRef.current?.();
       return undefined;
     }
-    t1Ref.current = setTimeout(beginExit, 3200);
+    t1Ref.current = setTimeout(beginExit, 1800);
     return () => { clearTimeout(t1Ref.current); };
   }, [skip, beginExit]);
 
@@ -173,8 +173,8 @@ export function EntryTransition({ onComplete, onExitBegin }) {
       initial={{ opacity: 1 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{
-        duration: isExiting ? 2.4 : 0,
-        delay: isExiting ? 0.3 : 0,
+        duration: isExiting ? 1.4 : 0,
+        delay: 0,
         ease: [0.65, 0, 0.35, 1],
       }}
       onAnimationComplete={() => {
