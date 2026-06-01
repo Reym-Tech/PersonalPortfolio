@@ -2,8 +2,6 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { Canvas, useFrame } from "@react-three/fiber";
 import { motion, useReducedMotion } from "framer-motion";
 
-const NAME_WORDS = ["John", "Remy", "C.", "Gonzales"];
-
 const GRID_HALF = 20;
 const GRID_STEP = 1.6;
 const GRID_COLOR = 0x9ca3af; // gray-400 — refined on white
@@ -14,7 +12,7 @@ function hasWebGL() {
     const canvas = document.createElement("canvas");
     return Boolean(
       window.WebGLRenderingContext &&
-        (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
     );
   } catch {
     return false;
@@ -217,48 +215,7 @@ export function EntryTransition({ onComplete, onExitBegin }) {
         }}
         aria-hidden="true"
       >
-        <motion.p
-          className="font-mono text-xs uppercase tracking-[0.5em] text-elegant-text/40"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
-        >
-          Portfolio
-        </motion.p>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 text-4xl font-medium tracking-tight text-elegant-text md:text-6xl">
-          {NAME_WORDS.map((word, index) => (
-            <motion.span
-              key={word}
-              className="inline-block"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.75,
-                delay: 1.0 + index * 0.12,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              {word}
-            </motion.span>
-          ))}
-        </div>
-
-        <motion.span
-          className="mt-8 block h-px bg-elegant-text/20"
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ width: "5rem", opacity: 1 }}
-          transition={{ duration: 0.9, delay: 1.58, ease: [0.22, 1, 0.36, 1] }}
-        />
-
-        <motion.p
-          className="mt-6 font-mono text-xs uppercase tracking-[0.4em] text-elegant-text/40"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 2.0, ease: "easeOut" }}
-        >
-          Full-Stack Developer
-        </motion.p>
       </motion.div>
 
       <button
