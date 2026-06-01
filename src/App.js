@@ -325,14 +325,13 @@ function PortfolioContent() {
     transition: { duration: 0.5, delay, ease: "easeOut" },
   });
 
-  // Hero entrance begins when the overlay starts its exit, so content builds
-  // through the dissolving overlay and lands exactly as it clears.
+  // Hero content staggers in after the card push lands (~1.7 s into the 2.1 s scale).
   const heroReveal = (delay = 0) => ({
-    initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
-    animate: introExiting ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
+    initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+    animate: introExiting ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
     transition: {
-      duration: reduceMotion ? 0.3 : 0.65,
-      delay: reduceMotion ? 0 : delay + 0.35,
+      duration: reduceMotion ? 0.3 : 0.6,
+      delay: reduceMotion ? delay * 0.1 : 1.7 + delay,
       ease: [0.22, 1, 0.36, 1],
     },
   });
@@ -737,7 +736,21 @@ function PortfolioContent() {
       <section id="home" className="relative scroll-mt-20">
         <LineGrid />
         <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
-          <div className={`relative overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface p-8 md:p-12`}>
+          <motion.div
+            className={`relative overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface p-8 md:p-12`}
+            initial={reduceMotion ? { opacity: 0 } : { scale: 0.06, opacity: 0 }}
+            animate={
+              introExiting
+                ? { scale: 1, opacity: 1 }
+                : reduceMotion
+                ? { opacity: 0 }
+                : { scale: 0.06, opacity: 0 }
+            }
+            transition={{
+              duration: reduceMotion ? 0.3 : 2.1,
+              ease: reduceMotion ? "easeOut" : [0, 0, 0.58, 1],
+            }}
+          >
             <span
               aria-hidden="true"
               className="absolute top-6 font-mono text-sm uppercase tracking-widest text-elegant-text/30"
@@ -787,7 +800,7 @@ function PortfolioContent() {
                 </Parallax>
               </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

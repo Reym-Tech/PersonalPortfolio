@@ -74,64 +74,84 @@ function ArchGrid() {
   );
 }
 
-// Slow cinematic drift: starts overhead, gently pushes into the space.
-// On exit, lifts away — ascending through the void.
-function CameraRig({ exiting }) {
+// phaseRef holds "intro" | "exit" so useFrame can read it without
+// triggering re-renders on every frame.
+function CameraRig({ phaseRef }) {
   useFrame((state, delta) => {
-    if (!exiting.current) {
+    const phase = phaseRef.current;
+
+    if (phase === "exit") {
+      // Rush forward through the grid — mirrors the hero card scaling up beneath.
+      state.camera.position.y += (2.5 - state.camera.position.y) * Math.min(1, delta * 1.5);
+      state.camera.position.z += (3.5 - state.camera.position.z) * Math.min(1, delta * 1.5);
+    } else {
+      // Slow cinematic drift overhead during void initialization.
       state.camera.position.y += (9 - state.camera.position.y) * Math.min(1, delta * 0.3);
       state.camera.position.z += (10 - state.camera.position.z) * Math.min(1, delta * 0.3);
-    } else {
-      state.camera.position.y += (18 - state.camera.position.y) * Math.min(1, delta * 1.8);
     }
     state.camera.lookAt(0, 0, 0);
   });
   return null;
 }
 
-function Scene({ exiting }) {
+function Scene({ phaseRef }) {
   return (
     <>
       <color attach="background" args={["#FFFFFF"]} />
       <ambientLight intensity={1.8} />
       <ArchGrid />
-      <CameraRig exiting={exiting} />
+      <CameraRig phaseRef={phaseRef} />
     </>
   );
 }
 
-// Sequence 1 — Void Initialization:
-//   1. White void breathes; camera drifts overhead.
-//   2. Drafting grid draws itself from center outward (~2.5 s).
-//   3. Identity card assembles over the grid — eyebrow, name, rule, tagline.
-//   4. 0.8 s hold at full composition.
-//   5. Exit: card lifts away, overlay fades — white dissolves into white Hero.
-//      onComplete fires when Hero is fully visible.
+// Entry sequence:
+//   Sequence 1 — Void Initialization (0 – 3.2 s):
+//     White void; camera drifts overhead; drafting grid draws itself outward.
+//   Sequence 2 — 3D Camera Push (3.2 – 5.3 s):
+//     Overlay dissolves over 2 s while camera rushes forward through the grid;
+//     the real hero section scales in underneath (handled in App.js).
 //
 // prefers-reduced-motion and absent WebGL skip straight to onComplete.
 export function EntryTransition({ onComplete, onExitBegin }) {
   const reduceMotion = useReducedMotion();
   const [supported] = useState(hasWebGL);
   const [phase, setPhase] = useState("intro");
-  const exiting = useRef(false);
+  const phaseRef = useRef("intro");
+  // Refs keep callbacks fresh without making them effect dependencies.
+  // This prevents the heart-counter's 200 ms setState from resetting the
+  // sequence timers every render.
+  const onExitBeginRef = useRef(onExitBegin);
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => { onExitBeginRef.current = onExitBegin; });
+  useEffect(() => { onCompleteRef.current = onComplete; });
+
+  const t1Ref = useRef(null);
 
   const skip = reduceMotion || !supported;
 
+  // beginExit has no external deps so its identity is stable — safe for
+  // event-listener and timer effects to depend on without re-running.
   const beginExit = useCallback(() => {
-    exiting.current = true;
+    clearTimeout(t1Ref.current);
+    phaseRef.current = "exit";
     setPhase("exit");
-    onExitBegin?.();
-  }, [onExitBegin]);
+    onExitBeginRef.current?.();
+  }, []);
 
   useEffect(() => {
     if (skip) {
-      onExitBegin?.();
-      onComplete();
+      onExitBeginRef.current?.();
+      onCompleteRef.current?.();
       return undefined;
     }
-    const timer = setTimeout(beginExit, 3200);
-    return () => clearTimeout(timer);
-  }, [skip, onComplete, onExitBegin, beginExit]);
+
+    t1Ref.current = setTimeout(beginExit, 3200);
+
+    return () => {
+      clearTimeout(t1Ref.current);
+    };
+  }, [skip, beginExit]);
 
   // Lock scroll while the overlay owns the screen.
   useEffect(() => {
@@ -165,12 +185,12 @@ export function EntryTransition({ onComplete, onExitBegin }) {
       initial={{ opacity: 1 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{
-        duration: isExiting ? 0.9 : 0,
-        delay: isExiting ? 0.22 : 0,
+        duration: isExiting ? 2.0 : 0,
+        delay: isExiting ? 0.1 : 0,
         ease: [0.65, 0, 0.35, 1],
       }}
       onAnimationComplete={() => {
-        if (isExiting) onComplete();
+        if (isExiting) onCompleteRef.current?.();
       }}
       role="presentation"
     >
@@ -188,7 +208,7 @@ export function EntryTransition({ onComplete, onExitBegin }) {
           gl={{ antialias: true, powerPreference: "high-performance" }}
         >
           <Suspense fallback={null}>
-            <Scene exiting={exiting} />
+            <Scene phaseRef={phaseRef} />
           </Suspense>
         </Canvas>
       </motion.div>
@@ -202,21 +222,6 @@ export function EntryTransition({ onComplete, onExitBegin }) {
             "radial-gradient(ellipse 90% 80% at 50% 50%, transparent 30%, rgba(0,0,0,0.045) 100%)",
         }}
       />
-
-      {/* Identity card — minimal monochromatic typography over the grid. */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
-        initial={{ opacity: 0 }}
-        animate={isExiting ? { opacity: 0, y: -14 } : { opacity: 1, y: 0 }}
-        transition={{
-          duration: isExiting ? 0.32 : 0.7,
-          delay: isExiting ? 0 : 0.55,
-          ease: [0.65, 0, 0.35, 1],
-        }}
-        aria-hidden="true"
-      >
-
-      </motion.div>
 
       <button
         type="button"
