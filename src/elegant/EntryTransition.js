@@ -1,25 +1,14 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
 import { motion, useReducedMotion } from "framer-motion";
 
 const NAME_WORDS = ["John", "Remy", "C.", "Gonzales"];
 
-// Elegant design tokens. Three.js needs raw hex, so they're mirrored here from
-// tailwind.config.js (elegant.text / primary / secondary / surface).
-const SCENE = {
-  bg: "#111827",
-  primary: "#3B82F6",
-  secondary: "#8B5CF6",
-  surface: "#FFFFFF",
-};
+const GRID_HALF = 20;
+const GRID_STEP = 1.6;
+const GRID_COLOR = 0x9ca3af; // gray-400 — refined on white
 
-const STAR_COUNT = 1800;
-const STAR_FIELD_DEPTH = 120;
-const STAR_SPREAD = 60;
-
-// WebGL is required for the 3D sequence. jsdom and the rare unsupported browser
-// fall through to a clean, immediate hand-off to the Hero instead of a black box.
+// WebGL check — jsdom and unsupported browsers skip to an immediate hand-off.
 function hasWebGL() {
   try {
     const canvas = document.createElement("canvas");
@@ -32,91 +21,71 @@ function hasWebGL() {
   }
 }
 
-// A field of points streaming past the camera. On exit the stream accelerates
-// into a warp to sell the push through the lens.
-function Starfield({ exiting }) {
-  const pointsRef = useRef(null);
-  const speed = useRef(8);
+// Architectural drafting grid. Lines sorted center-to-edge so drawRange
+// reveals them outward — like a CAD tool initializing a workspace.
+function ArchGrid() {
+  const geomRef = useRef(null);
+  const progress = useRef(-0.18); // brief void before first line appears
 
-  const positions = useMemo(() => {
-    const arr = new Float32Array(STAR_COUNT * 3);
-    for (let i = 0; i < STAR_COUNT; i += 1) {
-      arr[i * 3] = (Math.random() - 0.5) * STAR_SPREAD;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * STAR_SPREAD;
-      arr[i * 3 + 2] = -Math.random() * STAR_FIELD_DEPTH;
+  const { positions, lineCount } = useMemo(() => {
+    const lines = [];
+    const n = Math.ceil(GRID_HALF / GRID_STEP);
+
+    for (let i = -n; i <= n; i++) {
+      const x = i * GRID_STEP;
+      lines.push({ dist: Math.abs(x), pts: [x, 0, -GRID_HALF, x, 0, GRID_HALF] });
     }
-    return arr;
+    for (let i = -n; i <= n; i++) {
+      const z = i * GRID_STEP;
+      lines.push({ dist: Math.abs(z), pts: [-GRID_HALF, 0, z, GRID_HALF, 0, z] });
+    }
+
+    // Center lines first, then progressively outward toward the horizon.
+    lines.sort((a, b) => a.dist - b.dist);
+
+    const pts = [];
+    for (const line of lines) pts.push(...line.pts);
+
+    return { positions: new Float32Array(pts), lineCount: pts.length / 3 };
   }, []);
 
   useFrame((_, delta) => {
-    if (!pointsRef.current) return;
-    const target = exiting.current ? 90 : 8;
-    speed.current += (target - speed.current) * Math.min(1, delta * 2);
-
-    const attribute = pointsRef.current.geometry.attributes.position;
-    const array = attribute.array;
-    for (let i = 0; i < STAR_COUNT; i += 1) {
-      const zIndex = i * 3 + 2;
-      array[zIndex] += speed.current * delta;
-      if (array[zIndex] > 12) {
-        array[zIndex] = -STAR_FIELD_DEPTH;
-        array[i * 3] = (Math.random() - 0.5) * STAR_SPREAD;
-        array[i * 3 + 1] = (Math.random() - 0.5) * STAR_SPREAD;
-      }
+    if (!geomRef.current) return;
+    progress.current = Math.min(1, progress.current + delta * 0.44);
+    if (progress.current <= 0) {
+      geomRef.current.setDrawRange(0, 0);
+      return;
     }
-    attribute.needsUpdate = true;
+    const count = Math.floor(progress.current * lineCount);
+    // Round to even — each line segment needs 2 vertices.
+    geomRef.current.setDrawRange(0, count & ~1);
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
+    <lineSegments>
+      <bufferGeometry
+        ref={(g) => {
+          geomRef.current = g;
+          if (g) g.setDrawRange(0, 0);
+        }}
+      >
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial
-        color={SCENE.surface}
-        size={0.14}
-        sizeAttenuation
-        transparent
-        opacity={0.85}
-        depthWrite={false}
-      />
-    </points>
+      <lineBasicMaterial color={GRID_COLOR} transparent opacity={0.48} />
+    </lineSegments>
   );
 }
 
-// Wireframe solids drifting in the brand palette to give the void some structure.
-function FloatingShapes() {
-  return (
-    <>
-      <Float speed={1.4} rotationIntensity={1.2} floatIntensity={1.6}>
-        <mesh position={[-3.4, 1.4, -4]}>
-          <icosahedronGeometry args={[1.1, 0]} />
-          <meshStandardMaterial color={SCENE.primary} wireframe />
-        </mesh>
-      </Float>
-      <Float speed={1.1} rotationIntensity={1} floatIntensity={1.3}>
-        <mesh position={[3.6, -1.3, -6]}>
-          <icosahedronGeometry args={[1.5, 0]} />
-          <meshStandardMaterial color={SCENE.secondary} wireframe />
-        </mesh>
-      </Float>
-      <Float speed={1.9} rotationIntensity={1.5} floatIntensity={1.9}>
-        <mesh position={[2.4, 2.4, -3]}>
-          <octahedronGeometry args={[0.7, 0]} />
-          <meshStandardMaterial color={SCENE.surface} wireframe />
-        </mesh>
-      </Float>
-    </>
-  );
-}
-
-// Eases the camera from its resting dolly to a push straight through the field
-// on exit, the WebGL half of the seamless hand-off into the Hero.
+// Slow cinematic drift: starts overhead, gently pushes into the space.
+// On exit, lifts away — ascending through the void.
 function CameraRig({ exiting }) {
   useFrame((state, delta) => {
-    const targetZ = exiting.current ? -10 : 8;
-    state.camera.position.z +=
-      (targetZ - state.camera.position.z) * Math.min(1, delta * 1.6);
+    if (!exiting.current) {
+      state.camera.position.y += (9 - state.camera.position.y) * Math.min(1, delta * 0.3);
+      state.camera.position.z += (10 - state.camera.position.z) * Math.min(1, delta * 0.3);
+    } else {
+      state.camera.position.y += (18 - state.camera.position.y) * Math.min(1, delta * 1.8);
+    }
     state.camera.lookAt(0, 0, 0);
   });
   return null;
@@ -125,25 +94,27 @@ function CameraRig({ exiting }) {
 function Scene({ exiting }) {
   return (
     <>
-      <color attach="background" args={[SCENE.bg]} />
-      <fog attach="fog" args={[SCENE.bg, 9, 32]} />
-      <ambientLight intensity={0.7} />
-      <pointLight position={[6, 5, 6]} intensity={60} color={SCENE.primary} />
-      <pointLight position={[-6, -3, 3]} intensity={45} color={SCENE.secondary} />
-      <Starfield exiting={exiting} />
-      <FloatingShapes />
+      <color attach="background" args={["#FFFFFF"]} />
+      <ambientLight intensity={1.8} />
+      <ArchGrid />
       <CameraRig exiting={exiting} />
     </>
   );
 }
 
-// Cinematic, single-shot entry: a 3D field assembles behind the name, then the
-// camera pushes through and the whole scene dissolves to hand off to the Hero.
-// Honors prefers-reduced-motion (and absent WebGL) by skipping to completion.
-export function EntryTransition({ onComplete }) {
+// Sequence 1 — Void Initialization:
+//   1. White void breathes; camera drifts overhead.
+//   2. Drafting grid draws itself from center outward (~2.5 s).
+//   3. Identity card assembles over the grid — eyebrow, name, rule, tagline.
+//   4. 0.8 s hold at full composition.
+//   5. Exit: card lifts away, overlay fades — white dissolves into white Hero.
+//      onComplete fires when Hero is fully visible.
+//
+// prefers-reduced-motion and absent WebGL skip straight to onComplete.
+export function EntryTransition({ onComplete, onExitBegin }) {
   const reduceMotion = useReducedMotion();
   const [supported] = useState(hasWebGL);
-  const [phase, setPhase] = useState("intro"); // "intro" | "exit"
+  const [phase, setPhase] = useState("intro");
   const exiting = useRef(false);
 
   const skip = reduceMotion || !supported;
@@ -151,16 +122,18 @@ export function EntryTransition({ onComplete }) {
   const beginExit = useCallback(() => {
     exiting.current = true;
     setPhase("exit");
-  }, []);
+    onExitBegin?.();
+  }, [onExitBegin]);
 
   useEffect(() => {
     if (skip) {
+      onExitBegin?.();
       onComplete();
       return undefined;
     }
-    const timer = setTimeout(beginExit, 2600);
+    const timer = setTimeout(beginExit, 3200);
     return () => clearTimeout(timer);
-  }, [skip, onComplete, beginExit]);
+  }, [skip, onComplete, onExitBegin, beginExit]);
 
   // Lock scroll while the overlay owns the screen.
   useEffect(() => {
@@ -172,7 +145,7 @@ export function EntryTransition({ onComplete }) {
     };
   }, [skip]);
 
-  // Let the visitor bail out via keyboard at any point.
+  // Keyboard escape hatch.
   useEffect(() => {
     if (skip) return undefined;
     const handleKey = (event) => {
@@ -190,51 +163,79 @@ export function EntryTransition({ onComplete }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[60] overflow-hidden bg-elegant-text"
+      className="fixed inset-0 z-[60] overflow-hidden bg-elegant-surface"
       initial={{ opacity: 1 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
-      transition={{ duration: isExiting ? 1 : 0, ease: [0.65, 0, 0.35, 1] }}
+      transition={{
+        duration: isExiting ? 0.9 : 0,
+        delay: isExiting ? 0.22 : 0,
+        ease: [0.65, 0, 0.35, 1],
+      }}
       onAnimationComplete={() => {
         if (isExiting) onComplete();
       }}
       role="presentation"
     >
-      <Canvas
+      {/* 3D canvas — materializes softly so the grid emerges from pure white. */}
+      <motion.div
         className="absolute inset-0"
-        camera={{ position: [0, 0, 8], fov: 60 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, powerPreference: "high-performance" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
       >
-        <Suspense fallback={null}>
-          <Scene exiting={exiting} />
-        </Suspense>
-      </Canvas>
+        <Canvas
+          className="absolute inset-0"
+          camera={{ position: [0, 12, 12], fov: 45 }}
+          dpr={[1, 2]}
+          gl={{ antialias: true, powerPreference: "high-performance" }}
+        >
+          <Suspense fallback={null}>
+            <Scene exiting={exiting} />
+          </Suspense>
+        </Canvas>
+      </motion.div>
 
+      {/* Soft radial vignette — edges deepen just enough to convey spatial depth. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 90% 80% at 50% 50%, transparent 30%, rgba(0,0,0,0.045) 100%)",
+        }}
+      />
+
+      {/* Identity card — minimal monochromatic typography over the grid. */}
       <motion.div
         className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
-        animate={isExiting ? { scale: 1.4, opacity: 0 } : { scale: 1, opacity: 1 }}
-        transition={{ duration: isExiting ? 1 : 0.6, ease: [0.65, 0, 0.35, 1] }}
+        initial={{ opacity: 0 }}
+        animate={isExiting ? { opacity: 0, y: -14 } : { opacity: 1, y: 0 }}
+        transition={{
+          duration: isExiting ? 0.32 : 0.7,
+          delay: isExiting ? 0 : 0.55,
+          ease: [0.65, 0, 0.35, 1],
+        }}
         aria-hidden="true"
       >
         <motion.p
-          className="font-mono text-sm uppercase tracking-[0.4em] text-elegant-surface/50"
-          initial={{ opacity: 0, y: 12 }}
+          className="font-mono text-xs uppercase tracking-[0.5em] text-elegant-text/40"
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
         >
           Portfolio
         </motion.p>
 
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 text-4xl font-medium tracking-tight text-elegant-surface md:text-6xl">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 text-4xl font-medium tracking-tight text-elegant-text md:text-6xl">
           {NAME_WORDS.map((word, index) => (
             <motion.span
               key={word}
               className="inline-block"
-              initial={{ opacity: 0, y: 48 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: 0.7,
-                delay: 0.35 + index * 0.13,
+                duration: 0.75,
+                delay: 1.0 + index * 0.12,
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
@@ -244,17 +245,26 @@ export function EntryTransition({ onComplete }) {
         </div>
 
         <motion.span
-          className="mt-8 block h-px bg-elegant-primary"
+          className="mt-8 block h-px bg-elegant-text/20"
           initial={{ width: 0, opacity: 0 }}
-          animate={{ width: "8rem", opacity: 1 }}
-          transition={{ duration: 0.7, delay: 1, ease: "easeOut" }}
+          animate={{ width: "5rem", opacity: 1 }}
+          transition={{ duration: 0.9, delay: 1.58, ease: [0.22, 1, 0.36, 1] }}
         />
+
+        <motion.p
+          className="mt-6 font-mono text-xs uppercase tracking-[0.4em] text-elegant-text/40"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 2.0, ease: "easeOut" }}
+        >
+          Full-Stack Developer
+        </motion.p>
       </motion.div>
 
       <button
         type="button"
         onClick={beginExit}
-        className="absolute bottom-8 right-8 font-mono text-sm uppercase tracking-widest text-elegant-surface/50 transition-colors hover:text-elegant-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-elegant-surface/40 focus-visible:ring-offset-2 focus-visible:ring-offset-elegant-text"
+        className="absolute bottom-8 right-8 font-mono text-xs uppercase tracking-widest text-elegant-text/30 transition-colors hover:text-elegant-text/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-elegant-text/20 focus-visible:ring-offset-2"
       >
         Skip
       </button>

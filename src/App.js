@@ -12,6 +12,7 @@ import {
 import { ArrowRight, Mail, Close } from "./elegant/icons";
 import { EntryTransition } from "./elegant/EntryTransition";
 import { ScrollProgress, Parallax, ParallaxImage, CountUp } from "./elegant/scroll";
+import { LineGrid } from "./elegant/LineGrid";
 
 // Data
 const projectsData = [
@@ -313,6 +314,7 @@ function PortfolioContent() {
   const [photoLiked, setPhotoLiked] = useState(() => localStorage.getItem("photoLiked") === "true");
   const [loopHeartCount, setLoopHeartCount] = useState(22);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [introExiting, setIntroExiting] = useState(false);
   const [introDone, setIntroDone] = useState(false);
 
   // Subtle scroll-reveal preset; honors prefers-reduced-motion.
@@ -323,12 +325,16 @@ function PortfolioContent() {
     transition: { duration: 0.5, delay, ease: "easeOut" },
   });
 
-  // Hero entrance is gated on the entry transition so the section assembles
-  // exactly as the cinematic overlay lifts — a seamless handoff into the Hero.
+  // Hero entrance begins when the overlay starts its exit, so content builds
+  // through the dissolving overlay and lands exactly as it clears.
   const heroReveal = (delay = 0) => ({
     initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
-    animate: introDone ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
-    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] },
+    animate: introExiting ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
+    transition: {
+      duration: reduceMotion ? 0.3 : 0.65,
+      delay: reduceMotion ? 0 : delay + 0.35,
+      ease: [0.22, 1, 0.36, 1],
+    },
   });
 
   // Persist photo likes
@@ -628,7 +634,12 @@ function PortfolioContent() {
 
   return (
     <div className="min-h-screen scroll-smooth bg-elegant-surface font-display text-elegant-text antialiased">
-      {!introDone && <EntryTransition onComplete={() => setIntroDone(true)} />}
+      {!introDone && (
+        <EntryTransition
+          onExitBegin={() => setIntroExiting(true)}
+          onComplete={() => setIntroDone(true)}
+        />
+      )}
 
       <ScrollProgress />
 
@@ -723,7 +734,8 @@ function PortfolioContent() {
       </motion.aside>
 
       {/* HERO */}
-      <section id="home" className="scroll-mt-20 tile-bg">
+      <section id="home" className="relative scroll-mt-20">
+        <LineGrid />
         <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
           <div className={`relative overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface p-8 md:p-12`}>
             <span
