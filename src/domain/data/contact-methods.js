@@ -28,11 +28,11 @@ export const contactMethods = [
   },
   {
     name: "LinkedIn",
-    handle: "Coming soon",
+    handle: "john-remy-gonzales",
     caption: "Connect with me",
-    href: "#",
+    href: "https://www.linkedin.com/in/john-remy-gonzales-598270406/",
     icon: "/images/linkedin-icon.svg",
-    external: false,
-    disabled: true,
+    external: true,
+    disabled: false,
   },
 ];

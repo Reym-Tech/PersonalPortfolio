@@ -23,6 +23,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
     let my = -9999;
     let rafId = null;
     let alive = true;
+    let visible = true;
 
     function build() {
       const w = canvas.offsetWidth;
@@ -81,7 +82,10 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
     }
 
     function frame() {
-      if (!alive) return;
+      if (!alive || !visible) {
+        rafId = null;
+        return;
+      }
 
       for (const nd of nodes) {
         const nx = nd.rx + nd.dx;
@@ -110,6 +114,16 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       rafId = requestAnimationFrame(frame);
     }
 
+    function start() {
+      if (!alive || reduceMotion || !visible || rafId != null) return;
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+
     function onMove(e) {
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -133,27 +147,34 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
     }
 
     function onResize() {
-      cancelAnimationFrame(rafId);
+      stop();
       build();
-      if (reduceMotion) drawGrid();
-      else frame();
+      drawGrid();
+      if (!reduceMotion) start();
     }
 
     build();
+    drawGrid();
     window.addEventListener("mousemove", onMove);
     window.addEventListener("touchmove", onTouch, { passive: true });
     window.addEventListener("touchend", onTouchEnd);
     window.addEventListener("resize", onResize);
 
-    if (reduceMotion) {
-      drawGrid();
-    } else {
-      frame();
-    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (!visible) return;
+        if (reduceMotion) drawGrid();
+        else start();
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
 
     return () => {
       alive = false;
-      cancelAnimationFrame(rafId);
+      stop();
+      observer.disconnect();
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("touchmove", onTouch);
       window.removeEventListener("touchend", onTouchEnd);

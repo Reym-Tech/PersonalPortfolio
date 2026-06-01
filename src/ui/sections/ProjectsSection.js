@@ -134,7 +134,7 @@ export function ProjectsSection() {
                     <div className="mt-6 flex flex-wrap gap-3">
                       <button
                         onClick={() => setSelectedProject(project)}
-                        className={outlineButtonSm}
+                        className={primaryButtonSm}
                       >
                         View case study
                         <ArrowRight />

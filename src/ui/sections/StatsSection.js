@@ -8,7 +8,7 @@ export function StatsSection() {
   const rise = useRise();
 
   return (
-    <section className={`border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
+    <section id="stats" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
       <div className="mx-auto max-w-6xl px-6 py-16 md:px-8">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {stats.map((stat, index) => (

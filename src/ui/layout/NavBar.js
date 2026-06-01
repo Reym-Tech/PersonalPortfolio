@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { primaryButton, focusLink } from "../design-system/button-styles";
 import { BORDER } from "../design-system/tokens";
+import { useDialog } from "../design-system/use-dialog";
 import { NAV_LINKS } from "../../domain/data/nav-links";
 import { generateCv } from "../../application/use-cases/generate-cv";
 
 export function NavBar() {
   const reduceMotion = useReducedMotion();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarRef = useRef(null);
+
+  const closeSidebar = () => setSidebarOpen(false);
+  useDialog(sidebarRef, sidebarOpen, closeSidebar);
 
   return (
     <>
@@ -28,12 +33,12 @@ export function NavBar() {
           <div className="flex items-center gap-6">
             <ul className="hidden items-center gap-8 md:flex">
               {NAV_LINKS.map((item) => (
-                <li key={item}>
+                <li key={item.href}>
                   <a
-                    href={`#${item.toLowerCase()}`}
+                    href={item.href}
                     className={`text-sm text-elegant-text/70 transition-colors hover:text-elegant-text ${focusLink}`}
                   >
-                    {item}
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -54,21 +59,26 @@ export function NavBar() {
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-elegant-text/40 md:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={closeSidebar}
         />
       )}
 
       <motion.aside
+        ref={sidebarRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile menu"
+        tabIndex={-1}
+        inert={!sidebarOpen}
         initial={false}
         animate={{ x: sidebarOpen ? 0 : "-100%" }}
         transition={reduceMotion ? { duration: 0 } : { type: "spring", damping: 24, stiffness: 280 }}
-        className={`fixed left-0 top-0 z-50 h-full w-64 border-r ${BORDER} bg-elegant-surface p-6 md:hidden`}
-        aria-label="Mobile menu"
+        className={`fixed left-0 top-0 z-50 h-full w-64 border-r ${BORDER} bg-elegant-surface p-6 focus:outline-none md:hidden`}
       >
         <div className="mb-8 flex items-center justify-between">
           <span className="font-mono text-sm uppercase tracking-widest text-elegant-text/50">Menu</span>
           <button
-            onClick={() => setSidebarOpen(false)}
+            onClick={closeSidebar}
             aria-label="Close menu"
             className={`inline-flex h-9 w-9 items-center justify-center rounded-[8px] border ${BORDER} hover:bg-[#F9FAFB] ${focusLink}`}
           >
@@ -79,13 +89,13 @@ export function NavBar() {
         </div>
         <ul className="flex flex-col gap-1">
           {NAV_LINKS.map((item) => (
-            <li key={item}>
+            <li key={item.href}>
               <a
-                href={`#${item.toLowerCase()}`}
-                onClick={() => setSidebarOpen(false)}
+                href={item.href}
+                onClick={closeSidebar}
                 className={`block rounded-[8px] px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-[#F9FAFB] hover:text-elegant-text ${focusLink}`}
               >
-                {item}
+                {item.label}
               </a>
             </li>
           ))}

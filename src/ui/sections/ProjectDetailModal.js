@@ -1,65 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 import { primaryButton, outlineButton, focusRing } from "../design-system/button-styles";
 import { Close } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
+import { useDialog } from "../design-system/use-dialog";
 
 export function ProjectDetailModal({ project, onClose }) {
   const dialogRef = useRef(null);
-  const previousFocusRef = useRef(null);
-  const onCloseRef = useRef(onClose);
   const reduceMotion = useReducedMotion();
 
-  useEffect(() => { onCloseRef.current = onClose; });
-
-  useEffect(() => {
-    if (!project) return;
-    previousFocusRef.current = document.activeElement;
-    const id = requestAnimationFrame(() => dialogRef.current?.focus());
-    return () => {
-      cancelAnimationFrame(id);
-      previousFocusRef.current?.focus();
-    };
-  }, [project]);
-
-  useEffect(() => {
-    if (!project) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
-  }, [project]);
-
-  useEffect(() => {
-    if (!project) return;
-    const handleKey = (e) => { if (e.key === "Escape") onCloseRef.current(); };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [project]);
-
-  useEffect(() => {
-    if (!project) return;
-    const handleTab = (e) => {
-      if (e.key !== "Tab") return;
-      const el = dialogRef.current;
-      if (!el) return;
-      const focusable = el.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("keydown", handleTab);
-    return () => document.removeEventListener("keydown", handleTab);
-  }, [project]);
+  useDialog(dialogRef, Boolean(project), onClose);
 
   return (
     <AnimatePresence>
@@ -70,7 +21,7 @@ export function ProjectDetailModal({ project, onClose }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-6"
-          onClick={() => onCloseRef.current()}
+          onClick={onClose}
         >
           <motion.div
             ref={dialogRef}
@@ -87,7 +38,7 @@ export function ProjectDetailModal({ project, onClose }) {
           >
             <button
               type="button"
-              onClick={() => onCloseRef.current()}
+              onClick={onClose}
               aria-label="Close project details"
               className={`absolute top-4 right-4 z-10 rounded-[4px] text-elegant-text/40 transition-colors hover:text-elegant-text ${focusRing}`}
             >

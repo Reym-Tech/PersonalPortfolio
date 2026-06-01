@@ -9,7 +9,7 @@ export function ServicesSection() {
   const rise = useRise();
 
   return (
-    <section className="scroll-mt-20">
+    <section id="services" className="scroll-mt-20">
       <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
           <SectionHeading eyebrow="Services" title="What I Offer" center />
