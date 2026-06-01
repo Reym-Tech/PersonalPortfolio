@@ -36,7 +36,7 @@ export function NavBar() {
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className={`text-sm text-elegant-text/70 transition-colors hover:text-elegant-text ${focusLink}`}
+                    className={`text-sm text-elegant-text/70 transition-colors hover:text-elegant-primary ${focusLink}`}
                   >
                     {item.label}
                   </a>
@@ -93,7 +93,7 @@ export function NavBar() {
               <a
                 href={item.href}
                 onClick={closeSidebar}
-                className={`block rounded-[8px] px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-[#F9FAFB] hover:text-elegant-text ${focusLink}`}
+                className={`block rounded-[8px] px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-[#F9FAFB] hover:text-elegant-primary ${focusLink}`}
               >
                 {item.label}
               </a>

@@ -20,6 +20,17 @@ export function HeroSection({ introExiting, instantReveal }) {
     },
   });
 
+  // The 2D grid settles in as the 3D entry grid recedes, reading as one continuous
+  // surface. Skipped when revisiting (instantReveal) or under reduced motion.
+  const gridSettle =
+    reduceMotion || instantReveal
+      ? { initial: false, animate: { opacity: 1, scale: 1 }, transition: { duration: 0 } }
+      : {
+          initial: { opacity: 0, scale: 1.06 },
+          animate: introExiting ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.06 },
+          transition: { duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] },
+        };
+
   const handleViewProjects = () => {
     const projectsSection = document.getElementById("projects");
     if (projectsSection) {
@@ -29,10 +40,12 @@ export function HeroSection({ introExiting, instantReveal }) {
 
   return (
     <section id="home" className="relative scroll-mt-20">
-      <LineGrid />
+      <motion.div {...gridSettle} className="absolute inset-0">
+        <LineGrid />
+      </motion.div>
       <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
         <motion.div
-          className="relative p-8 md:p-12"
+          className="relative p-8 pt-14 md:p-12"
           initial={{ opacity: 0 }}
           animate={introExiting ? { opacity: 1 } : { opacity: 0 }}
           transition={{
@@ -60,7 +73,7 @@ export function HeroSection({ introExiting, instantReveal }) {
               </h1>
 
               <p className="mt-4 text-base text-elegant-text/70">
-                BSIT 3rd Year • <em className="font-light italic text-elegant-primary-400">UM Digos College</em>
+                BSIT 3rd Year • <em className="font-light italic text-elegant-primary">UM Digos College</em>
               </p>
 
               <p className="mt-6 max-w-md text-base leading-relaxed text-elegant-text/70">

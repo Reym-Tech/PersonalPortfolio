@@ -45,7 +45,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = "rgba(17, 24, 39, 0.07)";
+      ctx.strokeStyle = "rgba(156, 163, 175, 0.2)";
       ctx.lineWidth = 1;
 
       for (let r = 0; r < rows; r++) {

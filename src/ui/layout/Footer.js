@@ -49,7 +49,7 @@ export function Footer() {
               <a
                 key={link.href}
                 href={link.href}
-                className={`text-sm text-elegant-text/60 transition-colors hover:text-elegant-text ${focusLink}`}
+                className={`text-sm text-elegant-text/60 transition-colors hover:text-elegant-primary ${focusLink}`}
               >
                 {link.label}
               </a>
@@ -70,7 +70,7 @@ export function Footer() {
           </div>
           <a
             href="#home"
-            className={`inline-flex items-center gap-2 text-sm text-elegant-text/60 transition-colors hover:text-elegant-text ${focusLink}`}
+            className={`inline-flex items-center gap-2 text-sm text-elegant-text/60 transition-colors hover:text-elegant-primary ${focusLink}`}
           >
             Back to top
             <span aria-hidden="true">↑</span>

@@ -37,7 +37,7 @@ module.exports = {
         },
         // Elegant design system tokens (DESIGN.md). Semantic, raw token values.
         elegant: {
-          primary: '#3B82F6',
+          primary: '#2563EB',
           secondary: '#8B5CF6',
           success: '#16A34A',
           warning: '#D97706',
