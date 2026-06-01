@@ -74,6 +74,26 @@ function ArchGrid() {
   );
 }
 
+// GridPlane — rotates the drafting grid from a flat floor (XZ plane) into a
+// vertical wall facing the camera during exit. Near edge lifts toward viewer.
+function GridPlane({ phaseRef }) {
+  const groupRef = useRef(null);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+    if (phaseRef.current === "exit") {
+      groupRef.current.rotation.x +=
+        (Math.PI / 2 - groupRef.current.rotation.x) * Math.min(1, delta * 0.75);
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      <ArchGrid />
+    </group>
+  );
+}
+
 // phaseRef holds "intro" | "exit" so useFrame can read it without
 // triggering re-renders on every frame.
 function CameraRig({ phaseRef }) {
@@ -81,9 +101,9 @@ function CameraRig({ phaseRef }) {
     const phase = phaseRef.current;
 
     if (phase === "exit") {
-      // Rush forward through the grid — mirrors the hero card scaling up beneath.
-      state.camera.position.y += (2.5 - state.camera.position.y) * Math.min(1, delta * 1.5);
-      state.camera.position.z += (3.5 - state.camera.position.z) * Math.min(1, delta * 1.5);
+      // Zoom out — camera retreats as the grid tilts up into a wall.
+      state.camera.position.y += (12 - state.camera.position.y) * Math.min(1, delta * 0.75);
+      state.camera.position.z += (22 - state.camera.position.z) * Math.min(1, delta * 0.75);
     } else {
       // Slow cinematic drift overhead during void initialization.
       state.camera.position.y += (9 - state.camera.position.y) * Math.min(1, delta * 0.3);
@@ -99,7 +119,7 @@ function Scene({ phaseRef }) {
     <>
       <color attach="background" args={["#FFFFFF"]} />
       <ambientLight intensity={1.8} />
-      <ArchGrid />
+      <GridPlane phaseRef={phaseRef} />
       <CameraRig phaseRef={phaseRef} />
     </>
   );
@@ -108,9 +128,10 @@ function Scene({ phaseRef }) {
 // Entry sequence:
 //   Sequence 1 — Void Initialization (0 – 3.2 s):
 //     White void; camera drifts overhead; drafting grid draws itself outward.
-//   Sequence 2 — 3D Camera Push (3.2 – 5.3 s):
-//     Overlay dissolves over 2 s while camera rushes forward through the grid;
-//     the real hero section scales in underneath (handled in App.js).
+//   Sequence 2 — Zoom-Out Wall Reveal (3.2 – 5.5 s):
+//     Camera retreats while the grid floor pivots up into a vertical wall;
+//     a card outline frames the wall, matching the Hero card design;
+//     overlay dissolves revealing the hero section beneath.
 //
 // prefers-reduced-motion and absent WebGL skip straight to onComplete.
 export function EntryTransition({ onComplete, onExitBegin }) {
@@ -185,8 +206,8 @@ export function EntryTransition({ onComplete, onExitBegin }) {
       initial={{ opacity: 1 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{
-        duration: isExiting ? 2.0 : 0,
-        delay: isExiting ? 0.1 : 0,
+        duration: isExiting ? 2.4 : 0,
+        delay: isExiting ? 0.3 : 0,
         ease: [0.65, 0, 0.35, 1],
       }}
       onAnimationComplete={() => {
@@ -212,6 +233,17 @@ export function EntryTransition({ onComplete, onExitBegin }) {
           </Suspense>
         </Canvas>
       </motion.div>
+
+      {/* Card outline — appears as the grid wall forms, framing it like the Hero card. */}
+      {isExiting && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-8 rounded-[8px] border border-[#E5E7EB] md:inset-x-24 md:inset-y-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.8 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        />
+      )}
 
       {/* Soft radial vignette — edges deepen just enough to convey spatial depth. */}
       <div

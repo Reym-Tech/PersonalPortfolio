@@ -325,13 +325,13 @@ function PortfolioContent() {
     transition: { duration: 0.5, delay, ease: "easeOut" },
   });
 
-  // Hero content staggers in after the card push lands (~1.7 s into the 2.1 s scale).
+  // Hero content staggers in as the overlay is nearly transparent (~2 s into the exit).
   const heroReveal = (delay = 0) => ({
     initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
     animate: introExiting ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
     transition: {
-      duration: reduceMotion ? 0.3 : 0.6,
-      delay: reduceMotion ? delay * 0.1 : 1.7 + delay,
+      duration: reduceMotion ? 0.3 : 0.65,
+      delay: reduceMotion ? delay * 0.1 : 2.0 + delay,
       ease: [0.22, 1, 0.36, 1],
     },
   });
@@ -738,17 +738,12 @@ function PortfolioContent() {
         <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
           <motion.div
             className={`relative overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface p-8 md:p-12`}
-            initial={reduceMotion ? { opacity: 0 } : { scale: 0.06, opacity: 0 }}
-            animate={
-              introExiting
-                ? { scale: 1, opacity: 1 }
-                : reduceMotion
-                ? { opacity: 0 }
-                : { scale: 0.06, opacity: 0 }
-            }
+            initial={{ opacity: 0 }}
+            animate={introExiting ? { opacity: 1 } : { opacity: 0 }}
             transition={{
-              duration: reduceMotion ? 0.3 : 2.1,
-              ease: reduceMotion ? "easeOut" : [0, 0, 0.58, 1],
+              duration: reduceMotion ? 0.3 : 1.2,
+              delay: reduceMotion ? 0 : 1.5,
+              ease: [0.22, 1, 0.36, 1],
             }}
           >
             <span
