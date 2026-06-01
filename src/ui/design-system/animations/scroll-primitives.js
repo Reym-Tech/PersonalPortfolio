@@ -9,8 +9,16 @@ import {
   useReducedMotion,
 } from "framer-motion";
 
-// Scroll-driven primitives for the Elegant design system. Centralized so every
-// scroll interaction shares one feel and one reduced-motion contract.
+// Returns the standard scroll-reveal variant factory, honoring reduced-motion.
+export function useRise() {
+  const reduceMotion = useReducedMotion();
+  return (delay = 0) => ({
+    initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-80px" },
+    transition: { duration: 0.5, delay, ease: "easeOut" },
+  });
+}
 
 // Thin reading-progress bar pinned to the top of the viewport, driven by overall
 // page scroll. Decorative, so it stays put under prefers-reduced-motion (the
@@ -76,7 +84,6 @@ export function ParallaxImage({
   );
 }
 
-// Splits a stat like "24+" into its animatable number and its trailing label.
 function parseStat(value) {
   const match = String(value).match(/^(\d+)(.*)$/);
   if (!match) return { target: 0, suffix: String(value) };

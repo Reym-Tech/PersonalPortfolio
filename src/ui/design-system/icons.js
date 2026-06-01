@@ -1,6 +1,3 @@
-// Inline line icons for the Elegant design system. Stroke uses currentColor so
-// callers control color via text-* tokens.
-
 export function ArrowRight({ className = "" }) {
   return (
     <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">

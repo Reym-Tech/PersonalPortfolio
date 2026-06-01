@@ -1,0 +1,38 @@
+export const contactMethods = [
+  {
+    name: "Gmail",
+    handle: "johnremygonzales20@gmail.com",
+    caption: "Send me a message",
+    href: "mailto:johnremygonzales20@gmail.com",
+    icon: "/images/gmail-icon.svg",
+    external: false,
+    disabled: false,
+  },
+  {
+    name: "GitHub",
+    handle: "github.com/Reym-Tech",
+    caption: "View my projects",
+    href: "https://github.com/Reym-Tech",
+    icon: "/images/github-icon.svg",
+    external: true,
+    disabled: false,
+  },
+  {
+    name: "Facebook",
+    handle: "JohnRemyxD",
+    caption: "Follow me on Facebook",
+    href: "https://www.facebook.com/JohnRemyxD",
+    icon: "/images/facebook-icon.svg",
+    external: true,
+    disabled: false,
+  },
+  {
+    name: "LinkedIn",
+    handle: "Coming soon",
+    caption: "Connect with me",
+    href: "#",
+    icon: "/images/linkedin-icon.svg",
+    external: false,
+    disabled: true,
+  },
+];

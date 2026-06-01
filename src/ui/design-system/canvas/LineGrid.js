@@ -1,22 +1,20 @@
-import { useRef, useEffect } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import { useRef, useEffect } from "react";
+import { useReducedMotion } from "framer-motion";
 
-// Physics constants — tuned for a soft elastic warp, not a jarring snap.
-// MAX_PULL is raw acceleration per frame; equilibrium displacement ≈ MAX_PULL / SPRING.
 const SPACING = 40;
-const RADIUS = 160;    // cursor influence radius in px
-const MAX_PULL = 1.5;  // peak acceleration per frame → ~18 px equilibrium displacement
-const SPRING = 0.08;   // spring restoration force
-const DAMPING = 0.82;  // velocity damping (< 1 = underdamped, gives natural overshoot)
+const RADIUS = 160;
+const MAX_PULL = 1.5;
+const SPRING = 0.08;
+const DAMPING = 0.82;
 
-export function LineGrid({ className = '', fadeColor = '#ffffff' }) {
+export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
   const canvasRef = useRef(null);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     let nodes = [];
     let cols = 0;
@@ -46,7 +44,7 @@ export function LineGrid({ className = '', fadeColor = '#ffffff' }) {
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = 'rgba(17, 24, 39, 0.07)';
+      ctx.strokeStyle = "rgba(17, 24, 39, 0.07)";
       ctx.lineWidth = 1;
 
       for (let r = 0; r < rows; r++) {
@@ -75,9 +73,8 @@ export function LineGrid({ className = '', fadeColor = '#ffffff' }) {
         ctx.stroke();
       }
 
-      // Fade the bottom edge to blend with the section below
       const grad = ctx.createLinearGradient(0, h * 0.85, 0, h);
-      grad.addColorStop(0, 'rgba(255,255,255,0)');
+      grad.addColorStop(0, "rgba(255,255,255,0)");
       grad.addColorStop(1, fadeColor);
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
@@ -93,11 +90,9 @@ export function LineGrid({ className = '', fadeColor = '#ffffff' }) {
         const ey = my - ny;
         const d = Math.sqrt(ex * ex + ey * ey);
 
-        // Spring restoration toward rest position
         let ax = -nd.dx * SPRING;
         let ay = -nd.dy * SPRING;
 
-        // Magnetic attraction toward cursor; quadratic falloff for smooth warp
         if (d < RADIUS && d > 1) {
           const t = 1 - d / RADIUS;
           const f = (t * t * MAX_PULL) / d;
@@ -145,10 +140,10 @@ export function LineGrid({ className = '', fadeColor = '#ffffff' }) {
     }
 
     build();
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('touchmove', onTouch, { passive: true });
-    window.addEventListener('touchend', onTouchEnd);
-    window.addEventListener('resize', onResize);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("touchmove", onTouch, { passive: true });
+    window.addEventListener("touchend", onTouchEnd);
+    window.addEventListener("resize", onResize);
 
     if (reduceMotion) {
       drawGrid();
@@ -159,10 +154,10 @@ export function LineGrid({ className = '', fadeColor = '#ffffff' }) {
     return () => {
       alive = false;
       cancelAnimationFrame(rafId);
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('touchmove', onTouch);
-      window.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("resize", onResize);
     };
   }, [reduceMotion, fadeColor]);
 

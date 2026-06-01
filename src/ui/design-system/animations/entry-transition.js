@@ -4,9 +4,8 @@ import { motion, useReducedMotion } from "framer-motion";
 
 const GRID_HALF = 20;
 const GRID_STEP = 1.6;
-const GRID_COLOR = 0x9ca3af; // gray-400 — refined on white
+const GRID_COLOR = 0x9ca3af;
 
-// WebGL check — jsdom and unsupported browsers skip to an immediate hand-off.
 function hasWebGL() {
   try {
     const canvas = document.createElement("canvas");
@@ -19,11 +18,9 @@ function hasWebGL() {
   }
 }
 
-// Architectural drafting grid. Lines sorted center-to-edge so drawRange
-// reveals them outward — like a CAD tool initializing a workspace.
 function ArchGrid() {
   const geomRef = useRef(null);
-  const progress = useRef(-0.18); // brief void before first line appears
+  const progress = useRef(-0.18);
 
   const { positions, lineCount } = useMemo(() => {
     const lines = [];
@@ -38,7 +35,6 @@ function ArchGrid() {
       lines.push({ dist: Math.abs(z), pts: [-GRID_HALF, 0, z, GRID_HALF, 0, z] });
     }
 
-    // Center lines first, then progressively outward toward the horizon.
     lines.sort((a, b) => a.dist - b.dist);
 
     const pts = [];
@@ -55,7 +51,6 @@ function ArchGrid() {
       return;
     }
     const count = Math.floor(progress.current * lineCount);
-    // Round to even — each line segment needs 2 vertices.
     geomRef.current.setDrawRange(0, count & ~1);
   });
 
@@ -74,8 +69,6 @@ function ArchGrid() {
   );
 }
 
-// GridPlane — rotates the drafting grid from a flat floor (XZ plane) into a
-// vertical wall facing the camera during exit. Near edge lifts toward viewer.
 function GridPlane({ phaseRef }) {
   const groupRef = useRef(null);
 
@@ -94,18 +87,14 @@ function GridPlane({ phaseRef }) {
   );
 }
 
-// phaseRef holds "intro" | "exit" so useFrame can read it without
-// triggering re-renders on every frame.
 function CameraRig({ phaseRef }) {
   useFrame((state, delta) => {
     const phase = phaseRef.current;
 
     if (phase === "exit") {
-      // Zoom out — camera retreats as the grid tilts up into a wall.
       state.camera.position.y += (12 - state.camera.position.y) * Math.min(1, delta * 0.75);
       state.camera.position.z += (22 - state.camera.position.z) * Math.min(1, delta * 0.75);
     } else {
-      // Slow cinematic drift overhead during void initialization.
       state.camera.position.y += (9 - state.camera.position.y) * Math.min(1, delta * 0.3);
       state.camera.position.z += (10 - state.camera.position.z) * Math.min(1, delta * 0.3);
     }
@@ -125,23 +114,11 @@ function Scene({ phaseRef }) {
   );
 }
 
-// Entry sequence:
-//   Sequence 1 — Void Initialization (0 – 3.2 s):
-//     White void; camera drifts overhead; drafting grid draws itself outward.
-//   Sequence 2 — Zoom-Out Wall Reveal (3.2 – 5.5 s):
-//     Camera retreats while the grid floor pivots up into a vertical wall;
-//     a card outline frames the wall, matching the Hero card design;
-//     overlay dissolves revealing the hero section beneath.
-//
-// prefers-reduced-motion and absent WebGL skip straight to onComplete.
 export function EntryTransition({ onComplete, onExitBegin }) {
   const reduceMotion = useReducedMotion();
   const [supported] = useState(hasWebGL);
   const [phase, setPhase] = useState("intro");
   const phaseRef = useRef("intro");
-  // Refs keep callbacks fresh without making them effect dependencies.
-  // This prevents the heart-counter's 200 ms setState from resetting the
-  // sequence timers every render.
   const onExitBeginRef = useRef(onExitBegin);
   const onCompleteRef = useRef(onComplete);
   useEffect(() => { onExitBeginRef.current = onExitBegin; });
@@ -151,8 +128,6 @@ export function EntryTransition({ onComplete, onExitBegin }) {
 
   const skip = reduceMotion || !supported;
 
-  // beginExit has no external deps so its identity is stable — safe for
-  // event-listener and timer effects to depend on without re-running.
   const beginExit = useCallback(() => {
     clearTimeout(t1Ref.current);
     phaseRef.current = "exit";
@@ -166,25 +141,17 @@ export function EntryTransition({ onComplete, onExitBegin }) {
       onCompleteRef.current?.();
       return undefined;
     }
-
     t1Ref.current = setTimeout(beginExit, 3200);
-
-    return () => {
-      clearTimeout(t1Ref.current);
-    };
+    return () => { clearTimeout(t1Ref.current); };
   }, [skip, beginExit]);
 
-  // Lock scroll while the overlay owns the screen.
   useEffect(() => {
     if (skip) return undefined;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
-    };
+    return () => { document.body.style.overflow = previous; };
   }, [skip]);
 
-  // Keyboard escape hatch.
   useEffect(() => {
     if (skip) return undefined;
     const handleKey = (event) => {
@@ -215,7 +182,6 @@ export function EntryTransition({ onComplete, onExitBegin }) {
       }}
       role="presentation"
     >
-      {/* 3D canvas — materializes softly so the grid emerges from pure white. */}
       <motion.div
         className="absolute inset-0"
         initial={{ opacity: 0 }}
@@ -234,7 +200,6 @@ export function EntryTransition({ onComplete, onExitBegin }) {
         </Canvas>
       </motion.div>
 
-      {/* Card outline — appears as the grid wall forms, framing it like the Hero card. */}
       {isExiting && (
         <motion.div
           aria-hidden="true"
@@ -245,7 +210,6 @@ export function EntryTransition({ onComplete, onExitBegin }) {
         />
       )}
 
-      {/* Soft radial vignette — edges deepen just enough to convey spatial depth. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"

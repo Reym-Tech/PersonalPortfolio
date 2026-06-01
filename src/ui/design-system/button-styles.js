@@ -1,7 +1,3 @@
-// Shared interaction styles for the Elegant design system.
-// Centralized so every button/link keeps identical states (SKILL: prefer
-// system consistency over one-off local optimizations).
-
 export const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-elegant-primary focus-visible:ring-offset-2 focus-visible:ring-offset-elegant-surface";
 
