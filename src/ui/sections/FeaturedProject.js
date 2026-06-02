@@ -14,6 +14,11 @@ export function FeaturedProject({ project, onOpen }) {
     offset: ["start end", "end start"],
   });
 
+  // The Outcome is pulled out of the narrative so it can carry the focal
+  // emphasis the case study builds toward; Problem/Approach lead into it.
+  const outcome = project.highlights?.find((h) => h.label === "Outcome");
+  const story = project.highlights?.filter((h) => h.label !== "Outcome") ?? [];
+
   return (
     <div ref={ref} className={`border-y ${BORDER} bg-elegant-surface`}>
       <div className="mx-auto grid max-w-6xl items-start gap-8 px-6 py-16 md:grid-cols-[3fr_4fr] md:gap-14 md:px-8 md:py-20">
@@ -24,10 +29,10 @@ export function FeaturedProject({ project, onOpen }) {
         />
 
         <div>
-          <RevealAt progress={scrollYProgress} at={0.1}>
+          <RevealAt progress={scrollYProgress} at={0.06}>
             <span
               aria-hidden="true"
-              className="block font-mono text-[2.5rem] font-semibold leading-none text-elegant-text/15 md:text-[3rem]"
+              className="block font-mono text-[4rem] font-semibold leading-none text-elegant-text/15 md:text-[6rem]"
             >
               01
             </span>
@@ -36,7 +41,7 @@ export function FeaturedProject({ project, onOpen }) {
             </div>
           </RevealAt>
 
-          <RevealAt progress={scrollYProgress} at={0.16}>
+          <RevealAt progress={scrollYProgress} at={0.13}>
             <h3 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
               {project.title}
             </h3>
@@ -45,13 +50,35 @@ export function FeaturedProject({ project, onOpen }) {
             )}
           </RevealAt>
 
-          <RevealAt progress={scrollYProgress} at={0.24}>
-            <p className="mt-5 max-w-prose text-base leading-relaxed text-elegant-text/70">
-              {project.description}
-            </p>
+          <RevealAt progress={scrollYProgress} at={0.2}>
+            <div className="mt-6 space-y-5">
+              {story.map((h) => (
+                <div key={h.label}>
+                  <span className="font-mono text-xs font-medium uppercase tracking-wider text-elegant-text/40">
+                    {h.label}
+                  </span>
+                  <p className="mt-2 max-w-prose text-base leading-relaxed text-elegant-text/70">
+                    {h.text}
+                  </p>
+                </div>
+              ))}
+            </div>
           </RevealAt>
 
-          <RevealAt progress={scrollYProgress} at={0.32}>
+          {outcome && (
+            <RevealAt progress={scrollYProgress} at={0.27}>
+              <div className="mt-6 border-l-2 border-elegant-primary pl-5">
+                <span className="font-mono text-xs font-medium uppercase tracking-wider text-elegant-primary">
+                  {outcome.label}
+                </span>
+                <p className="mt-2 max-w-prose text-lg leading-relaxed text-elegant-text md:text-xl">
+                  {outcome.text}
+                </p>
+              </div>
+            </RevealAt>
+          )}
+
+          <RevealAt progress={scrollYProgress} at={0.34}>
             <div className="mt-6 flex flex-wrap gap-2">
               {project.technologies.map((tech) => (
                 <span

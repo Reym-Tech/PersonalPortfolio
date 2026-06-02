@@ -2,10 +2,20 @@ import { useRef, useEffect } from "react";
 import { useReducedMotion } from "framer-motion";
 
 const SPACING = 40;
-const RADIUS = 160;
-const MAX_PULL = 1.5;
-const SPRING = 0.08;
-const DAMPING = 0.82;
+const BASE_COLOR = "156, 163, 175";
+
+// Ambient wave keeps the grid subtly alive on load and on touch devices, not
+// only when a cursor is near. Barely-there (~1.5px against 40px cells) so it
+// never competes with the hero text.
+const WAVE_AMP = 1.5;
+const WAVE_SPEED = 0.0009;
+const WAVE_FREQ = 0.012;
+
+// Cursor spotlight: lines within GLOW_RADIUS of the pointer brighten and thicken
+// with a soft falloff — a legible interaction that leaves the grid geometry
+// undistorted (unlike a pull/warp, which reads as a faint smudge).
+const GLOW_RADIUS = 150;
+const GLOW_ALPHA = 0.5;
 
 export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
   const canvasRef = useRef(null);
@@ -36,7 +46,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       nodes = [];
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          nodes.push({ rx: c * SPACING, ry: r * SPACING, dx: 0, dy: 0, vx: 0, vy: 0 });
+          nodes.push({ rx: c * SPACING, ry: r * SPACING, wx: 0, wy: 0 });
         }
       }
     }
@@ -45,7 +55,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = "rgba(156, 163, 175, 0.2)";
+      ctx.strokeStyle = `rgba(${BASE_COLOR}, 0.2)`;
       ctx.lineWidth = 1;
 
       for (let r = 0; r < rows; r++) {
@@ -53,8 +63,8 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
         for (let c = 0; c < cols; c++) {
           const nd = nodes[r * cols + c];
           if (!nd) continue;
-          const x = nd.rx + nd.dx;
-          const y = nd.ry + nd.dy;
+          const x = nd.rx + nd.wx;
+          const y = nd.ry + nd.wy;
           if (c === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
@@ -66,13 +76,15 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
         for (let r = 0; r < rows; r++) {
           const nd = nodes[r * cols + c];
           if (!nd) continue;
-          const x = nd.rx + nd.dx;
-          const y = nd.ry + nd.dy;
+          const x = nd.rx + nd.wx;
+          const y = nd.ry + nd.wy;
           if (r === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
       }
+
+      drawGlow();
 
       const grad = ctx.createLinearGradient(0, h * 0.85, 0, h);
       grad.addColorStop(0, "rgba(255,255,255,0)");
@@ -81,33 +93,54 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       ctx.fillRect(0, 0, w, h);
     }
 
-    function frame() {
+    function drawGlow() {
+      if (mx < -9000) return;
+      const cMin = Math.max(0, Math.floor((mx - GLOW_RADIUS) / SPACING) - 1);
+      const cMax = Math.min(cols - 1, Math.ceil((mx + GLOW_RADIUS) / SPACING) + 1);
+      const rMin = Math.max(0, Math.floor((my - GLOW_RADIUS) / SPACING) - 1);
+      const rMax = Math.min(rows - 1, Math.ceil((my + GLOW_RADIUS) / SPACING) + 1);
+
+      for (let r = rMin; r <= rMax; r++) {
+        for (let c = cMin; c <= cMax; c++) {
+          const nd = nodes[r * cols + c];
+          if (!nd) continue;
+          const x = nd.rx + nd.wx;
+          const y = nd.ry + nd.wy;
+          const ex = mx - x;
+          const ey = my - y;
+          const d = Math.sqrt(ex * ex + ey * ey);
+          if (d > GLOW_RADIUS) continue;
+
+          const t = 1 - d / GLOW_RADIUS;
+          ctx.strokeStyle = `rgba(${BASE_COLOR}, ${GLOW_ALPHA * t * t})`;
+          ctx.lineWidth = 1 + t;
+          ctx.beginPath();
+
+          const right = nodes[r * cols + c + 1];
+          if (c < cols - 1 && right) {
+            ctx.moveTo(x, y);
+            ctx.lineTo(right.rx + right.wx, right.ry + right.wy);
+          }
+          const down = nodes[(r + 1) * cols + c];
+          if (r < rows - 1 && down) {
+            ctx.moveTo(x, y);
+            ctx.lineTo(down.rx + down.wx, down.ry + down.wy);
+          }
+          ctx.stroke();
+        }
+      }
+    }
+
+    function frame(now) {
       if (!alive || !visible) {
         rafId = null;
         return;
       }
 
       for (const nd of nodes) {
-        const nx = nd.rx + nd.dx;
-        const ny = nd.ry + nd.dy;
-        const ex = mx - nx;
-        const ey = my - ny;
-        const d = Math.sqrt(ex * ex + ey * ey);
-
-        let ax = -nd.dx * SPRING;
-        let ay = -nd.dy * SPRING;
-
-        if (d < RADIUS && d > 1) {
-          const t = 1 - d / RADIUS;
-          const f = (t * t * MAX_PULL) / d;
-          ax += ex * f;
-          ay += ey * f;
-        }
-
-        nd.vx = (nd.vx + ax) * DAMPING;
-        nd.vy = (nd.vy + ay) * DAMPING;
-        nd.dx += nd.vx;
-        nd.dy += nd.vy;
+        const phase = (nd.rx + nd.ry) * WAVE_FREQ + now * WAVE_SPEED;
+        nd.wx = Math.sin(phase) * WAVE_AMP;
+        nd.wy = Math.cos(phase) * WAVE_AMP;
       }
 
       drawGrid();

@@ -16,7 +16,8 @@ Status: Done
 
 Source: Fresh Review #1
 
-Status: Not Started
+Status: Not Started (persistent-3D hero grid was prototyped and reverted — the
+perspective floor read as awkward; the 2D LineGrid was kept by preference)
 
 ---
 
@@ -24,7 +25,7 @@ Status: Not Started
 
 Source: Fresh Review #5
 
-Status: In Progress
+Status: Done
 
 ---
 
@@ -32,7 +33,7 @@ Status: In Progress
 
 Source: Fresh Review #6
 
-Status: Not Started
+Status: Done
 
 ## Tier 2 — Differentiation
 

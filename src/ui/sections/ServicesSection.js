@@ -10,34 +10,32 @@ export function ServicesSection() {
 
   return (
     <section id="services" className="scroll-mt-20">
-      <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
+      <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
-          <SectionHeading eyebrow="Services" title="What I Offer" center />
+          <SectionHeading eyebrow="Services" title="What I Offer" />
         </motion.div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <div className="mt-12">
           {services.map((service, index) => (
             <motion.div
               key={service.id}
               {...rise(index * 0.05)}
-              className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-8 transition-colors hover:bg-[#F9FAFB]`}
+              className={`grid gap-x-8 gap-y-3 border-t ${BORDER} py-8 md:grid-cols-[auto_1fr]`}
             >
-              <span aria-hidden="true" className="font-mono text-sm text-elegant-text/40">
+              <span
+                aria-hidden="true"
+                className="font-mono text-[2.5rem] font-semibold leading-none text-elegant-text/15 md:text-[3rem]"
+              >
                 {String(service.id).padStart(2, "0")}
               </span>
-              <h3 className="mt-3 text-lg font-medium">{service.title}</h3>
-              <p className="mt-3 text-base leading-relaxed text-elegant-text/70">
-                {service.description}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {service.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className={`rounded-[4px] border ${BORDER} px-3 py-1 font-mono text-sm text-elegant-text/70`}
-                  >
-                    {skill}
-                  </span>
-                ))}
+              <div>
+                <h3 className="text-xl font-medium md:text-2xl">{service.title}</h3>
+                <p className="mt-3 max-w-prose text-base leading-relaxed text-elegant-text/70">
+                  {service.description}
+                </p>
+                <p className="mt-4 font-mono text-sm text-elegant-text/50">
+                  {service.skills.join("  ·  ")}
+                </p>
               </div>
             </motion.div>
           ))}

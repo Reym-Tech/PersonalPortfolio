@@ -19,6 +19,7 @@ export function ContactSection() {
             title="Let's create something together"
             description="I'm open to new projects and opportunities — reach out through any of the channels below."
             center
+            display
           />
         </motion.div>
 

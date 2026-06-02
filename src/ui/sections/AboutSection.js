@@ -33,7 +33,7 @@ export function AboutSection() {
     <section id="about" className="scroll-mt-20">
       <div className="mx-auto max-w-5xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
-          <SectionHeading eyebrow="About" title="About Me" />
+          <SectionHeading eyebrow="About" title="About Me" display />
         </motion.div>
 
         <div className="mt-12 grid items-start gap-12 md:grid-cols-2">
