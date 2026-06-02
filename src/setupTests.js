@@ -29,3 +29,15 @@ if (!window.IntersectionObserver) {
     }
   };
 }
+
+// jsdom doesn't implement the canvas 2D context, so decorative canvas components
+// (e.g. LineGrid) crash on render. Stub the methods they draw with.
+HTMLCanvasElement.prototype.getContext = () => ({
+  clearRect: () => {},
+  beginPath: () => {},
+  moveTo: () => {},
+  lineTo: () => {},
+  stroke: () => {},
+  fillRect: () => {},
+  createLinearGradient: () => ({ addColorStop: () => {} }),
+});

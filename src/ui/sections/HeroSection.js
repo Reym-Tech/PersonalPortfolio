@@ -62,26 +62,39 @@ export function HeroSection({ introExiting, instantReveal }) {
           </span>
 
           <div className="grid items-center gap-12 md:grid-cols-2">
-            <motion.div {...heroReveal()}>
-              <p className="flex items-center gap-2 text-sm text-elegant-text/70">
+            <div>
+              <motion.p
+                {...heroReveal()}
+                className="flex items-center gap-2 text-sm text-elegant-text/70"
+              >
                 <span aria-hidden="true" className="h-2 w-2 rounded-full bg-elegant-success" />
                 Available for work
-              </p>
+              </motion.p>
 
-              <h1 className="mt-6 text-[2.5rem] font-semibold leading-tight tracking-tight md:text-[3.5rem] lg:text-[4.5rem]">
-                John Remy C. Gonzales
-              </h1>
+              <motion.h1
+                {...heroReveal(0.04)}
+                className="mt-6 max-w-[15ch] text-balance text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[4rem] lg:text-[5rem]"
+              >
+                I build <span className="text-elegant-primary">accessible</span>,{" "}
+                <span className="whitespace-nowrap text-elegant-primary">motion-driven</span> interfaces.
+              </motion.h1>
 
-              <p className="mt-4 text-base text-elegant-text/70">
+              <motion.p {...heroReveal(0.08)} className="mt-5 text-base text-elegant-text/70 md:text-lg">
+                John Remy C. Gonzales — full-stack web &amp; mobile developer
+              </motion.p>
+
+              <motion.p {...heroReveal(0.08)} className="mt-2 text-base text-elegant-text/70">
                 BSIT 3rd Year • <em className="font-light italic text-elegant-primary">UM Digos College</em>
-              </p>
+              </motion.p>
 
-              <p className="mt-6 max-w-md text-base leading-relaxed text-elegant-text/70">
-                Building full-stack web and mobile applications with a focus on
-                clean code, accessibility, and refined user experience.
-              </p>
+              <motion.p
+                {...heroReveal(0.12)}
+                className="mt-6 max-w-md text-base leading-relaxed text-elegant-text/70"
+              >
+                Front to back — React &amp; Tailwind interfaces, Node.js &amp; REST backends.
+              </motion.p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
+              <motion.div {...heroReveal(0.16)} className="mt-8 flex flex-wrap gap-4">
                 <button onClick={handleViewProjects} className={primaryButton}>
                   View My Work
                   <ArrowRight />
@@ -89,8 +102,8 @@ export function HeroSection({ introExiting, instantReveal }) {
                 <button onClick={generateCv} className={outlineButton}>
                   Download Resume
                 </button>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
 
             <motion.div {...heroReveal(0.12)} className="flex justify-center md:justify-end">
               <Parallax offset={24}>
