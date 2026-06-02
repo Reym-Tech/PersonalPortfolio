@@ -41,7 +41,9 @@ Status: Done
 
 Source: Fresh Review #7
 
-Status: Not Started
+Status: Done (About chips reworked from generic role labels + rice joke to four
+specific, site-provable claims: Accessibility-first, Motion-driven interfaces,
+Full-Stack — React · Node, Continuous learner)
 
 ### 6. Brand Accent Strategy
 
@@ -53,19 +55,27 @@ Goal:
 Develop a more distinctive visual identity through intentional use of
 the brand accent color, stronger focal points, and clearer art direction.
 
-Status: Not Started
+Status: Done (committed to a monochrome black/white identity with blue as a
+rule-governed accent — blue now means "interactive / alive" only: hovers, focus
+rings, scroll bar, the cursor-tinted grid glow, and the single Featured Outcome
+beat; all structural uses demoted to black/gray. Added an oversized faint
+section-numeral system (01–07) for editorial scale contrast and wayfinding.)
 
 ### 7. Hero Grid Visibility
 
 Source: Fresh Review #9
 
-Status: Not Started
+Status: Done (LineGrid reworked with an ambient self-animating wave + a cursor
+spotlight that brightens/thickens nearby lines — reads as present but not loud,
+without raising base line opacity under the hero text)
 
 ### 8. Stats Reframing
 
 Source: Fresh Review #8
 
-Status: Not Started
+Status: Done (reordered so the grid opens on the strongest number — 24+
+Technologies — with the two small honest counts last; relabeled Projects
+Shipped / Certifications. Count-up kept by preference; no invented metrics)
 
 ## Tier 3 — Polish
 

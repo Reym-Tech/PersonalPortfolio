@@ -1,5 +1,5 @@
 export function Eyebrow({ children }) {
   return (
-    <p className="font-mono text-sm uppercase tracking-widest text-elegant-primary">{children}</p>
+    <p className="font-mono text-sm uppercase tracking-widest text-elegant-text/70">{children}</p>
   );
 }

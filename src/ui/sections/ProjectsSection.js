@@ -23,6 +23,7 @@ export function ProjectsSection() {
       <div className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:px-8">
         <motion.div {...rise()}>
           <SectionHeading
+            index="02"
             eyebrow="Selected work"
             title="Featured Projects"
             description="A selection of full-stack web and mobile projects built across academic coursework and independent study."

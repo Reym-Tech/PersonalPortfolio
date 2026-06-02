@@ -33,7 +33,7 @@ export function AboutSection() {
     <section id="about" className="scroll-mt-20">
       <div className="mx-auto max-w-5xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
-          <SectionHeading eyebrow="About" title="About Me" display />
+          <SectionHeading index="01" eyebrow="About" title="About Me" display />
         </motion.div>
 
         <div className="mt-12 grid items-start gap-12 md:grid-cols-2">
@@ -63,10 +63,10 @@ export function AboutSection() {
 
             <div className="flex flex-wrap gap-3 pt-2">
               {[
-                { label: "Full-Stack Developer" },
-                { label: "Can cook rice in under a minute" },
-                { label: "UI/UX Enthusiast" },
-                { label: "Problem Solver" },
+                { label: "Accessibility-first" },
+                { label: "Motion-driven interfaces" },
+                { label: "Full-Stack — React · Node" },
+                { label: "Continuous learner" },
               ].map((item) => (
                 <span
                   key={item.label}
@@ -118,7 +118,7 @@ export function AboutSection() {
                   "Breaking down complex problems into clean, testable solutions",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-base text-elegant-text/80">
-                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-elegant-primary" />
+                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-elegant-text/40" />
                     <span>{item}</span>
                   </li>
                 ))}

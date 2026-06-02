@@ -24,6 +24,7 @@ export function CertificationsSection() {
       <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
           <SectionHeading
+            index="06"
             eyebrow="Credentials"
             title="Certifications"
             description="Verified credentials in IT infrastructure, web development, and programming."

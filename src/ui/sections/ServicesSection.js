@@ -12,7 +12,7 @@ export function ServicesSection() {
     <section id="services" className="scroll-mt-20">
       <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
-          <SectionHeading eyebrow="Services" title="What I Offer" />
+          <SectionHeading index="04" eyebrow="Services" title="What I Offer" />
         </motion.div>
 
         <div className="mt-12">

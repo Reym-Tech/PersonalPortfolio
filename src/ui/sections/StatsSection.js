@@ -17,7 +17,7 @@ export function StatsSection() {
               {...rise(index * 0.05)}
               className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-6 text-center`}
             >
-              <CountUp value={stat.value} className="text-[2rem] font-medium text-elegant-primary" />
+              <CountUp value={stat.value} className="text-[2rem] font-medium text-elegant-text" />
               <p className="mt-2 font-mono text-sm uppercase tracking-widest text-elegant-text/50">
                 {stat.label}
               </p>

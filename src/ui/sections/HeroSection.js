@@ -75,8 +75,8 @@ export function HeroSection({ introExiting, instantReveal }) {
                 {...heroReveal(0.04)}
                 className="mt-6 max-w-[15ch] text-balance text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[4rem] lg:text-[5rem]"
               >
-                I build <span className="text-elegant-primary">accessible</span>,{" "}
-                <span className="whitespace-nowrap text-elegant-primary">motion-driven</span> interfaces.
+                I build accessible,{" "}
+                <span className="whitespace-nowrap">motion-driven</span> interfaces.
               </motion.h1>
 
               <motion.p {...heroReveal(0.08)} className="mt-5 text-base text-elegant-text/70 md:text-lg">
@@ -84,7 +84,7 @@ export function HeroSection({ introExiting, instantReveal }) {
               </motion.p>
 
               <motion.p {...heroReveal(0.08)} className="mt-2 text-base text-elegant-text/70">
-                BSIT 3rd Year • <em className="font-light italic text-elegant-primary">UM Digos College</em>
+                BSIT 3rd Year • <em className="font-light italic text-elegant-text">UM Digos College</em>
               </motion.p>
 
               <motion.p

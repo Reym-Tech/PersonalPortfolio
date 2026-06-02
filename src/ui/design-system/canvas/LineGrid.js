@@ -13,9 +13,12 @@ const WAVE_FREQ = 0.012;
 
 // Cursor spotlight: lines within GLOW_RADIUS of the pointer brighten and thicken
 // with a soft falloff — a legible interaction that leaves the grid geometry
-// undistorted (unlike a pull/warp, which reads as a faint smudge).
+// undistorted (unlike a pull/warp, which reads as a faint smudge). The glow
+// carries the brand blue (#2563EB) while the base grid stays structural gray:
+// blue means "alive / responding to you", the site's one signature interaction.
 const GLOW_RADIUS = 150;
 const GLOW_ALPHA = 0.5;
+const GLOW_COLOR = "37, 99, 235";
 
 export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
   const canvasRef = useRef(null);
@@ -112,7 +115,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
           if (d > GLOW_RADIUS) continue;
 
           const t = 1 - d / GLOW_RADIUS;
-          ctx.strokeStyle = `rgba(${BASE_COLOR}, ${GLOW_ALPHA * t * t})`;
+          ctx.strokeStyle = `rgba(${GLOW_COLOR}, ${GLOW_ALPHA * t * t})`;
           ctx.lineWidth = 1 + t;
           ctx.beginPath();
 

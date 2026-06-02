@@ -15,6 +15,7 @@ export function ContactSection() {
       <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
           <SectionHeading
+            index="07"
             eyebrow="Contact"
             title="Let's create something together"
             description="I'm open to new projects and opportunities — reach out through any of the channels below."

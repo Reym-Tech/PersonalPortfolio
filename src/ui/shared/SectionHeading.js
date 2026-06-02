@@ -1,7 +1,7 @@
 import { Parallax } from "../design-system/animations/scroll-primitives";
 import { Eyebrow } from "./Eyebrow";
 
-export function SectionHeading({ eyebrow, title, description, center = false, display = false }) {
+export function SectionHeading({ eyebrow, title, description, center = false, display = false, index }) {
   // Anchor sections (About, Projects, Contact) use the larger display scale; the
   // contrast against the restrained default scale is what gives the page its rhythm.
   const titleClass = display
@@ -10,6 +10,16 @@ export function SectionHeading({ eyebrow, title, description, center = false, di
 
   return (
     <Parallax offset={18} className={center ? "text-center" : ""}>
+      {/* Oversized section index as an editorial wayfinding mark — watermark-faint
+          so the dramatic scale reads as texture, not a competing focal point. */}
+      {index && (
+        <span
+          aria-hidden="true"
+          className="block font-mono text-[3.5rem] font-semibold leading-none text-elegant-text/10 md:text-[5rem]"
+        >
+          {index}
+        </span>
+      )}
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <h2 className={titleClass}>{title}</h2>
       {description && (
