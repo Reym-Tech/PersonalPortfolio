@@ -4,9 +4,11 @@ export const focusRing =
 const buttonBase =
   "inline-flex items-center justify-center gap-2 rounded-[8px] text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";
 
-const filled = "bg-elegant-text text-white hover:bg-elegant-text/90 active:bg-elegant-text/80";
+// text-elegant-surface (not literal white) so the filled CTA inverts correctly in
+// dark mode: a near-white pill needs near-black text.
+const filled = "bg-elegant-text text-elegant-surface hover:bg-elegant-text/90 active:bg-elegant-text/80";
 const outlined =
-  "border border-[#E5E7EB] bg-elegant-surface text-elegant-text hover:bg-[#F9FAFB] active:bg-[#F3F4F6]";
+  "border border-elegant-border bg-elegant-surface text-elegant-text hover:bg-elegant-hover active:bg-elegant-active";
 
 export const primaryButton = `${buttonBase} ${filled} px-6 py-3 ${focusRing}`;
 export const outlineButton = `${buttonBase} ${outlined} px-6 py-3 ${focusRing}`;

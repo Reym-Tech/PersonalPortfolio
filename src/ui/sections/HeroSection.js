@@ -111,7 +111,7 @@ export function HeroSection({ introExiting, instantReveal }) {
                   src="/images/profile--.png"
                   alt="John Remy Gonzales"
                   loading="lazy"
-                  className="w-64 rounded-[8px] border border-[#E5E7EB] object-cover"
+                  className="w-64 rounded-[8px] border border-elegant-border object-cover"
                 />
               </Parallax>
             </motion.div>

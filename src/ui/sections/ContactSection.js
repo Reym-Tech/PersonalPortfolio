@@ -11,7 +11,7 @@ export function ContactSection() {
   const rise = useRise();
 
   return (
-    <section id="contact" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
+    <section id="contact" className={`scroll-mt-20 border-y ${BORDER} bg-elegant-muted tile-bg-muted`}>
       <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
           <SectionHeading
@@ -36,7 +36,7 @@ export function ContactSection() {
               className={`flex items-start gap-4 rounded-[8px] border ${BORDER} bg-elegant-surface p-6 transition-colors ${
                 method.disabled
                   ? "cursor-not-allowed opacity-60"
-                  : `hover:bg-[#F9FAFB] ${focusLink}`
+                  : `hover:bg-elegant-hover ${focusLink}`
               }`}
             >
               <span className={`inline-flex h-12 w-12 flex-none items-center justify-center rounded-[8px] border ${BORDER}`}>

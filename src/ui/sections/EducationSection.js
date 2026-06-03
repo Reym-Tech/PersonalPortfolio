@@ -9,7 +9,7 @@ export function EducationSection() {
   const rise = useRise();
 
   return (
-    <section id="education" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
+    <section id="education" className={`scroll-mt-20 border-y ${BORDER} bg-elegant-muted tile-bg-muted`}>
       <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
           <SectionHeading index="05" eyebrow="Background" title="Education & Experience" center />

@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { primaryButton, focusLink } from "../design-system/button-styles";
 import { BORDER } from "../design-system/tokens";
 import { useDialog } from "../design-system/use-dialog";
+import { ThemeToggle } from "../shared/ThemeToggle";
 import { NAV_LINKS } from "../../domain/data/nav-links";
 import { generateCv } from "../../application/use-cases/generate-cv";
 
@@ -30,7 +31,7 @@ export function NavBar() {
             />
           </a>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <ul className="hidden items-center gap-8 md:flex">
               {NAV_LINKS.map((item) => (
                 <li key={item.href}>
@@ -43,10 +44,11 @@ export function NavBar() {
                 </li>
               ))}
             </ul>
+            <ThemeToggle />
             <button
               onClick={() => setSidebarOpen(true)}
               aria-label="Open menu"
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-[8px] border ${BORDER} text-elegant-text hover:bg-[#F9FAFB] md:hidden ${focusLink}`}
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-[8px] border ${BORDER} text-elegant-text hover:bg-elegant-hover md:hidden ${focusLink}`}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
@@ -80,7 +82,7 @@ export function NavBar() {
           <button
             onClick={closeSidebar}
             aria-label="Close menu"
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-[8px] border ${BORDER} hover:bg-[#F9FAFB] ${focusLink}`}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-[8px] border ${BORDER} hover:bg-elegant-hover ${focusLink}`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
@@ -93,7 +95,7 @@ export function NavBar() {
               <a
                 href={item.href}
                 onClick={closeSidebar}
-                className={`block rounded-[8px] px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-[#F9FAFB] hover:text-elegant-primary ${focusLink}`}
+                className={`block rounded-[8px] px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-elegant-hover hover:text-elegant-primary ${focusLink}`}
               >
                 {item.label}
               </a>

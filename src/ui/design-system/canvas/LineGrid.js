@@ -1,6 +1,8 @@
 import { useRef, useEffect } from "react";
 import { useReducedMotion } from "framer-motion";
 
+import { useTheme } from "../../../ThemeContext";
+
 const SPACING = 40;
 const BASE_COLOR = "156, 163, 175";
 
@@ -20,9 +22,19 @@ const GLOW_RADIUS = 150;
 const GLOW_ALPHA = 0.5;
 const GLOW_COLOR = "37, 99, 235";
 
-export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
+export function LineGrid({ className = "", fadeColor = null }) {
   const canvasRef = useRef(null);
   const reduceMotion = useReducedMotion();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  // On dark, light-tinted lines at lower alpha read as the same whisper-quiet
+  // texture they do on white; the glow keeps carrying the (lighter) brand blue.
+  const baseColor = isDark ? "148, 163, 184" : BASE_COLOR;
+  const baseAlpha = isDark ? 0.14 : 0.2;
+  const glowColor = isDark ? "96, 165, 250" : GLOW_COLOR;
+  const fade = fadeColor ?? (isDark ? "#0d1117" : "#ffffff");
+  const fadeTransparent = isDark ? "rgba(13,17,23,0)" : "rgba(255,255,255,0)";
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -58,7 +70,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = `rgba(${BASE_COLOR}, 0.2)`;
+      ctx.strokeStyle = `rgba(${baseColor}, ${baseAlpha})`;
       ctx.lineWidth = 1;
 
       for (let r = 0; r < rows; r++) {
@@ -90,8 +102,8 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       drawGlow();
 
       const grad = ctx.createLinearGradient(0, h * 0.85, 0, h);
-      grad.addColorStop(0, "rgba(255,255,255,0)");
-      grad.addColorStop(1, fadeColor);
+      grad.addColorStop(0, fadeTransparent);
+      grad.addColorStop(1, fade);
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
     }
@@ -115,7 +127,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
           if (d > GLOW_RADIUS) continue;
 
           const t = 1 - d / GLOW_RADIUS;
-          ctx.strokeStyle = `rgba(${GLOW_COLOR}, ${GLOW_ALPHA * t * t})`;
+          ctx.strokeStyle = `rgba(${glowColor}, ${GLOW_ALPHA * t * t})`;
           ctx.lineWidth = 1 + t;
           ctx.beginPath();
 
@@ -216,7 +228,7 @@ export function LineGrid({ className = "", fadeColor = "#ffffff" }) {
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("resize", onResize);
     };
-  }, [reduceMotion, fadeColor]);
+  }, [reduceMotion, baseColor, baseAlpha, glowColor, fade, fadeTransparent]);
 
   return (
     <canvas

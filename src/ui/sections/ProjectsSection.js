@@ -1,22 +1,114 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 
-import { useRise, ParallaxImage } from "../design-system/animations/scroll-primitives";
-import { primaryButtonSm, outlineButtonSm } from "../design-system/button-styles";
-import { ArrowRight } from "../design-system/icons";
+import { useRise } from "../design-system/animations/scroll-primitives";
+import { focusRing } from "../design-system/button-styles";
+import { Close } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
+import { useDialog } from "../design-system/use-dialog";
 import { projects } from "../../domain/data/projects";
-import { FeaturedProject } from "./FeaturedProject";
-import { ProjectDetailModal } from "./ProjectDetailModal";
+import { ProjectCard } from "./ProjectCard";
+import { ProjectCardBrief } from "./ProjectCardBrief";
+
+// Desktop + motion-OK gates the sticky pile; otherwise a plain readable stack (this
+// is also the accessibility baseline and the mobile layout).
+function useEnablePile() {
+  const reduceMotion = useReducedMotion();
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  return isDesktop && !reduceMotion;
+}
+
+const PEEK_REM = 1.1; // top-edge sliver each covered card leaves visible
+const TOP_BASE_REM = 6; // first card's pin offset (clears the navbar)
+const GAP_REM = 2; // flow space between cards — a strip of page shows between them
+
+// One card in the pile. It pins (sticky) at an offset that grows with its index, so
+// each previous card peeks above the next. A flow gap above each card (GAP_REM) lets
+// a strip of page show between cards as one slides toward the next. As the following
+// card rises to cover it, the card shrinks/dims to read as receding into the stack;
+// the last card never recedes (final resting state). The depth transform is driven
+// off the whole deck's scroll (cards are uniform height, so even index slices track
+// coverage); the sticky element is never the scroll target, which would freeze its
+// progress while pinned.
+function PileCard({ progress, index, total, children }) {
+  const isLast = index === total - 1;
+  const start = (index + 0.5) / total;
+  const end = (index + 1) / total;
+  const scale = useTransform(progress, [start, end], [1, isLast ? 1 : 0.94]);
+  const opacity = useTransform(progress, [start, end], [1, isLast ? 1 : 0.6]);
+
+  return (
+    <div
+      className="sticky"
+      style={{
+        top: `${TOP_BASE_REM + index * PEEK_REM}rem`,
+        marginTop: index === 0 ? undefined : `${GAP_REM}rem`,
+        zIndex: index,
+      }}
+    >
+      <motion.div style={{ scale, opacity, transformOrigin: "top center" }}>
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
+// The deck owns the scroll target. Kept as its own component so useScroll only runs
+// on the desktop pile path — never in the static baseline (also avoids motion's
+// "ref not hydrated" warning under jsdom, where the pile is gated off).
+function Pile({ onOpen }) {
+  const deckRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: deckRef,
+    offset: ["start start", "end start"],
+  });
+
+  return (
+    <div ref={deckRef} className="relative px-6 pb-24 md:px-8">
+      {projects.map((project, index) => (
+        <PileCard
+          key={project.id}
+          progress={scrollYProgress}
+          index={index}
+          total={projects.length}
+        >
+          <ProjectCardBrief
+            project={project}
+            index={index}
+            onOpen={() => onOpen(project)}
+          />
+        </PileCard>
+      ))}
+    </div>
+  );
+}
 
 export function ProjectsSection() {
   const rise = useRise();
-  const [selectedProject, setSelectedProject] = useState(null);
+  const reduceMotion = useReducedMotion();
+  const enablePile = useEnablePile();
+  const dialogRef = useRef(null);
+  const [selected, setSelected] = useState(null);
 
-  const visible = projects.filter((p) => p.description);
-  const featured = visible.find((p) => p.featured);
-  const rest = visible.filter((p) => !p.featured);
+  const close = () => setSelected(null);
+  useDialog(dialogRef, Boolean(selected), close);
+  const selectedIndex = selected ? projects.findIndex((p) => p.id === selected.id) : -1;
 
   return (
     <section id="projects" className="scroll-mt-20">
@@ -32,90 +124,52 @@ export function ProjectsSection() {
         </motion.div>
       </div>
 
-      {featured && <FeaturedProject project={featured} onOpen={setSelectedProject} />}
-
-      <div className="mx-auto max-w-6xl px-6 pb-24 pt-16 md:px-8">
-        <div className="grid gap-8 md:grid-cols-2">
-          {rest.map((project, idx) => (
-            <motion.div key={project.id} {...rise(0.1 + idx * 0.05)}>
-              <div
-                className={`group flex h-full flex-col overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface transition-shadow duration-200 hover:shadow-md`}
-              >
-                <ParallaxImage
-                  src={project.image}
-                  alt={project.title}
-                  frameClassName={`h-56 w-full border-b ${BORDER}`}
-                />
-                <div className="flex flex-1 flex-col p-6">
-                  <h3 className="text-lg font-medium transition-colors group-hover:text-elegant-primary">
-                    {project.title}
-                  </h3>
-                  {project.role && (
-                    <p className="mt-1 font-mono text-sm text-elegant-text/50">{project.role}</p>
-                  )}
-                  <p className="mt-2 flex-1 text-base leading-relaxed text-elegant-text/70">
-                    {project.description}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className={`rounded-[4px] border ${BORDER} px-3 py-1 font-mono text-sm text-elegant-text/70`}
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className={primaryButtonSm}
-                    >
-                      View case study
-                      <ArrowRight />
-                    </button>
-                    {project.websiteLink && (
-                      <a
-                        href={project.websiteLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={outlineButtonSm}
-                      >
-                        Live demo
-                      </a>
-                    )}
-                    {project.githubLink && (
-                      <a
-                        href={project.githubLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={outlineButtonSm}
-                      >
-                        GitHub
-                      </a>
-                    )}
-                    {project.apkLink && (
-                      <a
-                        href={project.apkLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={outlineButtonSm}
-                      >
-                        APK
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+      {enablePile ? (
+        <Pile onOpen={setSelected} />
+      ) : (
+        <div className="mx-auto max-w-5xl space-y-8 px-6 pb-24 md:px-8">
+          {projects.map((project, index) => (
+            <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
-      </div>
+      )}
 
-      <ProjectDetailModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={close}
+            className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/50 p-4 md:p-8"
+          >
+            <motion.div
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={`project-title-${selected.id}`}
+              tabIndex={-1}
+              initial={reduceMotion ? { opacity: 0 } : { scale: 0.94, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={reduceMotion ? { opacity: 0 } : { scale: 0.94, opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0.2 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative my-auto w-full max-w-2xl focus:outline-none"
+            >
+              <button
+                type="button"
+                onClick={close}
+                aria-label="Close case study"
+                className={`absolute -top-3 -right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border ${BORDER} bg-elegant-surface text-elegant-text/60 shadow-md transition-colors hover:text-elegant-text ${focusRing}`}
+              >
+                <Close />
+              </button>
+              <ProjectCard project={selected} index={selectedIndex} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

@@ -2,6 +2,8 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { Canvas, useFrame } from "@react-three/fiber";
 import { motion, useReducedMotion } from "framer-motion";
 
+import { useTheme } from "../../../ThemeContext";
+
 const GRID_HALF = 20;
 const GRID_STEP = 1.6;
 const GRID_COLOR = 0x9ca3af;
@@ -103,10 +105,10 @@ function CameraRig({ phaseRef }) {
   return null;
 }
 
-function Scene({ phaseRef }) {
+function Scene({ phaseRef, isDark }) {
   return (
     <>
-      <color attach="background" args={["#FFFFFF"]} />
+      <color attach="background" args={[isDark ? "#0D1117" : "#FFFFFF"]} />
       <ambientLight intensity={1.8} />
       <GridPlane phaseRef={phaseRef} />
       <CameraRig phaseRef={phaseRef} />
@@ -116,6 +118,8 @@ function Scene({ phaseRef }) {
 
 export function EntryTransition({ onComplete, onExitBegin }) {
   const reduceMotion = useReducedMotion();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [supported] = useState(hasWebGL);
   const [phase, setPhase] = useState("intro");
   const phaseRef = useRef("intro");
@@ -195,7 +199,7 @@ export function EntryTransition({ onComplete, onExitBegin }) {
           gl={{ antialias: true, powerPreference: "high-performance" }}
         >
           <Suspense fallback={null}>
-            <Scene phaseRef={phaseRef} />
+            <Scene phaseRef={phaseRef} isDark={isDark} />
           </Suspense>
         </Canvas>
       </motion.div>
@@ -203,7 +207,7 @@ export function EntryTransition({ onComplete, onExitBegin }) {
       {isExiting && (
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-8 rounded-[8px] border border-[#E5E7EB] md:inset-x-24 md:inset-y-20"
+          className="pointer-events-none absolute inset-8 rounded-[8px] border border-elegant-border md:inset-x-24 md:inset-y-20"
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.8 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
@@ -214,8 +218,9 @@ export function EntryTransition({ onComplete, onExitBegin }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse 90% 80% at 50% 50%, transparent 30%, rgba(0,0,0,0.045) 100%)",
+          background: `radial-gradient(ellipse 90% 80% at 50% 50%, transparent 30%, ${
+            isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.045)"
+          } 100%)`,
         }}
       />
 

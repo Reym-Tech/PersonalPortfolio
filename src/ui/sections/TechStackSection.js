@@ -9,7 +9,7 @@ export function TechStackSection() {
   const rise = useRise();
 
   return (
-    <section id="skills" className={`scroll-mt-20 border-y ${BORDER} bg-[#FAFAFA] tile-bg-muted`}>
+    <section id="skills" className={`scroll-mt-20 border-y ${BORDER} bg-elegant-muted tile-bg-muted`}>
       <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
         <motion.div {...rise()}>
           <SectionHeading
@@ -26,7 +26,7 @@ export function TechStackSection() {
             <motion.div
               key={group.category}
               {...rise(index * 0.05)}
-              className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-6 transition-colors hover:bg-[#F9FAFB]`}
+              className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-6 transition-colors hover:bg-elegant-hover`}
             >
               <h3 className="font-mono text-sm uppercase tracking-widest text-elegant-text/50">
                 {group.category}

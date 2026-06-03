@@ -41,7 +41,7 @@ export function ContactFab() {
               <span className={`rounded-full border ${BORDER} bg-elegant-surface px-3 py-1.5 text-sm font-medium text-elegant-text shadow-sm`}>
                 {method.name}
               </span>
-              <span className={`inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border ${BORDER} bg-elegant-surface shadow-md transition-colors group-hover:bg-[#F9FAFB]`}>
+              <span className={`inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border ${BORDER} bg-elegant-surface shadow-md transition-colors group-hover:bg-elegant-hover`}>
                 <img src={method.icon} alt="" aria-hidden="true" className="h-5 w-5" />
               </span>
             </motion.a>
@@ -55,7 +55,7 @@ export function ContactFab() {
         aria-haspopup="true"
         aria-label={open ? "Close contact menu" : "Open contact menu"}
         whileTap={reduceMotion ? undefined : { scale: 0.92 }}
-        className={`inline-flex h-14 w-14 items-center justify-center rounded-full bg-elegant-text text-white shadow-lg transition-colors hover:bg-elegant-text/90 active:bg-elegant-text/80 ${focusRing}`}
+        className={`inline-flex h-14 w-14 items-center justify-center rounded-full bg-elegant-text text-elegant-surface shadow-lg transition-colors hover:bg-elegant-text/90 active:bg-elegant-text/80 ${focusRing}`}
       >
         <motion.span
           animate={reduceMotion ? undefined : { rotate: open ? 90 : 0 }}

@@ -33,7 +33,7 @@ export function Footer() {
                   target={method.external ? "_blank" : undefined}
                   rel={method.external ? "noopener noreferrer" : undefined}
                   aria-label={method.name}
-                  className={`inline-flex h-10 w-10 items-center justify-center rounded-full border ${BORDER} bg-elegant-surface transition-colors hover:bg-[#F9FAFB] ${focusLink}`}
+                  className={`inline-flex h-10 w-10 items-center justify-center rounded-full border ${BORDER} bg-elegant-surface transition-colors hover:bg-elegant-hover ${focusLink}`}
                 >
                   <img src={method.icon} alt="" aria-hidden="true" className="h-5 w-5" />
                 </a>

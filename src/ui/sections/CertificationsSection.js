@@ -37,7 +37,7 @@ export function CertificationsSection() {
               key={cert.id}
               {...rise(index * 0.05)}
               onClick={() => setSelectedCert(cert)}
-              className={`group flex flex-col overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface text-left transition-colors hover:bg-[#F9FAFB] ${focusLink}`}
+              className={`group flex flex-col overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface text-left transition-colors hover:bg-elegant-hover ${focusLink}`}
             >
               <ParallaxImage
                 src={cert.image}

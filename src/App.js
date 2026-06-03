@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { ThemeProvider } from "./ThemeContext";
 import { ScrollProgress } from "./ui/design-system/animations/scroll-primitives";
 import { EntryTransition } from "./ui/design-system/animations/entry-transition";
 import { NavBar } from "./ui/layout/NavBar";
@@ -21,7 +22,8 @@ export default function Portfolio() {
   const [introDone, setIntroDone] = useState(seenIntro);
 
   return (
-    <div className="min-h-screen scroll-smooth bg-elegant-surface font-display text-elegant-text antialiased">
+    <ThemeProvider>
+      <div className="min-h-screen scroll-smooth bg-elegant-surface font-display text-elegant-text antialiased">
       {!introDone && (
         <EntryTransition
           onExitBegin={() => setIntroExiting(true)}
@@ -44,6 +46,7 @@ export default function Portfolio() {
       <ContactSection />
       <Footer />
       <ContactFab />
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }

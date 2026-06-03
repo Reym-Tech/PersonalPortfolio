@@ -35,15 +35,22 @@ module.exports = {
           500: '#3b82f6',  // Light mode accent & dark mode accent hover
           600: '#2563eb',  // Light mode accent hover
         },
-        // Elegant design system tokens (DESIGN.md). Semantic, raw token values.
+        // Elegant design system tokens (DESIGN.md). Light/dark values live as CSS
+        // variables in index.css (:root / .dark). Channel-form vars + the
+        // <alpha-value> shim keep Tailwind opacity modifiers (e.g. text-elegant-text/70)
+        // working across both themes.
         elegant: {
-          primary: '#2563EB',
+          primary: 'rgb(var(--elegant-primary) / <alpha-value>)',
           secondary: '#8B5CF6',
-          success: '#16A34A',
+          success: 'rgb(var(--elegant-success) / <alpha-value>)',
           warning: '#D97706',
           danger: '#DC2626',
-          surface: '#FFFFFF',
-          text: '#111827',
+          surface: 'rgb(var(--elegant-surface) / <alpha-value>)',
+          text: 'rgb(var(--elegant-text) / <alpha-value>)',
+          border: 'rgb(var(--elegant-border) / <alpha-value>)',
+          muted: 'rgb(var(--elegant-muted) / <alpha-value>)',
+          hover: 'rgb(var(--elegant-hover) / <alpha-value>)',
+          active: 'rgb(var(--elegant-active) / <alpha-value>)',
         }
       },
       animation: {

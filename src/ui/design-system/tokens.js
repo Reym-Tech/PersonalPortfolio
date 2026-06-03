@@ -1,1 +1,1 @@
-export const BORDER = "border-[#E5E7EB]";
+export const BORDER = "border-elegant-border";
