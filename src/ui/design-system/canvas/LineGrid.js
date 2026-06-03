@@ -22,8 +22,20 @@ const GLOW_RADIUS = 150;
 const GLOW_ALPHA = 0.5;
 const GLOW_COLOR = "37, 99, 235";
 
-export function LineGrid({ className = "", fadeColor = null }) {
+// One-shot radial pulse echoing the 3D entry ripple. When the grid first reveals
+// after the intro, a shockwave expands from center along each node's radial
+// direction, then decays into the ambient wave — so the handoff reads as the
+// entry's energy arriving on this surface, not a cut. The bell envelope peaks
+// ~0.75s in (mid-crossfade, where both grids sit near half opacity) and settles,
+// leaving only the ambient breathing. Skipped on revisit / reduced motion.
+const PULSE_PEAK = 15;
+const PULSE_DURATION = 1500;
+const PULSE_FREQ = 0.018;
+const PULSE_SPEED = 0.0035;
+
+export function LineGrid({ className = "", fadeColor = null, pulse = false }) {
   const canvasRef = useRef(null);
+  const pulseStartRef = useRef(null);
   const reduceMotion = useReducedMotion();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -35,6 +47,12 @@ export function LineGrid({ className = "", fadeColor = null }) {
   const glowColor = isDark ? "96, 165, 250" : GLOW_COLOR;
   const fade = fadeColor ?? (isDark ? "#0d1117" : "#ffffff");
   const fadeTransparent = isDark ? "rgba(13,17,23,0)" : "rgba(255,255,255,0)";
+
+  // Mark the pulse's start so the animation loop can run its envelope; the loop
+  // reads performance.now(), the same clock as the rAF timestamp.
+  useEffect(() => {
+    if (pulse && !reduceMotion) pulseStartRef.current = performance.now();
+  }, [pulse, reduceMotion]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -152,10 +170,30 @@ export function LineGrid({ className = "", fadeColor = null }) {
         return;
       }
 
+      let pulseAmp = 0;
+      let pulseT = 0;
+      if (pulseStartRef.current != null) {
+        pulseT = now - pulseStartRef.current;
+        if (pulseT >= PULSE_DURATION) pulseStartRef.current = null;
+        else pulseAmp = PULSE_PEAK * Math.sin((pulseT / PULSE_DURATION) * Math.PI);
+      }
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
       for (const nd of nodes) {
         const phase = (nd.rx + nd.ry) * WAVE_FREQ + now * WAVE_SPEED;
-        nd.wx = Math.sin(phase) * WAVE_AMP;
-        nd.wy = Math.cos(phase) * WAVE_AMP;
+        let dx = Math.sin(phase) * WAVE_AMP;
+        let dy = Math.cos(phase) * WAVE_AMP;
+        if (pulseAmp > 0) {
+          const ox = nd.rx - cx;
+          const oy = nd.ry - cy;
+          const dist = Math.hypot(ox, oy) || 1;
+          const disp = pulseAmp * Math.sin(dist * PULSE_FREQ - pulseT * PULSE_SPEED);
+          dx += (ox / dist) * disp;
+          dy += (oy / dist) * disp;
+        }
+        nd.wx = dx;
+        nd.wy = dy;
       }
 
       drawGrid();

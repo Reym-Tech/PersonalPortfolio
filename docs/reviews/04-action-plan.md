@@ -130,6 +130,17 @@ modal contract; the pile is a sighted-pointer enhancement on top.
 
 ### 11. Intro Refinements
 
-Source: Fresh Review #
+Source: Fresh Review #10 (Top 10 — "Tighten first-load UX")
 
-Status: Not Started
+Status: Done (the source concern had three sub-parts; two were already resolved by
+earlier work and only one was genuinely open. "Not just a centered name" → solved by
+Tier 1 #1: the hero now leads with the value-prop headline "I build accessible,
+motion-driven interfaces," name demoted to a subline. "Skippable-by-default for
+return-intent" → already handled by the intro-seen sessionStorage gate; deliberately
+NOT pushed to localStorage, since cross-session skipping would further hide the site's
+only WebGL moment (fights Tier 1 #2's intent), and shaving the 1.8s hold is marginal.
+The one open item — "above-the-fold mobile hero has a real hook" — addressed as
+above-the-fold cohesion, not a redesign: the headline already supplies the hook, so the
+change is pure mobile vertical rhythm in HeroSection so headline + CTA sit higher on a
+phone — section py-24 → py-16 md:py-24, hero grid gap-12 → gap-8 md:gap-12. Desktop
+spacing unchanged via md: overrides; no a11y impact.)

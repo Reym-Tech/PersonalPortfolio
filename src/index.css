@@ -39,6 +39,16 @@
        never flashes white in the gap between the pre-paint script and hydration. */
     background-color: rgb(var(--elegant-surface));
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* Hide the native scrollbar; scrolling still works and the ScrollProgress bar
+       at the top keeps the position affordance. Firefox / legacy Edge below,
+       WebKit via the ::-webkit-scrollbar rule. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
   }
 }
 

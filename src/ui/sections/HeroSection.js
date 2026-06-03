@@ -41,9 +41,9 @@ export function HeroSection({ introExiting, instantReveal }) {
   return (
     <section id="home" className="relative scroll-mt-20">
       <motion.div {...gridSettle} className="absolute inset-0">
-        <LineGrid />
+        <LineGrid pulse={introExiting && !instantReveal} />
       </motion.div>
-      <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
+      <div className="mx-auto max-w-6xl px-6 py-16 md:px-8 md:py-24">
         <motion.div
           className="relative p-8 pt-14 md:p-12"
           initial={{ opacity: 0 }}
@@ -61,7 +61,7 @@ export function HeroSection({ introExiting, instantReveal }) {
             Portfolio
           </span>
 
-          <div className="grid items-center gap-12 md:grid-cols-2">
+          <div className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
             <div>
               <motion.p
                 {...heroReveal()}

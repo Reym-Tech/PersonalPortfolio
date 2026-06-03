@@ -8,6 +8,23 @@ const GRID_HALF = 20;
 const GRID_STEP = 1.6;
 const GRID_COLOR = 0x9ca3af;
 
+// One-shot ripple: a single wave swells from the grid's center as the lines draw
+// in, peaks mid-entry, then settles to a faint residual hum. The displacement is
+// on Y (the grid sits on the Y=0 floor), so the surface undulates without
+// breaking its perspective read. Amplitude is driven by draw progress, not wall
+// time, so ripple and draw-in stay locked together.
+const RIPPLE_MAX = 1.1;
+// The residual the ripple decays to during the exit crossfade, matched to the
+// energy the Hero's 2D LineGrid breathes at so the handoff reads as one surface
+// losing momentum rather than two animations. LineGrid waves WAVE_AMP=1.5px over
+// SPACING=40px cells (a 0.0375 cell-fraction); scaled to this grid's GRID_STEP
+// of 1.6 world units that's 0.0375 * 1.6 = 0.06. Phase can't carry across (the
+// entry wave is radial, LineGrid's is a planar diagonal), only the energy level.
+const RIPPLE_REST = 0.06;
+const RIPPLE_FREQ = 0.45;
+const RIPPLE_SPEED = 2.4;
+const RIPPLE_SEG = GRID_STEP;
+
 function hasWebGL() {
   try {
     const canvas = document.createElement("canvas");
@@ -23,37 +40,74 @@ function hasWebGL() {
 function ArchGrid() {
   const geomRef = useRef(null);
   const progress = useRef(-0.18);
+  const clock = useRef(0);
 
-  const { positions, lineCount } = useMemo(() => {
-    const lines = [];
+  // Each grid line is subdivided into short segments so the ripple can bend it
+  // along its length (a 2-point line could only tilt). Segments are sorted by
+  // their distance from center so the draw-in materializes as an expanding disc,
+  // riding the same outward wave as the ripple. `radii` holds each vertex's
+  // distance from center, reused every frame to compute its Y displacement.
+  const { positions, radii, vertexCount } = useMemo(() => {
     const n = Math.ceil(GRID_HALF / GRID_STEP);
+    const segments = [];
 
-    for (let i = -n; i <= n; i++) {
-      const x = i * GRID_STEP;
-      lines.push({ dist: Math.abs(x), pts: [x, 0, -GRID_HALF, x, 0, GRID_HALF] });
+    const addLine = (ax, az, bx, bz) => {
+      const length = Math.hypot(bx - ax, bz - az);
+      const steps = Math.max(1, Math.round(length / RIPPLE_SEG));
+      for (let s = 0; s < steps; s++) {
+        const t0 = s / steps;
+        const t1 = (s + 1) / steps;
+        const x1 = ax + (bx - ax) * t0;
+        const z1 = az + (bz - az) * t0;
+        const x2 = ax + (bx - ax) * t1;
+        const z2 = az + (bz - az) * t1;
+        const midDist = Math.hypot((x1 + x2) / 2, (z1 + z2) / 2);
+        segments.push({ midDist, x1, z1, x2, z2 });
+      }
+    };
+
+    for (let i = -n; i <= n; i++) addLine(i * GRID_STEP, -GRID_HALF, i * GRID_STEP, GRID_HALF);
+    for (let i = -n; i <= n; i++) addLine(-GRID_HALF, i * GRID_STEP, GRID_HALF, i * GRID_STEP);
+
+    segments.sort((a, b) => a.midDist - b.midDist);
+
+    const pos = new Float32Array(segments.length * 6);
+    const rad = new Float32Array(segments.length * 2);
+    for (let k = 0; k < segments.length; k++) {
+      const s = segments[k];
+      pos[k * 6] = s.x1;
+      pos[k * 6 + 2] = s.z1;
+      pos[k * 6 + 3] = s.x2;
+      pos[k * 6 + 5] = s.z2;
+      rad[k * 2] = Math.hypot(s.x1, s.z1);
+      rad[k * 2 + 1] = Math.hypot(s.x2, s.z2);
     }
-    for (let i = -n; i <= n; i++) {
-      const z = i * GRID_STEP;
-      lines.push({ dist: Math.abs(z), pts: [-GRID_HALF, 0, z, GRID_HALF, 0, z] });
-    }
 
-    lines.sort((a, b) => a.dist - b.dist);
-
-    const pts = [];
-    for (const line of lines) pts.push(...line.pts);
-
-    return { positions: new Float32Array(pts), lineCount: pts.length / 3 };
+    return { positions: pos, radii: rad, vertexCount: segments.length * 2 };
   }, []);
 
   useFrame((_, delta) => {
-    if (!geomRef.current) return;
+    const geom = geomRef.current;
+    if (!geom) return;
     progress.current = Math.min(1, progress.current + delta * 0.44);
     if (progress.current <= 0) {
-      geomRef.current.setDrawRange(0, 0);
+      geom.setDrawRange(0, 0);
       return;
     }
-    const count = Math.floor(progress.current * lineCount);
-    geomRef.current.setDrawRange(0, count & ~1);
+
+    clock.current += delta;
+    const p = progress.current;
+    const pulse = Math.sin(p * Math.PI); // bell: 0 → peak at mid-draw → 0
+    const amp = RIPPLE_REST + (RIPPLE_MAX - RIPPLE_REST) * pulse;
+
+    const array = geom.attributes.position.array;
+    for (let v = 0; v < vertexCount; v++) {
+      array[v * 3 + 1] = amp * Math.sin(radii[v] * RIPPLE_FREQ - clock.current * RIPPLE_SPEED);
+    }
+    geom.attributes.position.needsUpdate = true;
+
+    const count = Math.floor(p * vertexCount);
+    geom.setDrawRange(0, count & ~1);
   });
 
   return (
