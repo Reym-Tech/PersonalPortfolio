@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/images/PageIcon.png" />
+  <link rel="icon" href="%PUBLIC_URL%/images/icons/AppIcon_DarkMode.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#FFFFFF" />
   <!-- Apply the saved/system theme before first paint so dark mode never flashes white. -->
@@ -14,12 +14,12 @@
         var dark = stored ? stored === 'dark'
           : window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (dark) document.documentElement.classList.add('dark');
-      } catch (e) {}
+      } catch (e) { }
     })();
   </script>
   <meta name="description"
     content="Portfolio of John Remy Gonzales — full-stack web developer and BSIT student. Projects, tech stack, certifications, and resume." />
-  <link rel="apple-touch-icon" href="%PUBLIC_URL%/images/AppIcon.png" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/images/icons/AppIcon_LightMode.png" />
 
   <!-- Open Graph / Facebook / LinkedIn -->
   <meta property="og:type" content="website" />

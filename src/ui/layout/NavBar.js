@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { primaryButton, focusLink } from "../design-system/button-styles";
@@ -13,6 +13,21 @@ export function NavBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
 
+  const [isDark, setIsDark] = useState(
+    () => document.documentElement.classList.contains("dark")
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
   const closeSidebar = () => setSidebarOpen(false);
   useDialog(sidebarRef, sidebarOpen, closeSidebar);
 
@@ -25,7 +40,11 @@ export function NavBar() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-8">
           <a href="#home" aria-label="John Remy Gonzales — home" className={`flex items-center gap-3 ${focusLink}`}>
             <img
-              src="/images/AppIcon.png"
+              src={
+                isDark
+                  ? "/images/icons/AppIcon_DarkMode.png"
+                  : "/images/icons/AppIcon_LightMode.png"
+              }
               alt=""
               className="h-10 w-10 object-contain"
             />

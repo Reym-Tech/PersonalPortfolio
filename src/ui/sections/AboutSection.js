@@ -82,7 +82,7 @@ export function AboutSection() {
             <div className="flex justify-center">
               <div className="relative">
                 <ParallaxImage
-                  src="/images/profile3.jpg"
+                  src="/images/profiles/AboutSection.jpg"
                   alt="John Remy Gonzales portrait"
                   frameClassName={`w-56 rounded-[8px] border ${BORDER}`}
                   imgClassName="h-56 w-full object-cover"

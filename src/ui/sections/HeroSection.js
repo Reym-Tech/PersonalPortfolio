@@ -26,10 +26,10 @@ export function HeroSection({ introExiting, instantReveal }) {
     reduceMotion || instantReveal
       ? { initial: false, animate: { opacity: 1, scale: 1 }, transition: { duration: 0 } }
       : {
-          initial: { opacity: 0, scale: 1.06 },
-          animate: introExiting ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.06 },
-          transition: { duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] },
-        };
+        initial: { opacity: 0, scale: 1.06 },
+        animate: introExiting ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.06 },
+        transition: { duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] },
+      };
 
   const handleViewProjects = () => {
     const projectsSection = document.getElementById("projects");
@@ -108,7 +108,7 @@ export function HeroSection({ introExiting, instantReveal }) {
             <motion.div {...heroReveal(0.12)} className="flex justify-center md:justify-end">
               <Parallax offset={24}>
                 <img
-                  src="/images/profile--.png"
+                  src="/images/profiles/HeroSection.png"
                   alt="John Remy Gonzales"
                   loading="lazy"
                   className="w-64 rounded-[8px] border border-elegant-border object-cover"
