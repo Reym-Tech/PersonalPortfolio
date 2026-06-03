@@ -9,25 +9,6 @@ import { certificates } from "../../domain/data/certificates";
 
 export function AboutSection() {
   const rise = useRise();
-  const [photoLikes, setPhotoLikes] = useState(() => Number(localStorage.getItem("photoLikes")) || 0);
-  const [photoLiked, setPhotoLiked] = useState(() => localStorage.getItem("photoLiked") === "true");
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("photoLikes", String(photoLikes));
-      localStorage.setItem("photoLiked", String(photoLiked));
-    } catch (e) { }
-  }, [photoLikes, photoLiked]);
-
-  const handleToggleLike = () => {
-    if (photoLiked) {
-      setPhotoLiked(false);
-      setPhotoLikes((p) => Math.max(0, p - 1));
-    } else {
-      setPhotoLiked(true);
-      setPhotoLikes((p) => p + 1);
-    }
-  };
 
   return (
     <section id="about" className="scroll-mt-20">
@@ -87,22 +68,6 @@ export function AboutSection() {
                   frameClassName={`w-56 rounded-[8px] border ${BORDER}`}
                   imgClassName="h-56 w-full object-cover"
                 />
-                <button
-                  onClick={handleToggleLike}
-                  aria-pressed={photoLiked}
-                  aria-label={photoLiked ? "Unlike photo" : "Like photo"}
-                  className={`absolute -bottom-3 right-0 inline-flex items-center gap-2 rounded-full border ${BORDER} bg-elegant-surface px-3 py-1 ${focusLink}`}
-                >
-                  <motion.span
-                    animate={photoLiked ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                    className="text-lg"
-                    aria-hidden="true"
-                  >
-                    {photoLiked ? "💖" : "🤍"}
-                  </motion.span>
-                  <span className="font-mono text-sm text-elegant-text/70">{photoLikes}</span>
-                </button>
               </div>
             </div>
 

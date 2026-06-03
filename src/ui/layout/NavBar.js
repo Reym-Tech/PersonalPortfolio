@@ -79,7 +79,7 @@ export function NavBar() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-elegant-text/40 md:hidden"
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={closeSidebar}
         />
       )}
@@ -93,7 +93,7 @@ export function NavBar() {
         inert={!sidebarOpen}
         initial={false}
         animate={{ x: sidebarOpen ? 0 : "-100%" }}
-        transition={reduceMotion ? { duration: 0 } : { type: "spring", damping: 24, stiffness: 280 }}
+        transition={reduceMotion ? { duration: 0 } : { type: "spring", damping: 28, stiffness: 280 }}
         className={`fixed left-0 top-0 z-50 h-full w-64 border-r ${BORDER} bg-elegant-surface p-6 focus:outline-none md:hidden`}
       >
         <div className="mb-8 flex items-center justify-between">
