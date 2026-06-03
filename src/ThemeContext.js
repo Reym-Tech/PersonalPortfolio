@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useLayoutEffect, useState } from "react";
 
 const ThemeContext = createContext(null);
 
@@ -17,7 +17,10 @@ function getInitialTheme() {
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(getInitialTheme);
 
-  useEffect(() => {
+  // Layout (not passive) effect so the .dark class lands synchronously when the
+  // toggle runs it inside flushSync(); the theme-wave view transition snapshots
+  // <html> right after, and a late class would make the wave reveal no change.
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     try {
       localStorage.setItem("theme", theme);
