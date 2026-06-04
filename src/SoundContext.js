@@ -32,25 +32,6 @@ export function SoundProvider({ children }) {
     [isMuted, getEngine],
   );
 
-  // The entry "Enter" gate is the gesture that unlocks audio: it turns sound on
-  // and fires the intro cue in one go. Plays directly on the engine (like the
-  // unmute path below) because setIsMuted hasn't re-rendered yet, so the playSound
-  // guard would still read muted this tick.
-  const enableSound = useCallback(
-    (cue) => {
-      setIsMuted(false);
-      try {
-        localStorage.setItem("sound-muted", "0");
-      } catch {
-        // Storage disabled — preference still applies for this session.
-      }
-      const engine = getEngine();
-      engine.unlock();
-      if (cue) engine.play(cue);
-    },
-    [getEngine],
-  );
-
   const toggleMute = useCallback(() => {
     const next = !isMuted;
     setIsMuted(next);
@@ -69,8 +50,8 @@ export function SoundProvider({ children }) {
   }, [isMuted, getEngine]);
 
   const value = useMemo(
-    () => ({ isMuted, toggleMute, playSound, enableSound }),
-    [isMuted, toggleMute, playSound, enableSound],
+    () => ({ isMuted, toggleMute, playSound }),
+    [isMuted, toggleMute, playSound],
   );
 
   return <SoundContext.Provider value={value}>{children}</SoundContext.Provider>;
@@ -84,7 +65,6 @@ export function useSound() {
       isMuted: true,
       toggleMute: () => {},
       playSound: () => {},
-      enableSound: () => {},
     }
   );
 }

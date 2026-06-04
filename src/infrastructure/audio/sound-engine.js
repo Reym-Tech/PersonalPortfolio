@@ -108,8 +108,6 @@ export function createSoundEngine() {
     loadSwitch(ctx);
     if (name === "toggleDark") playToggle(ctx, out, 0.94, 392);
     else if (name === "toggleLight") playToggle(ctx, out, 1.06, 523.25);
-    else if (name === "intro") introSwell(ctx, out);
-    else if (name === "droplet") droplet(ctx, out);
   };
 
   return { unlock, play };
@@ -161,84 +159,4 @@ function tick(ctx, out, freq) {
   osc.connect(filter).connect(gain).connect(out.input);
   osc.start(now);
   osc.stop(now + 0.2);
-}
-
-// Spacious swell for the entry intro, fired on the "Enter" gesture as the grid
-// draws in: a slow, weightless bloom rather than a hard rise. A small cluster of
-// detuned sines forms a drone that beats gently — the chorus that reads as "wide"
-// — drifting up only a fifth, so the room (the bus's long reverb tail) carries the
-// motion instead of the pitch. A shimmer an octave up adds air; a dry sub adds
-// weight without muddying the tail. Runs ~1.7s, spanning the draw-in before the
-// droplet hands off to the Hero.
-function introSwell(ctx, out) {
-  const now = ctx.currentTime;
-  const duration = 1.7;
-
-  const filter = ctx.createBiquadFilter();
-  filter.type = "lowpass";
-  filter.frequency.setValueAtTime(400, now);
-  filter.frequency.exponentialRampToValueAtTime(2600, now + duration);
-
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.07, now + duration * 0.5);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-  filter.connect(gain).connect(out.input);
-
-  [-8, 0, 8].forEach((detune) => {
-    const osc = ctx.createOscillator();
-    osc.type = "sine";
-    osc.detune.setValueAtTime(detune, now);
-    osc.frequency.setValueAtTime(110, now);
-    osc.frequency.exponentialRampToValueAtTime(165, now + duration);
-    osc.connect(filter);
-    osc.start(now);
-    osc.stop(now + duration);
-  });
-
-  const shimmer = ctx.createOscillator();
-  const shimmerGain = ctx.createGain();
-  shimmer.type = "triangle";
-  shimmer.frequency.setValueAtTime(330, now);
-  shimmer.frequency.exponentialRampToValueAtTime(495, now + duration);
-  shimmerGain.gain.setValueAtTime(0.0001, now);
-  shimmerGain.gain.exponentialRampToValueAtTime(0.025, now + duration * 0.6);
-  shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-  shimmer.connect(shimmerGain).connect(out.input);
-  shimmer.start(now);
-  shimmer.stop(now + duration);
-
-  const sub = ctx.createOscillator();
-  const subGain = ctx.createGain();
-  sub.type = "sine";
-  sub.frequency.setValueAtTime(55, now);
-  sub.frequency.exponentialRampToValueAtTime(82, now + duration);
-  subGain.gain.setValueAtTime(0.0001, now);
-  subGain.gain.exponentialRampToValueAtTime(0.12, now + duration * 0.5);
-  subGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-  sub.connect(subGain).connect(out.dryInput);
-  sub.start(now);
-  sub.stop(now + duration);
-}
-
-// Droplet for the entry→Hero handoff: a bright, quick "ploink" — a hard attack
-// with a fast downward pitch drop, like something landing on the surface. The
-// transient itself is tiny; what bridges the 1.4s crossfade is the bus reverb,
-// so it's routed through the reverberant path to leave a ripple ringing as the
-// Hero arrives rather than a sound that cuts. Its tail is the one part to judge
-// by ear — too short reads as a click, too wet swamps the handoff.
-function droplet(ctx, out) {
-  const now = ctx.currentTime;
-
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(1200, now);
-  osc.frequency.exponentialRampToValueAtTime(360, now + 0.11);
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.16, now + 0.005);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
-  osc.connect(gain).connect(out.input);
-  osc.start(now);
-  osc.stop(now + 0.32);
 }

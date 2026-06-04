@@ -64,7 +64,7 @@ export function NavBar() {
                 </li>
               ))}
             </ul>
-            <SoundToggle />
+            <SoundToggle className="hidden md:inline-flex" />
             <ThemeToggle />
             <button
               onClick={() => setSidebarOpen(true)}
@@ -123,6 +123,7 @@ export function NavBar() {
             </li>
           ))}
         </ul>
+        <SoundToggle variant="row" className="mt-1" />
         <button
           onClick={() => {
             setSidebarOpen(false);
