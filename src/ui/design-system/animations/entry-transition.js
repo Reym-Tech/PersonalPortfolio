@@ -3,7 +3,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { useTheme } from "../../../ThemeContext";
-import { useSound } from "../../../SoundContext";
 
 const GRID_HALF = 20;
 const GRID_STEP = 1.6;
@@ -38,7 +37,7 @@ function hasWebGL() {
   }
 }
 
-function ArchGrid({ phaseRef }) {
+function ArchGrid() {
   const geomRef = useRef(null);
   const progress = useRef(-0.18);
   const clock = useRef(0);
@@ -90,12 +89,6 @@ function ArchGrid({ phaseRef }) {
   useFrame((_, delta) => {
     const geom = geomRef.current;
     if (!geom) return;
-    // Hold the grid undrawn behind the Enter gate; the draw-in begins with the
-    // intro swell once the visitor commits.
-    if (phaseRef.current === "gate") {
-      geom.setDrawRange(0, 0);
-      return;
-    }
     progress.current = Math.min(1, progress.current + delta * 0.44);
     if (progress.current <= 0) {
       geom.setDrawRange(0, 0);
@@ -145,7 +138,7 @@ function GridPlane({ phaseRef }) {
 
   return (
     <group ref={groupRef}>
-      <ArchGrid phaseRef={phaseRef} />
+      <ArchGrid />
     </group>
   );
 }
@@ -153,14 +146,6 @@ function GridPlane({ phaseRef }) {
 function CameraRig({ phaseRef }) {
   useFrame((state, delta) => {
     const phase = phaseRef.current;
-
-    // Hold the camera at its starting position behind the gate so the grid still
-    // flies in with the camera once Enter starts the intro, instead of drawing
-    // onto an already-settled view.
-    if (phase === "gate") {
-      state.camera.lookAt(0, 0, 0);
-      return;
-    }
 
     if (phase === "exit") {
       state.camera.position.y += (12 - state.camera.position.y) * Math.min(1, delta * 0.75);
@@ -188,63 +173,35 @@ function Scene({ phaseRef, isDark }) {
 export function EntryTransition({ onComplete, onExitBegin }) {
   const reduceMotion = useReducedMotion();
   const { theme } = useTheme();
-  const { playSound, enableSound } = useSound();
   const isDark = theme === "dark";
   const [supported] = useState(hasWebGL);
-  const [phase, setPhase] = useState("gate");
-  const phaseRef = useRef("gate");
+  const [phase, setPhase] = useState("intro");
+  const phaseRef = useRef("intro");
   const onExitBeginRef = useRef(onExitBegin);
   const onCompleteRef = useRef(onComplete);
-  const playSoundRef = useRef(playSound);
-  const enableSoundRef = useRef(enableSound);
-  const enterButtonRef = useRef(null);
   useEffect(() => { onExitBeginRef.current = onExitBegin; });
   useEffect(() => { onCompleteRef.current = onComplete; });
-  useEffect(() => { playSoundRef.current = playSound; });
-  useEffect(() => { enableSoundRef.current = enableSound; });
 
   const t1Ref = useRef(null);
 
   const skip = reduceMotion || !supported;
 
-  // Straight to the site, no animation or sound — the gate's escape hatch, and the
-  // reduced-motion / no-WebGL path.
-  const finish = useCallback(() => {
-    clearTimeout(t1Ref.current);
-    onExitBeginRef.current?.();
-    onCompleteRef.current?.();
-  }, []);
-
   const beginExit = useCallback(() => {
-    // Guard re-entry: the 1800ms timer can fire just after a manual Skip, and a
-    // double would replay the droplet and onExitBegin.
-    if (phaseRef.current === "exit") return;
     clearTimeout(t1Ref.current);
     phaseRef.current = "exit";
     setPhase("exit");
-    // The droplet hands off to the Hero; its reverb tail rings across the 1.4s
-    // crossfade. Audio is already unlocked here — the Enter gesture did it.
-    playSoundRef.current?.("droplet");
     onExitBeginRef.current?.();
   }, []);
 
-  // The Enter gesture: unlock audio and play the intro swell, start the grid
-  // draw-in, then auto-hand off to the Hero once the swell has spanned it.
-  const beginIntro = useCallback(() => {
-    // Guard re-entry: pressing Enter on the focused button fires both its native
-    // click and the window keydown handler, so beginIntro is called twice.
-    if (phaseRef.current !== "gate") return;
-    enableSoundRef.current?.("intro");
-    phaseRef.current = "intro";
-    setPhase("intro");
-    t1Ref.current = setTimeout(beginExit, 1800);
-  }, [beginExit]);
-
   useEffect(() => {
-    if (skip) finish();
-  }, [skip, finish]);
-
-  useEffect(() => () => clearTimeout(t1Ref.current), []);
+    if (skip) {
+      onExitBeginRef.current?.();
+      onCompleteRef.current?.();
+      return undefined;
+    }
+    t1Ref.current = setTimeout(beginExit, 1800);
+    return () => { clearTimeout(t1Ref.current); };
+  }, [skip, beginExit]);
 
   useEffect(() => {
     if (skip) return undefined;
@@ -256,27 +213,17 @@ export function EntryTransition({ onComplete, onExitBegin }) {
   useEffect(() => {
     if (skip) return undefined;
     const handleKey = (event) => {
-      if (event.key === "Escape") {
-        finish();
-      } else if (event.key === "Enter" || event.key === " ") {
-        if (phaseRef.current === "gate") beginIntro();
-        else if (phaseRef.current === "intro") beginExit();
+      if (event.key === "Escape" || event.key === "Enter" || event.key === " ") {
+        beginExit();
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [skip, beginIntro, beginExit, finish]);
-
-  // Auto-focus Enter so keyboard and screen-reader users can act at once — it's the
-  // only control on screen at the gate.
-  useEffect(() => {
-    if (!skip && phase === "gate") enterButtonRef.current?.focus();
-  }, [skip, phase]);
+  }, [skip, beginExit]);
 
   if (skip) return null;
 
   const isExiting = phase === "exit";
-  const showGate = phase === "gate";
 
   return (
     <motion.div
@@ -331,40 +278,13 @@ export function EntryTransition({ onComplete, onExitBegin }) {
         }}
       />
 
-      {showGate ? (
-        <motion.div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <button
-            ref={enterButtonRef}
-            type="button"
-            onClick={beginIntro}
-            className="rounded-[8px] border border-elegant-border px-10 py-3 font-mono text-sm uppercase tracking-[0.3em] text-elegant-text/80 transition-colors hover:bg-elegant-hover hover:text-elegant-text focus:outline-none focus-visible:ring-1 focus-visible:ring-elegant-text/30 focus-visible:ring-offset-2"
-          >
-            Enter
-          </button>
-          <button
-            type="button"
-            onClick={finish}
-            className="font-mono text-xs uppercase tracking-widest text-elegant-text/30 transition-colors hover:text-elegant-text/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-elegant-text/20 focus-visible:ring-offset-2"
-          >
-            Skip
-          </button>
-        </motion.div>
-      ) : (
-        phase === "intro" && (
-          <button
-            type="button"
-            onClick={beginExit}
-            className="absolute bottom-8 right-8 font-mono text-xs uppercase tracking-widest text-elegant-text/30 transition-colors hover:text-elegant-text/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-elegant-text/20 focus-visible:ring-offset-2"
-          >
-            Skip
-          </button>
-        )
-      )}
+      <button
+        type="button"
+        onClick={beginExit}
+        className="absolute bottom-8 right-8 font-mono text-xs uppercase tracking-widest text-elegant-text/30 transition-colors hover:text-elegant-text/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-elegant-text/20 focus-visible:ring-offset-2"
+      >
+        Skip
+      </button>
     </motion.div>
   );
 }
