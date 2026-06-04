@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { ThemeProvider } from "./ThemeContext";
+import { SoundProvider } from "./SoundContext";
 import { ScrollProgress } from "./ui/design-system/animations/scroll-primitives";
 import { EntryTransition } from "./ui/design-system/animations/entry-transition";
 import { NavBar } from "./ui/layout/NavBar";
@@ -23,6 +24,7 @@ export default function Portfolio() {
 
   return (
     <ThemeProvider>
+      <SoundProvider>
       <div className="min-h-screen scroll-smooth bg-elegant-surface font-display text-elegant-text antialiased">
       {!introDone && (
         <EntryTransition
@@ -47,6 +49,7 @@ export default function Portfolio() {
       <Footer />
       <ContactFab />
       </div>
+      </SoundProvider>
     </ThemeProvider>
   );
 }

@@ -5,6 +5,7 @@ import { primaryButton, focusLink } from "../design-system/button-styles";
 import { BORDER } from "../design-system/tokens";
 import { useDialog } from "../design-system/use-dialog";
 import { ThemeToggle } from "../shared/ThemeToggle";
+import { SoundToggle } from "../shared/SoundToggle";
 import { NAV_LINKS } from "../../domain/data/nav-links";
 import { generateCv } from "../../application/use-cases/generate-cv";
 
@@ -63,6 +64,7 @@ export function NavBar() {
                 </li>
               ))}
             </ul>
+            <SoundToggle />
             <ThemeToggle />
             <button
               onClick={() => setSidebarOpen(true)}

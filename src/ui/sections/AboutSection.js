@@ -1,8 +1,5 @@
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
 import { useRise, ParallaxImage } from "../design-system/animations/scroll-primitives";
-import { focusLink } from "../design-system/button-styles";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
 import { certificates } from "../../domain/data/certificates";

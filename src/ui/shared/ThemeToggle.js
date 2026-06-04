@@ -3,17 +3,23 @@ import { flushSync } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { useTheme } from "../../ThemeContext";
+import { useSound } from "../../SoundContext";
 import { focusLink } from "../design-system/button-styles";
 import { Moon, Sun } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
 
 export function ThemeToggle({ className = "" }) {
   const { theme, toggleTheme } = useTheme();
+  const { playSound } = useSound();
   const isDark = theme === "dark";
   const reduceMotion = useReducedMotion();
   const isWavingRef = useRef(false);
 
   const handleClick = (event) => {
+    // Before the reduced-motion early return so both paths sound. Pitch follows
+    // the destination: lower toward dark, higher toward light.
+    playSound(isDark ? "toggleLight" : "toggleDark");
+
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!document.startViewTransition || prefersReducedMotion) {
       toggleTheme();
