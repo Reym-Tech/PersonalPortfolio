@@ -36,7 +36,7 @@ export default function Portfolio() {
         />
       )}
       <ScrollProgress />
-      <NavBar />
+      <NavBar introExiting={introExiting} instantReveal={seenIntro} />
       <HeroSection introExiting={introExiting} instantReveal={seenIntro} />
       <AboutSection />
       <StatsSection />

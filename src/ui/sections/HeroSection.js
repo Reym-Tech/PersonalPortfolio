@@ -20,16 +20,8 @@ export function HeroSection({ introExiting, instantReveal }) {
     },
   });
 
-  // The 2D grid settles in as the 3D entry grid recedes, reading as one continuous
-  // surface. Skipped when revisiting (instantReveal) or under reduced motion.
-  const gridSettle =
-    reduceMotion || instantReveal
-      ? { initial: false, animate: { opacity: 1, scale: 1 }, transition: { duration: 0 } }
-      : {
-        initial: { opacity: 0, scale: 1.06 },
-        animate: introExiting ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.06 },
-        transition: { duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] },
-      };
+  // Grid is always visible — the Entry overlay (bg-elegant-surface) hides it
+  // during the intro and reveals it as the Entry fades. No dual crossfade.
 
   const handleViewProjects = () => {
     const projectsSection = document.getElementById("projects");
@@ -40,9 +32,9 @@ export function HeroSection({ introExiting, instantReveal }) {
 
   return (
     <section id="home" className="relative scroll-mt-20">
-      <motion.div {...gridSettle} className="absolute inset-0">
-        <LineGrid pulse={introExiting && !instantReveal} />
-      </motion.div>
+      <div className="absolute inset-0">
+        <LineGrid />
+      </div>
       <div className="mx-auto max-w-6xl px-6 py-16 md:px-8 md:py-24">
         <motion.div
           className="relative p-8 pt-14 md:p-12"

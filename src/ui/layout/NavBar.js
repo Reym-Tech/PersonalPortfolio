@@ -9,8 +9,18 @@ import { SoundToggle } from "../shared/SoundToggle";
 import { NAV_LINKS } from "../../domain/data/nav-links";
 import { generateCv } from "../../application/use-cases/generate-cv";
 
-export function NavBar() {
+export function NavBar({ introExiting = false, instantReveal = false }) {
   const reduceMotion = useReducedMotion();
+
+  const navReveal = instantReveal
+    ? { initial: false }
+    : {
+        initial: { opacity: 0, y: -10 },
+        animate: introExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 },
+        transition: reduceMotion
+          ? { duration: 0.2 }
+          : { duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] },
+      };
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
 
@@ -34,7 +44,8 @@ export function NavBar() {
 
   return (
     <>
-      <nav
+      <motion.nav
+        {...navReveal}
         aria-label="Primary"
         className={`sticky top-0 z-30 border-b ${BORDER} bg-elegant-surface/80 backdrop-blur`}
       >
@@ -77,7 +88,7 @@ export function NavBar() {
             </button>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {sidebarOpen && (
         <div
