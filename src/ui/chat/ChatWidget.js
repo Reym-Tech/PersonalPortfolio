@@ -53,11 +53,13 @@ const PANEL_MASK =
 // The base duration/ease govern --reveal (the wipe): a smooth, near-even
 // ease-in-out played over a long-enough beat that the eye actually follows the
 // edge travelling across the panel, which is what makes it read as a real object
-// being unfurled/drawn in rather than a snap. Scale and opacity are overridden
-// to settle a touch sooner with a confident ease-out, so the panel is in place
-// while the wipe finishes filling the last sliver.
-const PANEL_OPEN = { duration: 0.55, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.42, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.2, ease: "easeOut" } };
-const PANEL_CLOSE = { duration: 0.5, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.5, ease: [0.6, 0, 0.35, 1] } };
+// being unfurled/drawn in rather than a snap. Scale is overridden per-direction:
+// open uses a mild overshoot so the panel surges out of the FAB with momentum and
+// settles; close uses an ease-in so it slowly lets go then accelerates as it is
+// sucked into the FAB. Both start/end near the FAB point (see the low scale on
+// the panel itself), so the convergence reads as coming from / returning to it.
+const PANEL_OPEN = { duration: 0.55, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.5, ease: [0.22, 1.12, 0.36, 1] }, opacity: { duration: 0.22, ease: "easeOut" } };
+const PANEL_CLOSE = { duration: 0.46, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.46, ease: [0.5, 0, 0.85, 0.4] } };
 
 export function ChatWidget({
   isOpen,
@@ -215,7 +217,7 @@ export function ChatWidget({
             initial={
               reduceMotion
                 ? { opacity: 0 }
-                : { opacity: 0, scale: 0.62, "--reveal": REVEAL_HIDDEN }
+                : { opacity: 0, scale: 0.2, "--reveal": REVEAL_HIDDEN }
             }
             animate={
               reduceMotion
@@ -225,7 +227,7 @@ export function ChatWidget({
             exit={
               reduceMotion
                 ? { opacity: 0, transition: { duration: 0.12 } }
-                : { opacity: 1, scale: 0.5, "--reveal": REVEAL_HIDDEN, transition: PANEL_CLOSE }
+                : { opacity: 1, scale: 0.18, "--reveal": REVEAL_HIDDEN, transition: PANEL_CLOSE }
             }
             transition={reduceMotion ? { duration: 0.15 } : PANEL_OPEN}
             style={{
