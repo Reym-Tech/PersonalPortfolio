@@ -29,11 +29,35 @@ const INITIAL_MESSAGE = {
 const CHIPS = ["What's your stack?", "Available for hire?", "Tell me about your projects"];
 const COOLDOWN_SECONDS = 3;
 const TAB_TRANSITION = { duration: 0.2, ease: [0.22, 1, 0.36, 1] };
-// Asymmetric panel motion: a confident ease-out grow as it emerges from the FAB
-// corner, then a quicker ease-in collapse back toward it on close. Opacity fades
-// faster than the transform so the panel reads as solid the moment it settles.
-const PANEL_OPEN = { duration: 0.32, ease: [0.16, 1, 0.3, 1], opacity: { duration: 0.18, ease: "easeOut" } };
-const PANEL_CLOSE = { duration: 0.18, ease: [0.4, 0, 1, 1] };
+// The panel scales about the FAB's center, not its own corner, so it visibly
+// grows out of the launcher on open and is swallowed back into it on close. The
+// FAB center sits 28px left of and 44px below the panel's bottom-right corner
+// (FAB: 56px box at bottom/right 32 → center 60px from each edge; panel right
+// edge 32px from right, bottom edge 104px from bottom). Keep this in sync with
+// the FAB geometry in CrescereFAB.js and the bottom-[104px] offset below.
+const PANEL_ORIGIN = "calc(100% - 28px) calc(100% + 44px)";
+// A soft directional wipe is layered on top of the scale so the panel doesn't
+// just shrink uniformly — it is consumed/extruded one end at a time, like being
+// drawn through the FAB. The mask is a feathered gradient down the panel's
+// far-corner→FAB-corner diagonal ("to bottom right"); --reveal is how far along
+// that diagonal the solid (visible) region currently reaches. Sweeping it past
+// 100% on open makes the panel materialise far-corner-first and finish at the
+// FAB corner; reversing it on close consumes the FAB-corner first and leaves the
+// far corner for last — matching how a real object is pulled into a point. The
+// 20% feather is the soft "wrap" edge that keeps the sweep from reading as a
+// hard line.
+const REVEAL_HIDDEN = "-22%";
+const REVEAL_SHOWN = "116%";
+const PANEL_MASK =
+  "linear-gradient(to bottom right, #000 0%, #000 var(--reveal, 116%), transparent calc(var(--reveal, 116%) + 20%))";
+// The base duration/ease govern --reveal (the wipe): a smooth, near-even
+// ease-in-out played over a long-enough beat that the eye actually follows the
+// edge travelling across the panel, which is what makes it read as a real object
+// being unfurled/drawn in rather than a snap. Scale and opacity are overridden
+// to settle a touch sooner with a confident ease-out, so the panel is in place
+// while the wipe finishes filling the last sliver.
+const PANEL_OPEN = { duration: 0.55, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.42, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.2, ease: "easeOut" } };
+const PANEL_CLOSE = { duration: 0.5, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.5, ease: [0.6, 0, 0.35, 1] } };
 
 export function ChatWidget({
   isOpen,
@@ -188,15 +212,27 @@ export function ChatWidget({
             role="dialog"
             aria-modal="true"
             aria-label="Chat with Crescere"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            initial={
+              reduceMotion
+                ? { opacity: 0 }
+                : { opacity: 0, scale: 0.62, "--reveal": REVEAL_HIDDEN }
+            }
+            animate={
+              reduceMotion
+                ? { opacity: 1 }
+                : { opacity: 1, scale: 1, "--reveal": REVEAL_SHOWN }
+            }
             exit={
               reduceMotion
                 ? { opacity: 0, transition: { duration: 0.12 } }
-                : { opacity: 0, scale: 0.96, y: 8, transition: PANEL_CLOSE }
+                : { opacity: 1, scale: 0.5, "--reveal": REVEAL_HIDDEN, transition: PANEL_CLOSE }
             }
             transition={reduceMotion ? { duration: 0.15 } : PANEL_OPEN}
-            style={{ transformOrigin: "bottom right" }}
+            style={{
+              transformOrigin: PANEL_ORIGIN,
+              WebkitMaskImage: PANEL_MASK,
+              maskImage: PANEL_MASK,
+            }}
             className={`flex max-h-[calc(100dvh_-_8rem)] w-[360px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border ${BORDER} bg-elegant-surface/95 shadow-xl backdrop-blur-sm`}
           >
             {/* Header — assistant identity + tab switcher */}
