@@ -26,6 +26,11 @@ const INITIAL_MESSAGE = {
   content: "Hi! I'm John Remy's AI assistant. Ask me anything about his background, projects, or how to get in touch.",
 };
 
+// When /api/chat fails (no key, upstream error, offline), the panel still answers
+// in character and hands the visitor a real way to reach Remy instead of a dead end.
+const FALLBACK_REPLY =
+  "I'm having trouble reaching my brain right now — you can reach Remy directly at johnremygonzales20@gmail.com, or open the Contact tab above.";
+
 const CHIPS = ["What's your stack?", "Available for hire?", "Tell me about your projects"];
 const COOLDOWN_SECONDS = 3;
 const TAB_TRANSITION = { duration: 0.2, ease: [0.22, 1, 0.36, 1] };
@@ -120,7 +125,6 @@ export function ChatWidget({
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [cooldown, setCooldown] = useState(0);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -223,7 +227,6 @@ export function ChatWidget({
       setMessages(next);
       setInput("");
       setLoading(true);
-      setError(null);
       setCooldown(COOLDOWN_SECONDS);
 
       try {
@@ -246,7 +249,10 @@ export function ChatWidget({
         ]);
       } catch (err) {
         console.error("Chat error:", err);
-        setError(err.message || "Couldn't get a response. Please try again.");
+        setMessages((prev) => [
+          ...prev,
+          { id: Date.now() + 1, role: "assistant", content: FALLBACK_REPLY },
+        ]);
       } finally {
         setLoading(false);
       }
@@ -470,10 +476,6 @@ export function ChatWidget({
                         ))}
                       </div>
                     </div>
-                  )}
-
-                  {error && (
-                    <p className="text-center text-xs text-red-500/80">{error}</p>
                   )}
 
                   <div ref={messagesEndRef} />

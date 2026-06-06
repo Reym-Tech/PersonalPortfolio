@@ -1,6 +1,13 @@
-import { createPdfDocument } from "../../infrastructure/pdf/pdf-service";
+export async function generateCv() {
+  // jsPDF is ~heavy and resume export is rare, so load it on demand to keep it out of
+  // the main bundle. Bail quietly if the chunk fails to load.
+  let createPdfDocument;
+  try {
+    ({ createPdfDocument } = await import("../../infrastructure/pdf/pdf-service"));
+  } catch {
+    return;
+  }
 
-export function generateCv() {
   const doc = createPdfDocument();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
