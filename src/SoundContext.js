@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { createSoundEngine } from "./infrastructure/audio/sound-engine";
 
@@ -23,6 +23,21 @@ export function SoundProvider({ children }) {
     if (!engineRef.current) engineRef.current = createSoundEngine();
     return engineRef.current;
   }, []);
+
+  // When sound is already on at load (persisted from a prior session), no gesture
+  // has unlocked the AudioContext yet. Without this, the first cue would create the
+  // context and schedule a tone before resume() resolves — and play it silent. Warm
+  // it up on the first user gesture so the context is running before any cue fires.
+  useEffect(() => {
+    if (isMuted) return;
+    const warmUp = () => getEngine().unlock();
+    window.addEventListener("pointerdown", warmUp, { once: true });
+    window.addEventListener("keydown", warmUp, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", warmUp);
+      window.removeEventListener("keydown", warmUp);
+    };
+  }, [isMuted, getEngine]);
 
   const playSound = useCallback(
     (name) => {

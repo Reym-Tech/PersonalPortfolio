@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { ThemeProvider } from "./ThemeContext";
 import { SoundProvider } from "./SoundContext";
@@ -15,12 +15,30 @@ import { ServicesSection } from "./ui/sections/ServicesSection";
 import { EducationSection } from "./ui/sections/EducationSection";
 import { CertificationsSection } from "./ui/sections/CertificationsSection";
 import { ContactSection } from "./ui/sections/ContactSection";
-import { ContactFab } from "./ui/shared/ContactFab";
+import { CrescereFAB } from "./ui/chat/CrescereFAB";
+import { ChatWidget } from "./ui/chat/ChatWidget";
 
 export default function Portfolio() {
   const seenIntro = sessionStorage.getItem("intro-seen") === "1";
   const [introExiting, setIntroExiting] = useState(seenIntro);
   const [introDone, setIntroDone] = useState(seenIntro);
+
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatTab, setChatTab] = useState("chat");
+  const [isAiThinking, setIsAiThinking] = useState(false);
+  const [hasNewMessage, setHasNewMessage] = useState(false);
+
+  // Auto-clear new-message indicator after the pulse animation completes
+  useEffect(() => {
+    if (!hasNewMessage) return undefined;
+    const t = setTimeout(() => setHasNewMessage(false), 3000);
+    return () => clearTimeout(t);
+  }, [hasNewMessage]);
+
+  function openPanel(tab) {
+    setChatTab(tab);
+    setChatOpen(true);
+  }
 
   return (
     <ThemeProvider>
@@ -47,7 +65,20 @@ export default function Portfolio() {
       <CertificationsSection />
       <ContactSection />
       <Footer />
-      <ContactFab />
+      <CrescereFAB
+        isOpen={chatOpen}
+        onOpen={() => openPanel("chat")}
+        onClose={() => setChatOpen(false)}
+        isAiThinking={isAiThinking}
+        hasNewMessage={hasNewMessage}
+      />
+      <ChatWidget
+        isOpen={chatOpen}
+        onClose={() => setChatOpen(false)}
+        initialTab={chatTab}
+        onThinkingChange={setIsAiThinking}
+        onNewMessage={() => setHasNewMessage(true)}
+      />
       </div>
       </SoundProvider>
     </ThemeProvider>

@@ -14,8 +14,8 @@ export function HeroSection({ introExiting, instantReveal }) {
     initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
     animate: introExiting ? { opacity: 1, y: 0 } : reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
     transition: {
-      duration: reduceMotion ? 0.3 : instantReveal ? 0.5 : 0.65,
-      delay: reduceMotion ? delay * 0.1 : instantReveal ? 0.05 + delay * 0.5 : 0.5 + delay,
+      duration: reduceMotion ? 0.3 : instantReveal ? 0.5 : 0.6,
+      delay: reduceMotion ? delay * 0.1 : instantReveal ? 0.05 + delay * 1.25 : 0.85 + delay * 2.5,
       ease: [0.22, 1, 0.36, 1],
     },
   });
@@ -31,24 +31,24 @@ export function HeroSection({ introExiting, instantReveal }) {
   };
 
   return (
-    <section id="home" className="relative scroll-mt-20">
+    <section id="home" className="relative flex min-h-[calc(100vh-5rem)] items-center scroll-mt-20">
       <div className="absolute inset-0">
         <LineGrid />
       </div>
-      <div className="mx-auto max-w-6xl px-6 py-16 md:px-8 md:py-24">
+      <div className="mx-auto w-full max-w-6xl px-6 py-8 md:px-8">
         <motion.div
-          className="relative p-8 pt-14 md:p-12"
+          className="relative p-6 pt-10 md:p-8"
           initial={{ opacity: 0 }}
           animate={introExiting ? { opacity: 1 } : { opacity: 0 }}
           transition={{
-            duration: reduceMotion ? 0.3 : instantReveal ? 0.5 : 0.8,
-            delay: reduceMotion ? 0 : instantReveal ? 0 : 0.3,
+            duration: reduceMotion ? 0.3 : instantReveal ? 0.4 : 0.5,
+            delay: reduceMotion ? 0 : instantReveal ? 0 : 0.75,
             ease: [0.22, 1, 0.36, 1],
           }}
         >
           <span
             aria-hidden="true"
-            className="absolute top-6 left-0 font-mono text-sm uppercase tracking-widest text-elegant-text/30"
+            className="absolute top-2 left-0 font-mono text-sm uppercase tracking-widest text-elegant-text/30"
           >
             Portfolio
           </span>
@@ -65,7 +65,7 @@ export function HeroSection({ introExiting, instantReveal }) {
 
               <motion.h1
                 {...heroReveal(0.04)}
-                className="mt-6 max-w-[15ch] text-balance text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[4rem] lg:text-[5rem]"
+                className="mt-6 max-w-[15ch] text-balance text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[2rem] lg:text-[4rem]"
               >
                 I build accessible,{" "}
                 <span className="whitespace-nowrap">motion-driven</span> interfaces.
@@ -103,7 +103,7 @@ export function HeroSection({ introExiting, instantReveal }) {
                   src="/images/profiles/HeroSection.png"
                   alt="John Remy Gonzales"
                   loading="lazy"
-                  className="w-64 rounded-[8px] border border-elegant-border object-cover"
+                  className="w-64 max-h-[480px] rounded-[8px] border border-elegant-border object-cover object-top"
                 />
               </Parallax>
             </motion.div>

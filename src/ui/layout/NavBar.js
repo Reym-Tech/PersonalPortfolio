@@ -15,11 +15,11 @@ export function NavBar({ introExiting = false, instantReveal = false }) {
   const navReveal = instantReveal
     ? { initial: false }
     : {
-        initial: { opacity: 0, y: -10 },
-        animate: introExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 },
+        initial: { opacity: 0, y: -20 },
+        animate: introExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 },
         transition: reduceMotion
           ? { duration: 0.2 }
-          : { duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] },
+          : { duration: 0.5, delay: 0.65, ease: [0.22, 1, 0.36, 1] },
       };
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
