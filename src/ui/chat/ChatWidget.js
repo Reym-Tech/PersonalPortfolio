@@ -37,19 +37,26 @@ const TAB_TRANSITION = { duration: 0.2, ease: [0.22, 1, 0.36, 1] };
 // the FAB geometry in CrescereFAB.js and the bottom-[104px] offset below.
 const PANEL_ORIGIN = "calc(100% - 28px) calc(100% + 44px)";
 // A soft directional wipe is layered on top of the scale so the panel doesn't
-// just shrink uniformly — it is consumed/extruded one end at a time, like being
-// drawn through the FAB. The mask is a feathered gradient down the panel's
-// far-corner→FAB-corner diagonal ("to bottom right"); --reveal is how far along
-// that diagonal the solid (visible) region currently reaches. Sweeping it past
-// 100% on open makes the panel materialise far-corner-first and finish at the
-// FAB corner; reversing it on close consumes the FAB-corner first and leaves the
-// far corner for last — matching how a real object is pulled into a point. The
-// 20% feather is the soft "wrap" edge that keeps the sweep from reading as a
-// hard line.
+// just shrink uniformly — it is extruded/consumed one end at a time, like being
+// pulled through the FAB. The mask is a feathered diagonal gradient; --reveal is
+// how far along that diagonal the solid (visible) region reaches, and --ang sets
+// which corner sits at the gradient's 0% (where the solid grows from / retracts
+// to). To follow the tether, the FAB corner LEADS both phases: on open the panel
+// unfurls out of the FAB corner first; on close the FAB corner empties first and
+// the far corner trails. Open and close use different angles on purpose — a single
+// shared axis would force them to be mirror opposites (FAB-first one way ⇒
+// FAB-last the other), so decoupling --ang lets the FAB corner lead both ways.
+// The 20% feather is the soft "wrap" edge that keeps the sweep from reading hard.
 const REVEAL_HIDDEN = "-22%";
 const REVEAL_SHOWN = "116%";
+// 315deg puts 0% at the bottom-right FAB corner, so the solid region grows out of
+// it on open (FAB-corner-first emerge). 135deg puts 0% at the top-left far corner
+// — the FAB corner then sits at 100% and is the first to drop into the transparent
+// feather as --reveal retracts on close (FAB-corner-first absorb).
+const MASK_ANGLE_OPEN = "315deg";
+const MASK_ANGLE_CLOSE = "135deg";
 const PANEL_MASK =
-  "linear-gradient(to bottom right, #000 0%, #000 var(--reveal, 116%), transparent calc(var(--reveal, 116%) + 20%))";
+  "linear-gradient(var(--ang, 135deg), #000 0%, #000 var(--reveal, 116%), transparent calc(var(--reveal, 116%) + 20%))";
 // The base duration/ease govern --reveal (the wipe): a smooth, near-even
 // ease-in-out played over a long-enough beat that the eye actually follows the
 // edge travelling across the panel, which is what makes it read as a real object
@@ -58,18 +65,58 @@ const PANEL_MASK =
 // settles; close uses an ease-in so it slowly lets go then accelerates as it is
 // sucked into the FAB. Both start/end near the FAB point (see the low scale on
 // the panel itself), so the convergence reads as coming from / returning to it.
-const PANEL_OPEN = { duration: 0.55, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.5, ease: [0.22, 1.12, 0.36, 1] }, opacity: { duration: 0.22, ease: "easeOut" } };
-const PANEL_CLOSE = { duration: 0.46, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.46, ease: [0.5, 0, 0.85, 0.4] } };
+const PANEL_OPEN = { duration: 0.38, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.4, ease: [0.22, 1.12, 0.36, 1] }, opacity: { duration: 0.2, ease: "easeOut" } };
+// --ang snaps (duration 0) at the start of close: the axis flips while --reveal is
+// still 116% (panel fully solid under either angle), so there's no visible rotation
+// — only the retract direction changes.
+const PANEL_CLOSE = { duration: 0.3, ease: [0.45, 0, 0.55, 1], scale: { duration: 0.3, ease: [0.5, 0, 0.85, 0.4] }, "--ang": { duration: 0 } };
+
+// Liquid bridge ("genie neck") — an SVG metaball that visually merges the FAB and
+// the rising panel, matching the reference design: a soft, pale-lavender gooey body,
+// NOT a hard saturated column. Two circles share the FAB's horizontal centre; a gooey
+// filter (blur + alpha-contrast) melds them into one shape with a concave neck. The
+// lower circle is rooted at the FAB and sits behind the opaque z-50 launcher, so only
+// the neck and the rising blob read above the FAB lip. The upper "blob" travels up to
+// the panel base on open and back down into the FAB on close, so the connection is
+// maintained through the whole flight and only dissolves once the panel has settled.
+// The brand hue is already elegant.secondary (#8B5CF6); the reference's difference is
+// tone (lifted toward white), softness (the goo), and shape (a necking metaball).
+const BRIDGE_FILL = "#C4B1F2"; // pale lavender — elegant.secondary lifted toward white
+const BRIDGE_CORE = "#9B7BEA"; // a touch deeper at the FAB-rooted base, softened by the goo blur
+// Upper-blob travel in SVG-local coords (y=0 at the panel base, +y downward toward the
+// FAB). It starts close to the base circle (short, fat neck = "spit out") and rises to
+// just under the panel (long, thin neck = "stretch"), fattening slightly as it forms.
+const BRIDGE_BLOB_FROM = { cy: 34, r: 11 };
+const BRIDGE_BLOB_TO = { cy: 9, r: 14 };
+// Opacity is present through the whole emerge/absorb and fades only at the very ends, so
+// the bridge never vanishes before the panel arrives (the old desync, where it had fully
+// faded ~50ms before the panel finished). Keyframes resolve to 0 because at rest the
+// bridge is gone and the panel stands alone.
+const BRIDGE_OPEN = { duration: 0.42, ease: "easeOut", opacity: { duration: 0.42, times: [0, 0.22, 0.72, 1], ease: "easeInOut" } };
+const BRIDGE_CLOSE = { duration: 0.32, ease: "easeIn", opacity: { duration: 0.32, times: [0, 0.3, 1], ease: "easeInOut" } };
+
+// Panel content settles in sequentially once the shell has emerged (brief step 6 /
+// reference "Content Fade In"): header → tabs → conversation → input. Driven by a
+// `custom` order index so each region self-delays — no parent stagger container, which
+// keeps the tuned flex/scroll layout untouched. initial={false} on each region means a
+// tab switch never replays the reveal; only the initial open does, via the contentIn flip.
+const CONTENT_REVEAL = {
+  hidden: { opacity: 0, y: 6 },
+  shown: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.06, duration: 0.32, ease: [0.22, 1, 0.36, 1] } }),
+};
+const CONTENT_REVEAL_DELAY_MS = 150;
 
 export function ChatWidget({
   isOpen,
   onClose,
+  onClosed,
   initialTab = "chat",
   onThinkingChange,
   onNewMessage,
 }) {
   const reduceMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState(initialTab);
+  const [contentIn, setContentIn] = useState(false);
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -84,6 +131,22 @@ export function ChatWidget({
   useEffect(() => {
     if (isOpen) setActiveTab(initialTab);
   }, [isOpen, initialTab]);
+
+  // Stagger the panel's content in just after the shell has emerged. The short delay
+  // lets the bridge/scale read first, so content flows in "as it settles" rather than
+  // being present from frame one. Reduced motion shows everything at once.
+  useEffect(() => {
+    if (reduceMotion) {
+      setContentIn(isOpen);
+      return undefined;
+    }
+    if (!isOpen) {
+      setContentIn(false);
+      return undefined;
+    }
+    const timer = setTimeout(() => setContentIn(true), CONTENT_REVEAL_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [isOpen, reduceMotion]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -201,15 +264,75 @@ export function ChatWidget({
   const showChips = messages.length === 1 && !loading;
   const sendDisabled = !input.trim() || loading || cooldown > 0;
 
+  // Motion props for a content region's staggered reveal; `order` sets its place in the
+  // sequence. No-op under reduced motion so the region just renders statically.
+  const revealProps = (order) =>
+    reduceMotion
+      ? {}
+      : { custom: order, variants: CONTENT_REVEAL, initial: false, animate: contentIn ? "shown" : "hidden" };
+
   // Float the panel above the FAB so the launcher stays visible and never covers
   // the input. bottom-[104px] = FAB bottom (32) + FAB height (56) + 16 gap; the
   // FAB lives in CrescereFAB.js, so this offset encodes its geometry. right-8
   // (32px) aligns the panel's right edge to the FAB on every breakpoint.
   return (
     <div className="fixed bottom-[104px] right-8 z-40 flex flex-col items-end">
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => onClosed?.()}>
+        {isOpen && !reduceMotion && (
+          <motion.svg
+            key="bridge"
+            aria-hidden="true"
+            width={120}
+            height={120}
+            viewBox="0 0 120 120"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 1, 0] }}
+            exit={{ opacity: [0, 1, 0], transition: BRIDGE_CLOSE }}
+            transition={BRIDGE_OPEN}
+            style={{
+              // The 120px box is centred on the FAB (28px inset from the container's
+              // right edge − 60px half-width = −32) and its top sits at the panel base
+              // (top:100%), so SVG-local y grows downward into the FAB.
+              position: "absolute",
+              top: "100%",
+              right: -32,
+              marginTop: -6,
+              // Behind the panel within this z-40 container, so the blob's top tucks under
+              // the panel surface (hiding the handoff seam) while the neck below shows. The
+              // FAB (separate z-50) still sits on top. Explicit so it doesn't hinge on the
+              // panel's backdrop-blur happening to form a stacking context.
+              zIndex: -1,
+              pointerEvents: "none",
+              overflow: "visible",
+              filter: "drop-shadow(0 0 6px rgba(155,123,234,0.45))",
+            }}
+          >
+            <defs>
+              <filter id="bridge-goo" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b" />
+                <feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8" />
+              </filter>
+            </defs>
+            <g filter="url(#bridge-goo)">
+              {/* Base circle — rooted at the FAB centre, occluded by the opaque z-50
+                  launcher; supplies the bottom of the liquid body so the neck reads as
+                  pouring out of the FAB's top lip. */}
+              <circle cx={60} cy={44} r={20} fill={BRIDGE_CORE} />
+              {/* Rising blob — travels up to the panel base, stretching the neck. */}
+              <motion.circle
+                cx={60}
+                fill={BRIDGE_FILL}
+                initial={{ cy: BRIDGE_BLOB_FROM.cy, r: BRIDGE_BLOB_FROM.r }}
+                animate={{ cy: BRIDGE_BLOB_TO.cy, r: BRIDGE_BLOB_TO.r }}
+                exit={{ cy: BRIDGE_BLOB_FROM.cy, r: BRIDGE_BLOB_FROM.r, transition: BRIDGE_CLOSE }}
+                transition={BRIDGE_OPEN}
+              />
+            </g>
+          </motion.svg>
+        )}
         {isOpen && (
           <motion.div
+            key="panel"
             ref={panelRef}
             role="dialog"
             aria-modal="true"
@@ -217,17 +340,17 @@ export function ChatWidget({
             initial={
               reduceMotion
                 ? { opacity: 0 }
-                : { opacity: 0, scale: 0.2, "--reveal": REVEAL_HIDDEN }
+                : { opacity: 0, scale: 0.2, "--reveal": REVEAL_HIDDEN, "--ang": MASK_ANGLE_OPEN }
             }
             animate={
               reduceMotion
                 ? { opacity: 1 }
-                : { opacity: 1, scale: 1, "--reveal": REVEAL_SHOWN }
+                : { opacity: 1, scale: 1, "--reveal": REVEAL_SHOWN, "--ang": MASK_ANGLE_OPEN }
             }
             exit={
               reduceMotion
                 ? { opacity: 0, transition: { duration: 0.12 } }
-                : { opacity: 1, scale: 0.18, "--reveal": REVEAL_HIDDEN, transition: PANEL_CLOSE }
+                : { opacity: 1, scale: 0.18, "--reveal": REVEAL_HIDDEN, "--ang": MASK_ANGLE_CLOSE, transition: PANEL_CLOSE }
             }
             transition={reduceMotion ? { duration: 0.15 } : PANEL_OPEN}
             style={{
@@ -239,7 +362,7 @@ export function ChatWidget({
           >
             {/* Header — assistant identity + tab switcher */}
             <div className={`flex flex-none flex-col gap-3 border-b ${BORDER} px-4 pb-3 pt-3.5`}>
-              <div className="flex items-center justify-between">
+              <motion.div className="flex items-center justify-between" {...revealProps(0)}>
                 <div className="flex items-center gap-2.5">
                   <BotAvatar size={38} mark={26} isThinking={loading} />
                   <div className="leading-tight">
@@ -261,9 +384,9 @@ export function ChatWidget({
                 >
                   <Close />
                 </button>
-              </div>
+              </motion.div>
 
-              <div className={`flex items-center gap-0.5 rounded-[8px] border ${BORDER} bg-elegant-hover p-1`}>
+              <motion.div className={`flex items-center gap-0.5 rounded-[8px] border ${BORDER} bg-elegant-hover p-1`} {...revealProps(1)}>
                 {[
                   { id: "chat", label: "Chat with AI" },
                   { id: "contact", label: "Contact" },
@@ -280,7 +403,7 @@ export function ChatWidget({
                     {label}
                   </button>
                 ))}
-              </div>
+              </motion.div>
             </div>
 
             {/* Tab panels. mode="wait" keeps a single panel in the flex column at a
@@ -297,7 +420,7 @@ export function ChatWidget({
                   transition={TAB_TRANSITION}
                   className="flex min-h-0 flex-col"
                 >
-                <div className="chat-scroll flex min-h-0 flex-[1_1_300px] flex-col gap-3 overflow-y-auto p-4">
+                <motion.div className="chat-scroll flex min-h-0 flex-[1_1_300px] flex-col gap-3 overflow-y-auto p-4" {...revealProps(2)}>
                   {messages.map((msg) => {
                     const isUser = msg.role === "user";
                     return (
@@ -354,10 +477,10 @@ export function ChatWidget({
                   )}
 
                   <div ref={messagesEndRef} />
-                </div>
+                </motion.div>
 
                 {/* Input */}
-                <div className={`flex flex-none flex-col gap-2 border-t ${BORDER} p-3`}>
+                <motion.div className={`flex flex-none flex-col gap-2 border-t ${BORDER} p-3`} {...revealProps(3)}>
                   <div className="flex items-end gap-2">
                     <textarea
                       ref={inputRef}
@@ -390,7 +513,7 @@ export function ChatWidget({
                       Please wait {cooldown}s…
                     </p>
                   )}
-                </div>
+                </motion.div>
                 </motion.div>
               )}
 

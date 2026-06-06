@@ -27,6 +27,9 @@ export default function Portfolio() {
   const [chatTab, setChatTab] = useState("chat");
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  // Bumped when the panel finishes its absorb-into-FAB exit, so the FAB can fire its
+  // "snap back" pulse exactly on close-complete rather than on a drift-prone timer.
+  const [closePulse, setClosePulse] = useState(0);
 
   // Auto-clear new-message indicator after the pulse animation completes
   useEffect(() => {
@@ -71,10 +74,12 @@ export default function Portfolio() {
         onClose={() => setChatOpen(false)}
         isAiThinking={isAiThinking}
         hasNewMessage={hasNewMessage}
+        closePulse={closePulse}
       />
       <ChatWidget
         isOpen={chatOpen}
         onClose={() => setChatOpen(false)}
+        onClosed={() => setClosePulse((k) => k + 1)}
         initialTab={chatTab}
         onThinkingChange={setIsAiThinking}
         onNewMessage={() => setHasNewMessage(true)}

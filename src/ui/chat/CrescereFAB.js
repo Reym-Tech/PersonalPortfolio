@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useAnimationControls } from "framer-motion";
 
 import { focusRing } from "../design-system/button-styles";
 import { Close } from "../design-system/icons";
@@ -20,12 +20,26 @@ export function CrescereFAB({
   onClose,
   isAiThinking = false,
   hasNewMessage = false,
+  closePulse = 0,
 }) {
   const reduceMotion = useReducedMotion();
   const [isIdle, setIsIdle] = useState(false);
   const [fabHovered, setFabHovered] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
   const idleTimerRef = useRef(null);
+  const bounceControls = useAnimationControls();
+  const prevPulseRef = useRef(closePulse);
+
+  // "Snap back" — when the panel reports it has finished absorbing into the FAB
+  // (App bumps closePulse), the launcher answers with a glow burst and a tiny scale
+  // overshoot, then rests. Skips the initial mount and reduced motion.
+  useEffect(() => {
+    if (closePulse === prevPulseRef.current) return;
+    prevPulseRef.current = closePulse;
+    if (reduceMotion) return;
+    setBurstKey((k) => k + 1);
+    bounceControls.start({ scale: [1, 1.06, 0.98, 1] }, { duration: 0.45, ease: [0.34, 1.56, 0.64, 1] });
+  }, [closePulse, reduceMotion, bounceControls]);
 
   const resetIdle = useCallback(() => {
     setIsIdle(false);
@@ -72,6 +86,9 @@ export function CrescereFAB({
         />
       )}
 
+      {/* Bounce wrapper — carries the close-complete overshoot so it composes with the
+          button's own breathing / tap scale instead of fighting its animate prop. */}
+      <motion.div animate={bounceControls} className="inline-flex">
       <motion.button
         type="button"
         onClick={() => {
@@ -116,6 +133,7 @@ export function CrescereFAB({
           </motion.span>
         </span>
       </motion.button>
+      </motion.div>
     </div>
   );
 }
