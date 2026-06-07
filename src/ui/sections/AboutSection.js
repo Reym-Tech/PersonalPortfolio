@@ -20,25 +20,28 @@ export function AboutSection() {
           <motion.div {...rise(0.05)} className="space-y-6">
             <p className="text-base leading-relaxed text-elegant-text/80">
               I'm <span className="font-medium text-elegant-text">John Remy Gonzales</span>, a
-              BSIT student at the UM Digos College. My journey in tech began
-              with curiosity about how things work, which grew into a passion for building
-              functional, well-designed digital experiences.
+              BSIT student at UM Digos College in the Philippines. I started with{" "}
+              <span className="font-medium text-elegant-text">Ancient Crafts</span> — a native
+              Android marketplace I built to give indigenous artisans in Davao del Sur a digital
+              storefront for their handmade goods. Seeing a real community's craft inside something
+              I'd made is what turned coursework into the path I want to follow.
             </p>
             <p className="text-base leading-relaxed text-elegant-text/80">
-              I specialize in{" "}
-              <span className="font-medium text-elegant-text">full-stack web development</span>,
-              building responsive frontends with React and Tailwind CSS and
-              backends with FastAPI, Supabase, and serverless functions. I care most about{" "}
-              <span className="font-medium text-elegant-text">
-                refined interfaces with smooth interactions
-              </span>{" "}
-              that are a pleasure to use.
+              By my third year I was building for real users.{" "}
+              <span className="font-medium text-elegant-text">BrewTrack</span>, a point-of-sale and
+              inventory system, runs day to day at a local café — my first project built in
+              cooperation with an actual client. That taught me the part most student work skips:
+              too many projects stop at <span className="italic">"it works,"</span> leaving edge
+              cases ignored until they grow into real problems. I'd rather handle them up front.
             </p>
             <p className="text-base leading-relaxed text-elegant-text/80">
-              Beyond coding, I'm deeply interested in{" "}
-              <span className="font-medium text-elegant-text">UI/UX design</span>,{" "}
-              <span className="font-medium text-elegant-text">problem-solving</span>, and
-              automation. I'm a continuous learner, always exploring new tools and technologies.
+              What I care about most is how an interface{" "}
+              <span className="font-medium text-elegant-text">feels</span> — clean, responsive, and
+              accessible on every device, and a genuine pleasure to use. I build full-stack: React
+              and Tailwind on the front end, FastAPI, Supabase, and serverless functions behind it.
+              My goal is to grow into a{" "}
+              <span className="font-medium text-elegant-text">software engineering</span> role, and
+              every project is a step toward it.
             </p>
 
             <div className="flex flex-wrap gap-3 pt-2">

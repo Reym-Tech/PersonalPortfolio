@@ -68,7 +68,7 @@ export function HeroSection({ introExiting, instantReveal }) {
               </motion.h1>
 
               <motion.p {...heroReveal(0.08)} className="mt-5 text-base text-elegant-text/70 md:text-lg">
-                John Remy C. Gonzales — full-stack web &amp; mobile developer
+                John Remy C. Gonzales — full-stack developer who ships software people actually use
               </motion.p>
 
               <motion.p {...heroReveal(0.08)} className="mt-2 text-base text-elegant-text/70">
