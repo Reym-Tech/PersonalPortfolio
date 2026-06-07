@@ -20,7 +20,12 @@ export function ThemeToggle({ className = "" }) {
     playSound(isDark ? "toggleLight" : "toggleDark");
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!document.startViewTransition || prefersReducedMotion) {
+    // Skip the wave on touch devices: Chrome Android anchors the root view-transition
+    // snapshot to the document top when the page is scrolled, so the sticky nav blinks
+    // out and the wave fires from the top instead of the tap. The instant swap below is
+    // clean everywhere; the wave is mouse-centric (it originates at the click point).
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (!document.startViewTransition || prefersReducedMotion || isTouch) {
       toggleTheme();
       return;
     }
