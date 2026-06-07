@@ -16,6 +16,19 @@ const AudioContextClass =
     ? window.AudioContext || window.webkitAudioContext
     : undefined;
 
+// Reverb send for the toggle bus. Touch devices usually play through small speakers
+// that shed the reverb tail and low end, so the same click reads thinner there; a
+// wetter send (plus the body layer below) claws some presence back without making
+// the desktop mix washy — which would re-introduce the "too cinematic" clash this
+// sound was dialed back from.
+const REVERB_SEND = 0.35;
+const REVERB_SEND_COMPACT = 0.46;
+
+const prefersCompactMix = () =>
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(pointer: coarse)").matches;
+
 export function createSoundEngine() {
   let context = null;
   let bus = null;
@@ -50,7 +63,7 @@ export function createSoundEngine() {
     const dry = ctx.createGain();
     dry.gain.value = 0.85;
     const send = ctx.createGain();
-    send.gain.value = 0.35;
+    send.gain.value = prefersCompactMix() ? REVERB_SEND_COMPACT : REVERB_SEND;
     const reverb = ctx.createConvolver();
     reverb.buffer = createImpulseResponse(ctx, 1.8, 2.4);
 
@@ -106,8 +119,15 @@ export function createSoundEngine() {
     if (!ctx) return;
     const out = ensureBus(ctx);
     loadSwitch(ctx);
-    if (name === "toggleDark") playToggle(ctx, out, 0.94, 392);
-    else if (name === "toggleLight") playToggle(ctx, out, 1.06, 523.25);
+    // The recorded click is the snap; body() adds the cinematic weight under it.
+    // Lower frequency toward dark, higher toward light, matching the click's pitch.
+    if (name === "toggleDark") {
+      playToggle(ctx, out, 0.94, 392);
+      body(ctx, out, 150);
+    } else if (name === "toggleLight") {
+      playToggle(ctx, out, 1.06, 523.25);
+      body(ctx, out, 190);
+    }
   };
 
   return { unlock, play };
@@ -159,4 +179,30 @@ function tick(ctx, out, freq) {
   osc.connect(filter).connect(gain).connect(out.input);
   osc.start(now);
   osc.stop(now + 0.2);
+}
+
+// Cinematic weight layered under the toggle click. A short low-mid triangle with a
+// quick downward pitch drop reads as a "thud" that gives the snap body; its
+// overtones survive small phone speakers (missing-fundamental effect) where the
+// reverb tail is lost. Gain stays low so it reinforces the click, never booms.
+function body(ctx, out, freq) {
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(freq, now);
+  osc.frequency.exponentialRampToValueAtTime(freq * 0.7, now + 0.07);
+
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(520, now);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.05, now + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+
+  osc.connect(filter).connect(gain).connect(out.input);
+  osc.start(now);
+  osc.stop(now + 0.15);
 }
