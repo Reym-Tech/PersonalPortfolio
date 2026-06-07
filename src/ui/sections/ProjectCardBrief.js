@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { focusLink } from "../design-system/button-styles";
 import { ArrowRight } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
+import { cardTitle } from "../design-system/typography";
 import { Eyebrow } from "../shared/Eyebrow";
 
 // The compact pile card. Fixed height keeps the stack uniform so the peeking top
@@ -17,7 +18,7 @@ export function ProjectCardBrief({ project, index, onOpen }) {
       type="button"
       onClick={onOpen}
       aria-label={`View case study: ${project.title}`}
-      className={`group mx-auto grid h-64 w-full max-w-5xl grid-cols-[2fr_3fr] overflow-hidden rounded-[12px] border ${BORDER} bg-elegant-surface text-left shadow-lg transition-colors hover:bg-elegant-hover ${focusLink}`}
+      className={`group mx-auto grid h-64 w-full max-w-5xl grid-cols-[2fr_3fr] overflow-hidden rounded-none border ${BORDER} bg-elegant-surface text-left shadow-lg transition-colors hover:bg-elegant-hover ${focusLink}`}
     >
       <div className={`relative border-r ${BORDER}`}>
         <img src={project.image} alt="" className="h-full w-full object-cover" />
@@ -40,7 +41,7 @@ export function ProjectCardBrief({ project, index, onOpen }) {
             {project.featured && <Eyebrow>Featured</Eyebrow>}
           </div>
 
-          <h3 className="mt-1 font-display text-xl font-semibold tracking-tight md:text-2xl">{project.title}</h3>
+          <h3 className={`mt-1 ${cardTitle}`}>{project.title}</h3>
           {project.role && (
             <p className="mt-0.5 font-mono text-sm text-elegant-text/50">{project.role}</p>
           )}

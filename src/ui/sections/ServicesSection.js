@@ -4,6 +4,7 @@ import { useRise } from "../design-system/animations/scroll-primitives";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
 import { EditorialFrame } from "../design-system/EditorialFrame";
+import { cardTitle } from "../design-system/typography";
 import { services } from "../../domain/data/services";
 
 export function ServicesSection() {
@@ -31,7 +32,7 @@ export function ServicesSection() {
                 {String(service.id).padStart(2, "0")}
               </span>
               <div>
-                <h3 className="font-display text-xl font-medium md:text-2xl">{service.title}</h3>
+                <h3 className={cardTitle}>{service.title}</h3>
                 <p className="mt-3 max-w-prose text-base leading-relaxed text-elegant-text/70">
                   {service.description}
                 </p>

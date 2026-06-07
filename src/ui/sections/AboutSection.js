@@ -3,6 +3,7 @@ import { useRise, ParallaxImage } from "../design-system/animations/scroll-primi
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
 import { EditorialFrame } from "../design-system/EditorialFrame";
+import { cardTitleSm } from "../design-system/typography";
 import { certificates } from "../../domain/data/certificates";
 
 export function AboutSection() {
@@ -53,7 +54,7 @@ export function AboutSection() {
               ].map((item) => (
                 <span
                   key={item.label}
-                  className={`inline-flex items-center gap-2 rounded-full border ${BORDER} bg-elegant-surface px-4 py-2 text-sm text-elegant-text/70`}
+                  className={`inline-flex items-center gap-2 rounded-none border ${BORDER} bg-elegant-surface px-4 py-2 text-sm text-elegant-text/70`}
                 >
                   {item.label}
                 </span>
@@ -67,14 +68,14 @@ export function AboutSection() {
                 <ParallaxImage
                   src="/images/profiles/AboutSection.jpg"
                   alt="John Remy Gonzales portrait"
-                  frameClassName={`w-56 rounded-[8px] border ${BORDER}`}
+                  frameClassName={`w-56 rounded-none border ${BORDER}`}
                   imgClassName="h-56 w-full object-cover"
                 />
               </div>
             </div>
 
-            <div className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-8`}>
-              <h3 className="flex items-center gap-2 text-lg font-medium">
+            <div className={`rounded-none border ${BORDER} bg-elegant-surface p-8`}>
+              <h3 className={`flex items-center gap-2 ${cardTitleSm}`}>
                 My Passion
               </h3>
               <ul className="mt-4 space-y-3">
@@ -91,7 +92,7 @@ export function AboutSection() {
                 ))}
               </ul>
 
-              <h3 className={`mt-6 flex items-center gap-2 border-t ${BORDER} pt-6 text-lg font-medium`}>
+              <h3 className={`mt-6 flex items-center gap-2 border-t ${BORDER} pt-6 ${cardTitleSm}`}>
                 Quick Facts
               </h3>
               <ul className="mt-4 space-y-2 text-base text-elegant-text/70">

@@ -1,16 +1,19 @@
 // Signature visual device (review #3): corner crop-marks + mono coordinate labels that
 // frame a block like a technical drawing, tying the page to its mono-editorial vocabulary.
 // Purely decorative (aria-hidden); the parent must be `relative`.
-// `inset` positions the marks relative to that parent. The default insets past a section's
-// py-24 / px-6 padding so the marks hug the content rather than floating at the section's
-// outer corners; it must track the parent's padding. Parents that already pad their content
-// (e.g. the hero card) pass `inset="inset-0"`.
+// `inset` positions the marks relative to that parent. The horizontal inset is deliberately
+// SMALLER than the section's side padding (`px-6 md:px-8`): the section padding band is split
+// into a small screen margin (so the ticks never jam the viewport edge on mobile/tablet,
+// where the container fills the screen) plus a gap before the content, so the frame breathes
+// around the content instead of hugging it. `inset-x-0` would pin the ticks to the container
+// edge = the screen edge on small viewports. Parents that already pad their content (e.g. the
+// hero card) pass `inset="inset-0"`.
 // Light mode needs a stronger tick than dark — a hairline of near-white on a dark surface
 // reads more than the same alpha of near-black on white.
 export function EditorialFrame({
   topLeft,
   bottomRight,
-  inset = "inset-y-16 inset-x-0",
+  inset = "inset-y-16 inset-x-3 md:inset-x-4",
   tone = "border-elegant-text/45 dark:border-elegant-text/30",
 }) {
   return (

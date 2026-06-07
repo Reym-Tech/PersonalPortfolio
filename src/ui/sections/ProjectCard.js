@@ -1,6 +1,7 @@
 import { primaryButtonSm, outlineButtonSm } from "../design-system/button-styles";
 import { ArrowRight } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
+import { cardTitleLg } from "../design-system/typography";
 import { Eyebrow } from "../shared/Eyebrow";
 
 // One project's full case study as a single-column reading view (no screenshot — the
@@ -15,7 +16,7 @@ export function ProjectCard({ project, index }) {
   return (
     <article
       aria-labelledby={titleId}
-      className={`mx-auto max-w-2xl rounded-[12px] border ${BORDER} bg-elegant-surface shadow-sm`}
+      className={`mx-auto max-w-2xl rounded-none border ${BORDER} bg-elegant-surface shadow-sm`}
     >
       <div className="p-8 md:p-10">
         <div className="flex items-baseline gap-4">
@@ -30,7 +31,7 @@ export function ProjectCard({ project, index }) {
           {project.featured && <Eyebrow>Featured</Eyebrow>}
         </div>
 
-        <h3 id={titleId} className="mt-2 font-display text-2xl font-semibold tracking-tight md:text-3xl">
+        <h3 id={titleId} className={`mt-2 ${cardTitleLg}`}>
           {project.title}
         </h3>
         {project.role && (
@@ -61,7 +62,7 @@ export function ProjectCard({ project, index }) {
             {project.technologies.map((tech) => (
               <span
                 key={tech}
-                className={`rounded-[4px] border ${BORDER} px-2.5 py-1 font-mono text-xs text-elegant-text/70`}
+                className={`rounded-none border ${BORDER} px-2.5 py-1 font-mono text-xs text-elegant-text/70`}
               >
                 {tech}
               </span>

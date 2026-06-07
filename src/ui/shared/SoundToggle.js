@@ -13,7 +13,7 @@ export function SoundToggle({ className = "", variant = "icon" }) {
         onClick={toggleMute}
         aria-label={ariaLabel}
         aria-pressed={!isMuted}
-        className={`flex w-full items-center justify-between rounded-[8px] px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-elegant-hover ${focusLink} ${className}`}
+        className={`flex w-full items-center justify-between rounded-none px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-elegant-hover ${focusLink} ${className}`}
       >
         <span>Sound</span>
         <span className="font-mono text-sm uppercase tracking-widest text-elegant-text/50">
@@ -30,7 +30,7 @@ export function SoundToggle({ className = "", variant = "icon" }) {
       onClick={toggleMute}
       aria-label={ariaLabel}
       aria-pressed={!isMuted}
-      className={`inline-flex h-10 w-10 items-center justify-center rounded-[8px] transition-colors hover:bg-elegant-hover ${focusLink} ${isMuted ? "text-elegant-text/50" : "text-elegant-text"} ${className}`}
+      className={`inline-flex h-10 w-10 items-center justify-center rounded-none transition-colors hover:bg-elegant-hover ${focusLink} ${isMuted ? "text-elegant-text/50" : "text-elegant-text"} ${className}`}
     >
       {isMuted ? <SpeakerOff /> : <SpeakerOn />}
     </button>

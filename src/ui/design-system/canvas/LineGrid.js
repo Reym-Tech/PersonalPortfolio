@@ -20,7 +20,7 @@ export function LineGrid({ className = "", fadeColor = null }) {
   const isDark = theme === "dark";
 
   const baseColor = isDark ? "148, 163, 184" : BASE_COLOR;
-  const baseAlpha = isDark ? 0.14 : 0.2;
+  const baseAlpha = isDark ? 0.22 : 0.28;
   const glowColor = isDark ? "96, 165, 250" : GLOW_COLOR;
   const fade = fadeColor ?? (isDark ? "#0d1117" : "#ffffff");
   const fadeTransparent = isDark ? "rgba(13,17,23,0)" : "rgba(255,255,255,0)";

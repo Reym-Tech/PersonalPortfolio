@@ -1,5 +1,6 @@
 import { focusLink } from "../design-system/button-styles";
 import { BORDER } from "../design-system/tokens";
+import { cardTitleSm } from "../design-system/typography";
 import { contactMethods } from "../../domain/data/contact-methods";
 
 const FOOTER_LINKS = [
@@ -20,7 +21,7 @@ export function Footer() {
       <div className="mx-auto w-full max-w-6xl px-6 py-16 md:px-8">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
-            <p className="text-lg font-semibold">John Remy Gonzales</p>
+            <p className={cardTitleSm}>John Remy Gonzales</p>
             <p className="mt-2 text-sm leading-relaxed text-elegant-text/60">
               Full-stack web & mobile developer building clean, accessible, and
               refined digital experiences.
@@ -33,7 +34,7 @@ export function Footer() {
                   target={method.external ? "_blank" : undefined}
                   rel={method.external ? "noopener noreferrer" : undefined}
                   aria-label={method.name}
-                  className={`inline-flex h-10 w-10 items-center justify-center rounded-full border ${BORDER} bg-elegant-surface transition-colors hover:bg-elegant-hover ${focusLink}`}
+                  className={`inline-flex h-10 w-10 items-center justify-center rounded-none border ${BORDER} bg-elegant-surface transition-colors hover:bg-elegant-hover ${focusLink}`}
                 >
                   <img src={method.icon} alt="" aria-hidden="true" className="h-5 w-5" />
                 </a>

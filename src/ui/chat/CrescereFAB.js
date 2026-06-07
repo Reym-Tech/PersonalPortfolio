@@ -106,7 +106,7 @@ export function CrescereFAB({
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         whileHover={reduceMotion ? undefined : { scale: 1.08 }}
         whileTap={reduceMotion ? undefined : { scale: 0.95 }}
-        className={`relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#111827] text-white shadow-xl transition-shadow hover:shadow-2xl ${focusRing}`}
+        className={`relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#111827] text-white shadow-xl transition-shadow hover:shadow-2xl dark:bg-white dark:text-[#111827] ${focusRing}`}
       >
         {/* Robot face (closed) and Close X (open) crossfade in place. The X rotates
             45° on hover, per Micro Interactions: "Close — Rotate 45° on hover". */}
@@ -117,10 +117,14 @@ export function CrescereFAB({
             transition={{ duration: MORPH_MS, ease: EASE_OUT }}
             aria-hidden="true"
           >
-            <BotMark isThinking={isAiThinking} hasNewMessage={hasNewMessage && !isOpen} />
+            <BotMark
+              isThinking={isAiThinking}
+              hasNewMessage={hasNewMessage && !isOpen}
+              sparkleClassName="fill-[#BB8CF6] dark:fill-[#8B5CF6]"
+            />
           </motion.span>
           <motion.span
-            className="absolute inset-0 flex items-center justify-center text-white"
+            className="absolute inset-0 flex items-center justify-center"
             animate={{
               opacity: isOpen ? 1 : 0,
               scale: isOpen ? 1 : 0.7,

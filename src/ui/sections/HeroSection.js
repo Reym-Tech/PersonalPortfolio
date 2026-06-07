@@ -4,6 +4,7 @@ import { primaryButton, outlineButton } from "../design-system/button-styles";
 import { ArrowRight } from "../design-system/icons";
 import { LineGrid } from "../design-system/canvas/LineGrid";
 import { EditorialFrame } from "../design-system/EditorialFrame";
+import { heroTitle } from "../design-system/typography";
 import { Parallax } from "../design-system/animations/scroll-primitives";
 
 import { generateCv } from "../../application/use-cases/generate-cv";
@@ -61,7 +62,7 @@ export function HeroSection({ introExiting, instantReveal }) {
 
               <motion.h1
                 {...heroReveal(0.04)}
-                className="mt-6 max-w-[15ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[3.25rem] lg:text-[3.5rem]"
+                className={`mt-6 max-w-[15ch] text-balance ${heroTitle}`}
               >
                 I build accessible,{" "}
                 <span className="whitespace-nowrap">motion-driven</span> interfaces.
@@ -100,7 +101,7 @@ export function HeroSection({ introExiting, instantReveal }) {
                   alt="John Remy Gonzales"
                   fetchPriority="high"
                   decoding="async"
-                  className="w-64 max-h-[480px] rounded-[8px] border border-elegant-border object-cover object-top"
+                  className="w-64 max-h-[480px] rounded-none border border-elegant-border object-cover object-top"
                 />
               </Parallax>
             </motion.div>

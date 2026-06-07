@@ -9,13 +9,19 @@ import { BotMark } from "./BotMark";
 
 // Dark robot avatar reused in the header and beside every assistant message, so
 // the panel wears the same AI Assistant face as the FAB.
+// Mirrors the FAB's theme invert: dark circle + white robot in light mode, white circle
+// + dark robot in dark mode (so it never blends into the dark-mode panel surface).
 function BotAvatar({ size, mark, isThinking = false }) {
   return (
     <span
-      className="inline-flex flex-none items-center justify-center rounded-full bg-[#111827]"
+      className="inline-flex flex-none items-center justify-center rounded-full bg-[#111827] text-white dark:bg-white dark:text-[#111827]"
       style={{ width: size, height: size }}
     >
-      <BotMark size={mark} isThinking={isThinking} />
+      <BotMark
+        size={mark}
+        isThinking={isThinking}
+        sparkleClassName="fill-[#BB8CF6] dark:fill-[#8B5CF6]"
+      />
     </span>
   );
 }
@@ -232,6 +238,24 @@ export function ChatWidget({
       <AnimatePresence onExitComplete={() => onClosed?.()}>
         {isOpen && (
           <motion.div
+            key="scrim"
+            // Backdrop scrim: dims + lightly blurs the page so the open panel reads as
+            // the focused surface (the mobile-menu pattern) and gains a visible
+            // tap-to-dismiss target. Stronger on mobile, where the panel nearly fills
+            // the screen; lighter on desktop (sm+), where it's a small corner element and
+            // a heavy blackout would feel disproportionate. The FAB (z-50) sits above
+            // this, so the launcher stays bright as the close control.
+            onClick={onClose}
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0.12 : 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] sm:bg-black/20"
+          />
+        )}
+        {isOpen && (
+          <motion.div
             key="panel"
             ref={panelRef}
             role="dialog"
@@ -246,7 +270,7 @@ export function ChatWidget({
             }
             transition={reduceMotion ? { duration: 0.15 } : PANEL_OPEN}
             style={{ transformOrigin: PANEL_ORIGIN }}
-            className={`flex max-h-[calc(100dvh_-_8rem)] w-[360px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border ${BORDER} bg-elegant-surface/95 shadow-xl backdrop-blur-sm`}
+            className={`flex max-h-[calc(100dvh_-_8rem)] w-[360px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-none border ${BORDER} bg-elegant-surface/95 shadow-xl backdrop-blur-sm`}
           >
             {/* Header — assistant identity + tab switcher */}
             <div className={`flex flex-none flex-col gap-3 border-b ${BORDER} px-4 pb-3 pt-3.5`}>
@@ -268,13 +292,13 @@ export function ChatWidget({
                   type="button"
                   onClick={onClose}
                   aria-label="Close"
-                  className={`inline-flex h-8 w-8 items-center justify-center rounded-[8px] text-elegant-text/60 transition-colors hover:bg-elegant-hover hover:text-elegant-text ${focusLink}`}
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-none text-elegant-text/60 transition-colors hover:bg-elegant-hover hover:text-elegant-text ${focusLink}`}
                 >
                   <Close />
                 </button>
               </motion.div>
 
-              <motion.div className={`flex items-center gap-0.5 rounded-[8px] border ${BORDER} bg-elegant-hover p-1`} {...revealProps(1)}>
+              <motion.div className={`flex items-center gap-0.5 rounded-none border ${BORDER} bg-elegant-hover p-1`} {...revealProps(1)}>
                 {[
                   { id: "chat", label: "Chat with AI" },
                   { id: "contact", label: "Contact" },
@@ -283,7 +307,7 @@ export function ChatWidget({
                     key={id}
                     type="button"
                     onClick={() => setActiveTab(id)}
-                    className={`flex-1 rounded-[6px] px-3 py-1 text-xs font-medium transition-colors ${activeTab === id
+                    className={`flex-1 rounded-none px-3 py-1 text-xs font-medium transition-colors ${activeTab === id
                       ? "bg-elegant-surface text-elegant-text shadow-sm"
                       : "text-elegant-text/50 hover:text-elegant-text/80"
                       } ${focusRing}`}
@@ -318,9 +342,9 @@ export function ChatWidget({
                       >
                         {!isUser && <BotAvatar size={28} mark={19} />}
                         <p
-                          className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${isUser
-                            ? "rounded-br-sm bg-elegant-text text-elegant-surface"
-                            : `rounded-bl-sm border ${BORDER} bg-elegant-hover text-elegant-text`
+                          className={`max-w-[80%] rounded-none px-4 py-2.5 text-sm leading-relaxed ${isUser
+                            ? "bg-elegant-text text-elegant-surface"
+                            : `border ${BORDER} bg-elegant-hover text-elegant-text`
                             }`}
                         >
                           {msg.content}
@@ -336,7 +360,7 @@ export function ChatWidget({
                           key={chip}
                           type="button"
                           onClick={() => handleSend(chip)}
-                          className={`rounded-full border ${BORDER} bg-elegant-hover px-3 py-1 text-xs text-elegant-text/70 transition-colors hover:bg-elegant-active hover:text-elegant-text ${focusRing}`}
+                          className={`rounded-none border ${BORDER} bg-elegant-hover px-3 py-1 text-xs text-elegant-text/70 transition-colors hover:bg-elegant-active hover:text-elegant-text ${focusRing}`}
                         >
                           {chip}
                         </button>
@@ -347,7 +371,7 @@ export function ChatWidget({
                   {loading && (
                     <div className="flex items-end justify-start gap-2">
                       <BotAvatar size={28} mark={19} isThinking />
-                      <div className={`flex items-center gap-1.5 rounded-2xl rounded-bl-sm border ${BORDER} bg-elegant-hover px-4 py-3`}>
+                      <div className={`flex items-center gap-1.5 rounded-none border ${BORDER} bg-elegant-hover px-4 py-3`}>
                         {[0, 1, 2].map((i) => (
                           <motion.span
                             key={i}
@@ -375,7 +399,7 @@ export function ChatWidget({
                       rows={1}
                       maxLength={500}
                       aria-label="Message"
-                      className={`flex-1 resize-none rounded-[8px] border ${BORDER} bg-elegant-hover px-3 py-2 text-sm text-elegant-text placeholder:text-elegant-text/40 focus:outline-none focus:ring-2 focus:ring-elegant-primary focus:ring-offset-0`}
+                      className={`flex-1 resize-none rounded-none border ${BORDER} bg-elegant-hover px-3 py-2 text-sm text-elegant-text placeholder:text-elegant-text/40 focus:outline-none focus:ring-2 focus:ring-elegant-primary focus:ring-offset-0`}
                       style={{ minHeight: "38px", maxHeight: "96px" }}
                       onInput={(e) => {
                         e.target.style.height = "auto";
@@ -387,7 +411,7 @@ export function ChatWidget({
                       onClick={() => handleSend()}
                       disabled={sendDisabled}
                       aria-label="Send message"
-                      className={`inline-flex h-[38px] w-[38px] flex-none items-center justify-center rounded-[8px] bg-elegant-text text-elegant-surface transition-opacity disabled:opacity-40 ${focusRing}`}
+                      className={`inline-flex h-[38px] w-[38px] flex-none items-center justify-center rounded-none bg-elegant-text text-elegant-surface transition-opacity disabled:opacity-40 ${focusRing}`}
                     >
                       <ArrowRight />
                     </button>
@@ -418,9 +442,9 @@ export function ChatWidget({
                       href={method.href}
                       target={method.external ? "_blank" : undefined}
                       rel={method.external ? "noopener noreferrer" : undefined}
-                      className={`flex items-center gap-3 rounded-[8px] border ${BORDER} bg-elegant-hover px-3 py-3 transition-colors hover:bg-elegant-active ${focusLink}`}
+                      className={`flex items-center gap-3 rounded-none border ${BORDER} bg-elegant-hover px-3 py-3 transition-colors hover:bg-elegant-active ${focusLink}`}
                     >
-                      <span className={`inline-flex h-10 w-10 flex-none items-center justify-center rounded-[8px] border ${BORDER} bg-elegant-surface`}>
+                      <span className={`inline-flex h-10 w-10 flex-none items-center justify-center rounded-none border ${BORDER} bg-elegant-surface`}>
                         <img src={method.icon} alt="" aria-hidden="true" className="h-5 w-5" />
                       </span>
                       <div className="min-w-0 flex-1">

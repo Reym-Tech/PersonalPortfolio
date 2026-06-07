@@ -1,12 +1,11 @@
 import { Parallax } from "../design-system/animations/scroll-primitives";
+import { sectionTitle, sectionTitleSm } from "../design-system/typography";
 import { Eyebrow } from "./Eyebrow";
 
 export function SectionHeading({ eyebrow, title, description, center = false, display = false, index }) {
   // Anchor sections (About, Projects, Contact) use the larger display scale; the
   // contrast against the restrained default scale is what gives the page its rhythm.
-  const titleClass = display
-    ? "mt-3 font-display text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[3.5rem]"
-    : "mt-3 font-display text-[2rem] font-medium leading-tight tracking-tight md:text-[2.5rem]";
+  const titleClass = display ? `mt-3 ${sectionTitle}` : `mt-3 ${sectionTitleSm}`;
 
   return (
     <Parallax offset={18} className={center ? "text-center" : ""}>

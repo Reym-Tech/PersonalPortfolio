@@ -7,6 +7,7 @@ import { ArrowRight, Close } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
 import { EditorialFrame } from "../design-system/EditorialFrame";
+import { cardTitleSm } from "../design-system/typography";
 import { useDialog } from "../design-system/use-dialog";
 import { certificates } from "../../domain/data/certificates";
 
@@ -39,7 +40,7 @@ export function CertificationsSection() {
               key={cert.id}
               {...rise(index * 0.05)}
               onClick={() => setSelectedCert(cert)}
-              className={`group flex flex-col overflow-hidden rounded-[8px] border ${BORDER} bg-elegant-surface text-left transition-colors hover:bg-elegant-hover ${focusLink}`}
+              className={`group flex flex-col overflow-hidden rounded-none border ${BORDER} bg-elegant-surface text-left transition-colors hover:bg-elegant-hover ${focusLink}`}
             >
               <ParallaxImage
                 src={cert.image}
@@ -47,7 +48,7 @@ export function CertificationsSection() {
                 frameClassName={`h-40 w-full border-b ${BORDER}`}
               />
               <div className="flex flex-1 flex-col p-6">
-                <h3 className="text-lg font-medium leading-snug">{cert.title}</h3>
+                <h3 className={cardTitleSm}>{cert.title}</h3>
                 <p className="mt-2 font-mono text-sm text-elegant-text/50">
                   {cert.issuer} • {cert.date}
                 </p>
@@ -95,14 +96,14 @@ export function CertificationsSection() {
                 type="button"
                 onClick={closeCert}
                 aria-label="Close certificate"
-                className={`absolute -top-3 -right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border ${BORDER} bg-elegant-surface text-elegant-text/60 shadow-md transition-colors hover:text-elegant-text ${focusRing}`}
+                className={`absolute -top-3 -right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-none border ${BORDER} bg-elegant-surface text-elegant-text/60 shadow-md transition-colors hover:text-elegant-text ${focusRing}`}
               >
                 <Close />
               </button>
               <img
                 src={selectedCert.image}
                 alt={selectedCert.title}
-                className="max-h-[90vh] rounded-lg object-contain"
+                className="max-h-[90vh] rounded-none object-contain"
               />
             </motion.div>
           </motion.div>

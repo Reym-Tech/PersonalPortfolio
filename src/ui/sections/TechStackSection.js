@@ -26,7 +26,7 @@ export function TechStackSection() {
             <motion.div
               key={group.category}
               {...rise(index * 0.05)}
-              className={`rounded-[8px] border ${BORDER} bg-elegant-surface p-6 transition-colors hover:bg-elegant-hover`}
+              className={`rounded-none border ${BORDER} bg-elegant-surface p-6 transition-colors hover:bg-elegant-hover`}
             >
               <h3 className="font-mono text-sm uppercase tracking-widest text-elegant-text/50">
                 {group.category}
@@ -35,7 +35,7 @@ export function TechStackSection() {
                 {group.items.map((item) => (
                   <li
                     key={item}
-                    className={`rounded-[4px] border ${BORDER} px-3 py-1 font-mono text-sm text-elegant-text/70`}
+                    className={`rounded-none border ${BORDER} px-3 py-1 font-mono text-sm text-elegant-text/70`}
                   >
                     {item}
                   </li>

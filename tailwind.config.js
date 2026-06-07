@@ -31,8 +31,6 @@ module.exports = {
           primary: 'rgb(var(--elegant-primary) / <alpha-value>)',
           secondary: '#8B5CF6',
           success: 'rgb(var(--elegant-success) / <alpha-value>)',
-          warning: '#D97706',
-          danger: '#DC2626',
           surface: 'rgb(var(--elegant-surface) / <alpha-value>)',
           text: 'rgb(var(--elegant-text) / <alpha-value>)',
           border: 'rgb(var(--elegant-border) / <alpha-value>)',

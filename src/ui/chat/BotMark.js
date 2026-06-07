@@ -1,11 +1,17 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 // The "AI Assistant" face from CHATBOT_DESIGN.png (At Rest state): a friendly
-// robot head drawn in white line-art on the dark FAB, with a purple 4-point
-// sparkle twinkling at the upper-right. The sparkle is the design's mark of
-// intelligence ("AI Sparkle — gentle twinkle loop"), so it carries the only
-// idle motion; the face itself stays calm.
-const SPARKLE = "#BB8CF6"; // lighter than the #8B5CF6 token so it reads on #111827
+// robot head in line-art with a purple 4-point sparkle at the upper-right. The face is
+// drawn in `currentColor`, so the consumer sets its color via `text-*` — the FAB inverts
+// it with the theme (white on its dark light-mode body, dark on its white dark-mode body),
+// while the panel avatar keeps it white on its always-dark circle. The sparkle is the
+// design's mark of intelligence ("AI Sparkle — gentle twinkle loop"), so it carries the
+// only idle motion; the face itself stays calm.
+//
+// `sparkleClassName` lets the consumer tune the sparkle fill to the surface it sits on
+// (the default light purple reads on any dark surface; the FAB overrides it so the sparkle
+// deepens on its white dark-mode body). Keyed off the surface, not the global theme,
+// because the avatar's surface never inverts.
 
 // 4-point sparkle (concave star) centered at (cx, cy): outer tips at N/E/S/W,
 // inner valleys pulled close to center on the diagonals.
@@ -25,7 +31,12 @@ function sparklePath(cx, cy, r) {
   ].join(" ");
 }
 
-export function BotMark({ isThinking = false, hasNewMessage = false, size = 30 }) {
+export function BotMark({
+  isThinking = false,
+  hasNewMessage = false,
+  size = 30,
+  sparkleClassName = "fill-[#BB8CF6]",
+}) {
   const reduceMotion = useReducedMotion();
 
   // Twinkle cadence: a calm loop at rest, livelier while the assistant thinks.
@@ -43,22 +54,22 @@ export function BotMark({ isThinking = false, hasNewMessage = false, size = 30 }
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
       {/* Antenna — short stalk + tip dot */}
-      <path d="M15 9V6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="15" cy="5" r="1.15" fill="white" />
+      <path d="M15 9V6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="15" cy="5" r="1.15" fill="currentColor" />
 
       {/* Side ear nubs */}
-      <rect x="4.6" y="14" width="2" height="4" rx="1" stroke="white" strokeWidth="1.4" />
-      <rect x="23.4" y="14" width="2" height="4" rx="1" stroke="white" strokeWidth="1.4" />
+      <rect x="4.6" y="14" width="2" height="4" rx="1" stroke="currentColor" strokeWidth="1.4" />
+      <rect x="23.4" y="14" width="2" height="4" rx="1" stroke="currentColor" strokeWidth="1.4" />
 
       {/* Head */}
-      <rect x="7" y="9" width="16" height="14" rx="5" stroke="white" strokeWidth="1.6" />
+      <rect x="7" y="9" width="16" height="14" rx="5" stroke="currentColor" strokeWidth="1.6" />
 
       {/* Eyes */}
-      <circle cx="11.8" cy="15" r="1.5" fill="white" />
-      <circle cx="18.2" cy="15" r="1.5" fill="white" />
+      <circle cx="11.8" cy="15" r="1.5" fill="currentColor" />
+      <circle cx="18.2" cy="15" r="1.5" fill="currentColor" />
 
       {/* Smile */}
-      <path d="M12.2 18.4Q15 20.4 17.8 18.4" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      <path d="M12.2 18.4Q15 20.4 17.8 18.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
 
       {/* AI sparkle — the intelligence mark, upper-right */}
       <motion.g
@@ -66,14 +77,14 @@ export function BotMark({ isThinking = false, hasNewMessage = false, size = 30 }
         animate={twinkle}
         transition={twinkleTransition}
       >
-        <path d={sparklePath(25, 7.5, 4.4)} fill={SPARKLE} />
+        <path d={sparklePath(25, 7.5, 4.4)} className={sparkleClassName} />
       </motion.g>
 
       {/* Notification spark — a tiny second sparkle that blinks for new messages */}
       {hasNewMessage && (
         <motion.path
           d={sparklePath(28.5, 12, 2)}
-          fill={SPARKLE}
+          className={sparkleClassName}
           initial={reduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.4 }}
           animate={reduceMotion ? { opacity: 1 } : { opacity: [0, 1, 0.2, 1], scale: 1 }}
           transition={{ duration: 1.4, ease: "easeInOut" }}

@@ -114,7 +114,7 @@ export function ProjectsSection() {
   return (
     <section id="projects" className="scroll-mt-20">
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-24 md:px-8">
-        <EditorialFrame bottomRight="02 · Projects" inset="inset-x-0 top-16 bottom-8" />
+        <EditorialFrame bottomRight="02 · Projects" inset="inset-x-3 md:inset-x-4 top-16 bottom-8" />
         <motion.div {...rise()}>
           <SectionHeading
             index="02"
@@ -163,7 +163,7 @@ export function ProjectsSection() {
                 type="button"
                 onClick={close}
                 aria-label="Close case study"
-                className={`absolute -top-3 -right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border ${BORDER} bg-elegant-surface text-elegant-text/60 shadow-md transition-colors hover:text-elegant-text ${focusRing}`}
+                className={`absolute -top-3 -right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-none border ${BORDER} bg-elegant-surface text-elegant-text/60 shadow-md transition-colors hover:text-elegant-text ${focusRing}`}
               >
                 <Close />
               </button>

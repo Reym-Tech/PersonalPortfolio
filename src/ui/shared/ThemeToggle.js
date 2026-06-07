@@ -56,7 +56,7 @@ export function ThemeToggle({ className = "" }) {
       onClick={handleClick}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       aria-pressed={isDark}
-      className={`inline-flex h-10 w-10 items-center justify-center rounded-[8px] text-elegant-text transition-colors hover:bg-elegant-hover ${focusLink} ${className}`}
+      className={`inline-flex h-10 w-10 items-center justify-center rounded-none text-elegant-text transition-colors hover:bg-elegant-hover ${focusLink} ${className}`}
     >
       <AnimatePresence initial={false} mode="wait">
         <motion.span

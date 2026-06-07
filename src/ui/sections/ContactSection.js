@@ -33,13 +33,13 @@ export function ContactSection() {
               target={method.external ? "_blank" : undefined}
               rel={method.external ? "noopener noreferrer" : undefined}
               aria-disabled={method.disabled}
-              className={`flex items-start gap-4 rounded-[8px] border ${BORDER} bg-elegant-surface p-6 transition-colors ${
+              className={`flex items-start gap-4 rounded-none border ${BORDER} bg-elegant-surface p-6 transition-colors ${
                 method.disabled
                   ? "cursor-not-allowed opacity-60"
                   : `hover:bg-elegant-hover ${focusLink}`
               }`}
             >
-              <span className={`inline-flex h-12 w-12 flex-none items-center justify-center rounded-[8px] border ${BORDER}`}>
+              <span className={`inline-flex h-12 w-12 flex-none items-center justify-center rounded-none border ${BORDER}`}>
                 <img src={method.icon} alt="" aria-hidden="true" className="h-6 w-6" />
               </span>
               <span>

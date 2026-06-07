@@ -80,7 +80,7 @@ export function NavBar({ introExiting = false, instantReveal = false }) {
             <button
               onClick={() => setSidebarOpen(true)}
               aria-label="Open menu"
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-[8px] border ${BORDER} text-elegant-text hover:bg-elegant-hover md:hidden ${focusLink}`}
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-none border ${BORDER} text-elegant-text hover:bg-elegant-hover md:hidden ${focusLink}`}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
@@ -114,7 +114,7 @@ export function NavBar({ introExiting = false, instantReveal = false }) {
           <button
             onClick={closeSidebar}
             aria-label="Close menu"
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-[8px] border ${BORDER} hover:bg-elegant-hover ${focusLink}`}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-none border ${BORDER} hover:bg-elegant-hover ${focusLink}`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
@@ -127,7 +127,7 @@ export function NavBar({ introExiting = false, instantReveal = false }) {
               <a
                 href={item.href}
                 onClick={closeSidebar}
-                className={`block rounded-[8px] px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-elegant-hover hover:text-elegant-primary ${focusLink}`}
+                className={`block rounded-none px-4 py-3 text-base text-elegant-text/80 transition-colors hover:bg-elegant-hover hover:text-elegant-primary ${focusLink}`}
               >
                 {item.label}
               </a>
