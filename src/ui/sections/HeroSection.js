@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { primaryButton, outlineButton } from "../design-system/button-styles";
 import { ArrowRight } from "../design-system/icons";
 import { LineGrid } from "../design-system/canvas/LineGrid";
+import { EditorialFrame } from "../design-system/EditorialFrame";
 import { Parallax } from "../design-system/animations/scroll-primitives";
 
 import { generateCv } from "../../application/use-cases/generate-cv";
@@ -46,12 +47,7 @@ export function HeroSection({ introExiting, instantReveal }) {
             ease: [0.22, 1, 0.36, 1],
           }}
         >
-          <span
-            aria-hidden="true"
-            className="absolute top-2 left-0 font-mono text-sm uppercase tracking-widest text-elegant-text/30"
-          >
-            Portfolio
-          </span>
+          <EditorialFrame topLeft="Portfolio" bottomRight="00 · Home" inset="inset-0" />
 
           <div className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
             <div>
@@ -65,7 +61,7 @@ export function HeroSection({ introExiting, instantReveal }) {
 
               <motion.h1
                 {...heroReveal(0.04)}
-                className="mt-6 max-w-[15ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[3.25rem] lg:text-[4rem]"
+                className="mt-6 max-w-[15ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[3.25rem] lg:text-[3.5rem]"
               >
                 I build accessible,{" "}
                 <span className="whitespace-nowrap">motion-driven</span> interfaces.

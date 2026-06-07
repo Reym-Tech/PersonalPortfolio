@@ -12,6 +12,7 @@ import { focusRing } from "../design-system/button-styles";
 import { Close } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
+import { EditorialFrame } from "../design-system/EditorialFrame";
 import { useDialog } from "../design-system/use-dialog";
 import { projects } from "../../domain/data/projects";
 import { ProjectCard } from "./ProjectCard";
@@ -112,7 +113,8 @@ export function ProjectsSection() {
 
   return (
     <section id="projects" className="scroll-mt-20">
-      <div className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:px-8">
+      <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-24 md:px-8">
+        <EditorialFrame bottomRight="02 · Projects" inset="inset-x-0 top-16 bottom-8" />
         <motion.div {...rise()}>
           <SectionHeading
             index="02"

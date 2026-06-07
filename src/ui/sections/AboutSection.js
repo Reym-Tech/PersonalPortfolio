@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useRise, ParallaxImage } from "../design-system/animations/scroll-primitives";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
+import { EditorialFrame } from "../design-system/EditorialFrame";
 import { certificates } from "../../domain/data/certificates";
 
 export function AboutSection() {
@@ -9,7 +10,8 @@ export function AboutSection() {
 
   return (
     <section id="about" className="scroll-mt-20">
-      <div className="mx-auto max-w-5xl px-6 py-24 md:px-8">
+      <div className="relative mx-auto max-w-5xl px-6 py-24 md:px-8">
+        <EditorialFrame bottomRight="01 · About" />
         <motion.div {...rise()}>
           <SectionHeading index="01" eyebrow="About" title="About Me" display />
         </motion.div>

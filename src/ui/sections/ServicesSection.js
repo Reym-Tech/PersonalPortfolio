@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useRise } from "../design-system/animations/scroll-primitives";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
+import { EditorialFrame } from "../design-system/EditorialFrame";
 import { services } from "../../domain/data/services";
 
 export function ServicesSection() {
@@ -10,7 +11,8 @@ export function ServicesSection() {
 
   return (
     <section id="services" className="scroll-mt-20">
-      <div className="mx-auto max-w-4xl px-6 py-24 md:px-8">
+      <div className="relative mx-auto max-w-4xl px-6 py-24 md:px-8">
+        <EditorialFrame bottomRight="04 · Services" />
         <motion.div {...rise()}>
           <SectionHeading index="04" eyebrow="Services" title="What I Offer" />
         </motion.div>

@@ -6,6 +6,7 @@ import { outlineButton, focusLink, focusRing } from "../design-system/button-sty
 import { ArrowRight, Close } from "../design-system/icons";
 import { BORDER } from "../design-system/tokens";
 import { SectionHeading } from "../shared/SectionHeading";
+import { EditorialFrame } from "../design-system/EditorialFrame";
 import { useDialog } from "../design-system/use-dialog";
 import { certificates } from "../../domain/data/certificates";
 
@@ -21,7 +22,8 @@ export function CertificationsSection() {
 
   return (
     <section id="certificates" className="scroll-mt-20">
-      <div className="mx-auto max-w-6xl px-6 py-24 md:px-8">
+      <div className="relative mx-auto max-w-6xl px-6 py-24 md:px-8">
+        <EditorialFrame bottomRight="06 · Certificates" />
         <motion.div {...rise()}>
           <SectionHeading
             index="06"
