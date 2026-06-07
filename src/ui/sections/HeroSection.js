@@ -83,7 +83,7 @@ export function HeroSection({ introExiting, instantReveal }) {
                 {...heroReveal(0.12)}
                 className="mt-6 max-w-md text-base leading-relaxed text-elegant-text/70"
               >
-                Front to back — React &amp; Tailwind interfaces, Node.js &amp; REST backends.
+                Front to back — React &amp; Tailwind interfaces, FastAPI &amp; Supabase backends.
               </motion.p>
 
               <motion.div {...heroReveal(0.16)} className="mt-8 flex flex-wrap gap-4">

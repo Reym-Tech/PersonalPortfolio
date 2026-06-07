@@ -36,7 +36,6 @@ export const projects = [
     role: "Full-stack Developer",
     description: "Web-based POS and inventory management system for Hit Notes Café — tracks sales transactions, monitors stock levels, and surfaces revenue analytics through a unified Supabase-backed dashboard.",
     image: "/images/projects/BrewTrack.jpg",
-    githubLink: "https://github.com/Reym-Tech/BrewTrack_Latest",
     websiteLink: "https://bt-hitnotes.vercel.app",
     technologies: ["HTML", "CSS", "JavaScript", "Supabase", "PostgreSQL"],
     highlights: [

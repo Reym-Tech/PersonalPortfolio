@@ -25,8 +25,8 @@ export function AboutSection() {
             <p className="text-base leading-relaxed text-elegant-text/80">
               I specialize in{" "}
               <span className="font-medium text-elegant-text">full-stack web development</span>,
-              building responsive frontends with React and Tailwind CSS and reliable
-              backends with Node.js and REST APIs. I care most about{" "}
+              building responsive frontends with React and Tailwind CSS and
+              backends with FastAPI, Supabase, and serverless functions. I care most about{" "}
               <span className="font-medium text-elegant-text">
                 refined interfaces with smooth interactions
               </span>{" "}
@@ -43,7 +43,7 @@ export function AboutSection() {
               {[
                 { label: "Accessibility-first" },
                 { label: "Motion-driven interfaces" },
-                { label: "Full-Stack — React · Node" },
+                { label: "Full-Stack — React · FastAPI" },
                 { label: "Continuous learner" },
               ].map((item) => (
                 <span

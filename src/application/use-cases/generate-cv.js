@@ -111,9 +111,9 @@ export async function generateCv() {
   // TECHNICAL SKILLS
   addSectionHeader("TECHNICAL SKILLS");
   const skillCategories = [
-    { label: "Languages & Frameworks", skills: "JavaScript (ES6+), PHP, Java, HTML5/CSS3, React.js, Node.js" },
+    { label: "Languages & Frameworks", skills: "JavaScript (ES6+), Python, PHP, Java, HTML5/CSS3, React.js, Node.js" },
     { label: "Frontend Technologies", skills: "React, Tailwind CSS, Framer Motion, Responsive Design, Component Architecture" },
-    { label: "Backend & APIs", skills: "REST API Development, Express.js, Database Design, Server Configuration" },
+    { label: "Backend & APIs", skills: "REST API Development, FastAPI, Express.js, Serverless Functions, Database Design, Server Configuration" },
     { label: "Databases & Tools", skills: "MySQL, PostgreSQL, Firebase, Supabase, Git/GitHub, VS Code, Figma" },
   ];
   skillCategories.forEach((category) => {
