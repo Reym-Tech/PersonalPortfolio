@@ -6,8 +6,11 @@ module.exports = {
     extend: {
       fontFamily: {
         'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        // Elegant design system (DESIGN.md): primary/display=Google Sans, mono=Anonymous Pro
-        'display': ['"Google Sans"', 'Inter', 'system-ui', 'sans-serif'],
+        // Body = Inter (sans); headings = Space Grotesk (display). DESIGN.md specified
+        // "Google Sans" for display, but it isn't a loadable web font and silently fell
+        // back to Inter, so headings and body shared one voice. Space Grotesk is the real,
+        // grotesk-character face that gives the titling tier its own voice.
+        'display': ['"Space Grotesk"', 'system-ui', 'sans-serif'],
         'mono': ['"Anonymous Pro"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       fontWeight: {

@@ -29,7 +29,7 @@ export function ServicesSection() {
                 {String(service.id).padStart(2, "0")}
               </span>
               <div>
-                <h3 className="text-xl font-medium md:text-2xl">{service.title}</h3>
+                <h3 className="font-display text-xl font-medium md:text-2xl">{service.title}</h3>
                 <p className="mt-3 max-w-prose text-base leading-relaxed text-elegant-text/70">
                   {service.description}
                 </p>

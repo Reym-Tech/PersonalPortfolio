@@ -40,7 +40,7 @@ export function ProjectCardBrief({ project, index, onOpen }) {
             {project.featured && <Eyebrow>Featured</Eyebrow>}
           </div>
 
-          <h3 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">{project.title}</h3>
+          <h3 className="mt-1 font-display text-xl font-semibold tracking-tight md:text-2xl">{project.title}</h3>
           {project.role && (
             <p className="mt-0.5 font-mono text-sm text-elegant-text/50">{project.role}</p>
           )}

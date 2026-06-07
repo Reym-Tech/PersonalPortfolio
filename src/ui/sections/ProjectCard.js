@@ -30,7 +30,7 @@ export function ProjectCard({ project, index }) {
           {project.featured && <Eyebrow>Featured</Eyebrow>}
         </div>
 
-        <h3 id={titleId} className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+        <h3 id={titleId} className="mt-2 font-display text-2xl font-semibold tracking-tight md:text-3xl">
           {project.title}
         </h3>
         {project.role && (

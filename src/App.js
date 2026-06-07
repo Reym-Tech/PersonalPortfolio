@@ -46,7 +46,7 @@ export default function Portfolio() {
   return (
     <ThemeProvider>
       <SoundProvider>
-      <div className="min-h-screen scroll-smooth bg-elegant-surface font-display text-elegant-text antialiased">
+      <div className="min-h-screen scroll-smooth bg-elegant-surface font-sans text-elegant-text antialiased">
       {!introDone && (
         <EntryTransition
           onExitBegin={() => setIntroExiting(true)}

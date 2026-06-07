@@ -65,7 +65,7 @@ export function HeroSection({ introExiting, instantReveal }) {
 
               <motion.h1
                 {...heroReveal(0.04)}
-                className="mt-6 max-w-[15ch] text-balance text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[3.25rem] lg:text-[4rem]"
+                className="mt-6 max-w-[15ch] text-balance font-display text-[2.5rem] font-semibold leading-[1.05] tracking-tight md:text-[3.25rem] lg:text-[4rem]"
               >
                 I build accessible,{" "}
                 <span className="whitespace-nowrap">motion-driven</span> interfaces.
