@@ -1,8 +1,23 @@
 export const projects = [
   {
+    id: 0,
+    title: "This Portfolio",
+    featured: true,
+    role: "Designer & Front-end Developer",
+    description:
+      "The site you're on — a React single-page portfolio with a device- and motion-aware Framer Motion system, a WCAG-AA accessibility layer, and an AI assistant grounded on a Gemini serverless function.",
+    image: "/images/projects/Portfolio.png",
+    githubLink: "https://github.com/Reym-Tech/PersonalPortfolio",
+    technologies: ["React", "Tailwind CSS", "Framer Motion", "JavaScript", "jsPDF", "Gemini API", "Vercel"],
+    highlights: [
+      { label: "Problem", text: "Claiming front-end skills isn't the same as showing them. The portfolio itself had to be the proof — demonstrating motion, accessibility, and product thinking rather than just listing them on a card." },
+      { label: "Approach", text: "Built as a React single-page app: a Framer Motion system gated by device and reduced-motion preference, a WCAG-AA accessibility layer (focus-trapped dialogs, systematic focus rings, no-flash theming), and an AI assistant grounded on a Gemini serverless function that answers only from a fixed set of facts about me." },
+      { label: "Outcome", text: "The site you're reading is the deliverable — it runs the motion, accessibility, and assistant above, exports my resume in one click, and degrades gracefully when the AI is offline." },
+    ],
+  },
+  {
     id: 4,
     title: "Student Burnout Risk Predictor",
-    featured: true,
     role: "ML Engineer & Developer",
     description: "Academic burnout risk predictor built with Scikit-learn — classifies student risk level by analyzing study habits and generative AI tool usage patterns, served through a Python/FastAPI REST API.",
     image: "/images/projects/StudentBurnout.png",

@@ -29,11 +29,13 @@ export function ProjectCardBrief({ project, index, onOpen }) {
             hint past the card's clipped bottom edge. */}
         <div className="min-h-0 flex-1 overflow-hidden">
           <div className="flex items-baseline gap-3">
+            {/* NOTE: numbering starts at 00 — the first card is the portfolio itself
+                (the meta "Case Study 00"); real projects follow as 01+. */}
             <span
               aria-hidden="true"
               className="font-mono text-[2.5rem] font-semibold leading-none text-elegant-text/15"
             >
-              {String(index + 1).padStart(2, "0")}
+              {String(index).padStart(2, "0")}
             </span>
             {project.featured && <Eyebrow>Featured</Eyebrow>}
           </div>
@@ -44,9 +46,14 @@ export function ProjectCardBrief({ project, index, onOpen }) {
           )}
 
           {outcome && (
-            <p className="mt-3 border-l-2 border-elegant-primary pl-3 text-sm leading-relaxed text-elegant-text/80 line-clamp-2">
-              {outcome.text}
-            </p>
+            <div className="mt-3">
+              <span className="font-mono text-xs font-medium uppercase tracking-wider text-elegant-primary">
+                {outcome.label}
+              </span>
+              <p className="mt-1 text-sm leading-relaxed text-elegant-text line-clamp-2">
+                {outcome.text}
+              </p>
+            </div>
           )}
         </div>
 

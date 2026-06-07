@@ -19,11 +19,13 @@ export function ProjectCard({ project, index }) {
     >
       <div className="p-8 md:p-10">
         <div className="flex items-baseline gap-4">
+          {/* NOTE: numbering starts at 00 — the first card is the portfolio itself
+              (the meta "Case Study 00"); real projects follow as 01+. */}
           <span
             aria-hidden="true"
             className="font-mono text-[3rem] font-semibold leading-none text-elegant-text/15 md:text-[4rem]"
           >
-            {String(index + 1).padStart(2, "0")}
+            {String(index).padStart(2, "0")}
           </span>
           {project.featured && <Eyebrow>Featured</Eyebrow>}
         </div>
@@ -45,7 +47,7 @@ export function ProjectCard({ project, index }) {
             </div>
           ))}
           {outcome && (
-            <div className="border-l-2 border-elegant-primary pl-4">
+            <div>
               <span className="font-mono text-xs font-medium uppercase tracking-wider text-elegant-primary">
                 {outcome.label}
               </span>
