@@ -11,10 +11,12 @@ export async function generateCv() {
   const doc = createPdfDocument();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  let yPosition = 20;
   const margin = 20;
   const contentWidth = pageWidth - 2 * margin;
+  const pageBottom = pageHeight - 18;
+  let yPosition = 20;
 
+  // Monochrome palette mirrors the site's sharp-edge, grayscale design language.
   const colors = {
     primary: [0, 0, 0],
     accent: [50, 50, 50],
@@ -24,20 +26,29 @@ export async function generateCv() {
     divider: [180, 180, 180],
   };
 
-  const addSectionHeader = (text) => {
-    if (yPosition > pageHeight - 30) {
+  // Start a fresh page before writing a block that needs `needed` mm of vertical room.
+  const ensureSpace = (needed = 8) => {
+    if (yPosition + needed > pageBottom) {
       doc.addPage();
       yPosition = 20;
     }
-    doc.setFontSize(13);
+  };
+
+  const addSpace = (space = 4) => {
+    yPosition += space;
+  };
+
+  const addSectionHeader = (text) => {
+    ensureSpace(16);
+    doc.setFontSize(11.5);
     doc.setFont(undefined, "bold");
     doc.setTextColor(...colors.primary);
-    doc.text(text, margin, yPosition);
-    yPosition += 2;
-    doc.setDrawColor(...colors.accent);
-    doc.setLineWidth(0.8);
-    doc.line(margin, yPosition, margin + 50, yPosition);
-    yPosition += 8;
+    doc.text(text.toUpperCase(), margin, yPosition);
+    yPosition += 2.5;
+    doc.setDrawColor(...colors.divider);
+    doc.setLineWidth(0.3);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 7;
   };
 
   const addText = (text, fontSize = 10, isBold = false, indent = 0) => {
@@ -46,53 +57,74 @@ export async function generateCv() {
     doc.setTextColor(...colors.text);
     const lines = doc.splitTextToSize(text, contentWidth - indent);
     lines.forEach((line) => {
-      if (yPosition > pageHeight - 15) {
-        doc.addPage();
-        yPosition = 20;
-      }
+      ensureSpace(fontSize * 0.5);
       doc.text(line, margin + indent, yPosition);
-      yPosition += fontSize * 0.4;
+      yPosition += fontSize * 0.42;
     });
   };
 
+  // Square bullet keeps the resume consistent with the site's sharp-edge language.
   const addBullet = (text, fontSize = 9.5) => {
-    if (yPosition > pageHeight - 15) {
-      doc.addPage();
-      yPosition = 20;
-    }
     doc.setFontSize(fontSize);
     doc.setFont(undefined, "normal");
     doc.setTextColor(...colors.text);
-    doc.setFillColor(...colors.accent);
-    doc.circle(margin + 2, yPosition - 1.5, 0.8, "F");
     const lines = doc.splitTextToSize(text, contentWidth - 8);
-    lines.forEach((line) => {
+    lines.forEach((line, index) => {
+      ensureSpace(fontSize * 0.5);
+      if (index === 0) {
+        doc.setFillColor(...colors.accent);
+        doc.rect(margin + 1.5, yPosition - 2, 1.5, 1.5, "F");
+      }
       doc.text(line, margin + 6, yPosition);
       yPosition += fontSize * 0.42;
     });
   };
 
-  const addSpace = (space = 4) => {
-    yPosition += space;
+  const addProject = ({ name, subtitle, bullets }) => {
+    // Reserve room for the whole block so a project never splits title-from-bullets across a page.
+    ensureSpace(30);
+    doc.setFontSize(11);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(...colors.dark);
+    doc.text(name, margin, yPosition);
+    const nameWidth = doc.getTextWidth(name);
+    doc.setFontSize(9);
+    doc.setFont(undefined, "italic");
+    doc.setTextColor(...colors.accent);
+    doc.text(subtitle, margin + nameWidth + 4, yPosition);
+    yPosition += 5.5;
+    bullets.forEach((bullet) => addBullet(bullet));
+    addSpace(5);
   };
 
   // HEADER
-  doc.setFontSize(26);
+  doc.setFontSize(24);
   doc.setFont(undefined, "bold");
   doc.setTextColor(...colors.primary);
-  doc.text("REM", pageWidth / 2, yPosition, { align: "center" });
+  doc.text("JOHN REMY C. GONZALES", pageWidth / 2, yPosition, { align: "center" });
   yPosition += 7;
 
   doc.setFontSize(11);
   doc.setFont(undefined, "normal");
   doc.setTextColor(...colors.accent);
-  doc.text("Full-Stack Web Developer • BSIT Student", pageWidth / 2, yPosition, { align: "center" });
-  yPosition += 10;
+  doc.text("Full-Stack Web Developer  •  BSIT Student", pageWidth / 2, yPosition, { align: "center" });
+  yPosition += 7;
 
   doc.setFontSize(9);
   doc.setTextColor(...colors.lightText);
-  const contactInfo = "johnremygonzales20@gmail.com  •  github.com/Reym-Tech  •  facebook.com/JohnRemyxD";
-  doc.text(contactInfo, pageWidth / 2, yPosition, { align: "center" });
+  doc.text(
+    "johnremygonzales20@gmail.com  •  Davao del Sur, Philippines",
+    pageWidth / 2,
+    yPosition,
+    { align: "center" }
+  );
+  yPosition += 4.5;
+  doc.text(
+    "github.com/Reym-Tech  •  linkedin.com/in/john-remy-gonzales  •  facebook.com/JohnRemyxD",
+    pageWidth / 2,
+    yPosition,
+    { align: "center" }
+  );
   yPosition += 8;
 
   doc.setDrawColor(...colors.divider);
@@ -101,70 +133,81 @@ export async function generateCv() {
   yPosition += 10;
 
   // PROFESSIONAL PROFILE
-  addSectionHeader("PROFESSIONAL PROFILE");
+  addSectionHeader("Professional Profile");
   addText(
-    "Information Technology student with 3+ years of hands-on coding experience in full-stack web development and UI/UX design. I build responsive, user-centered applications with clean architecture and reliable backends, and I'm committed to continuous learning.",
+    "Information Technology student with 3+ years of hands-on coding across full-stack web and mobile development. I build responsive, accessible, user-centered applications — React and Tailwind on the front end, FastAPI and Supabase behind it — and ship software people actually use. Committed to continuous learning and growing into a software engineering role.",
     10
   );
   addSpace(6);
 
-  // TECHNICAL SKILLS
-  addSectionHeader("TECHNICAL SKILLS");
+  // TECHNICAL SKILLS — reconciled to the stacks actually used in the projects below.
+  addSectionHeader("Technical Skills");
   const skillCategories = [
-    { label: "Languages & Frameworks", skills: "JavaScript (ES6+), Python, PHP, Java, HTML5/CSS3, React.js, Node.js" },
-    { label: "Frontend Technologies", skills: "React, Tailwind CSS, Framer Motion, Responsive Design, Component Architecture" },
-    { label: "Backend & APIs", skills: "REST API Development, FastAPI, Express.js, Serverless Functions, Database Design, Server Configuration" },
-    { label: "Databases & Tools", skills: "MySQL, PostgreSQL, Firebase, Supabase, Git/GitHub, VS Code, Figma" },
+    { label: "Languages", skills: "JavaScript (ES6+), Python, PHP, Java, Dart, HTML5/CSS3" },
+    { label: "Frontend", skills: "React, Tailwind CSS, Framer Motion, Responsive Design, Component Architecture" },
+    { label: "Backend & APIs", skills: "FastAPI, Node.js, REST API Design, Serverless Functions" },
+    { label: "Databases", skills: "PostgreSQL, Supabase, Firebase, MySQL" },
+    { label: "Data & ML", skills: "Scikit-learn, Pandas, NumPy" },
+    { label: "Tools", skills: "Git & GitHub, Figma, Vercel, VS Code" },
   ];
   skillCategories.forEach((category) => {
+    ensureSpace(8);
     doc.setFontSize(10);
     doc.setFont(undefined, "bold");
     doc.setTextColor(...colors.dark);
     doc.text(category.label + ":", margin, yPosition);
     doc.setFont(undefined, "normal");
     doc.setTextColor(...colors.text);
-    const lines = doc.splitTextToSize(category.skills, contentWidth - 65);
+    const lines = doc.splitTextToSize(category.skills, contentWidth - 38);
     lines.forEach((line, index) => {
-      doc.text(line, margin + 65, yPosition + index * 4);
+      doc.text(line, margin + 38, yPosition + index * 4);
     });
     yPosition += 4 + (lines.length - 1) * 4 + 3;
   });
   addSpace(4);
 
-  // KEY PROJECTS
-  addSectionHeader("KEY PROJECTS & EXPERIENCE");
-
-  doc.setFontSize(11);
-  doc.setFont(undefined, "bold");
-  doc.setTextColor(...colors.dark);
-  doc.text("BrewTrack", margin, yPosition);
-  doc.setFontSize(9);
-  doc.setFont(undefined, "italic");
-  doc.setTextColor(...colors.accent);
-  doc.text("Web-Based POS & Inventory Management System", margin + 30, yPosition);
-  yPosition += 5.5;
-  addBullet("Built a point-of-sale system with real-time inventory tracking and a sales analytics dashboard");
-  addBullet("Implemented a responsive UI that works across devices for a streamlined checkout flow");
-  addBullet("Tech Stack: HTML5, CSS3, JavaScript, Supabase, PostgreSQL");
-  addBullet("Live Demo: bt-hitnotes.vercel.app");
-  addSpace(5);
-
-  doc.setFontSize(11);
-  doc.setFont(undefined, "bold");
-  doc.setTextColor(...colors.dark);
-  doc.text("Ancient Crafts", margin, yPosition);
-  doc.setFontSize(9);
-  doc.setFont(undefined, "italic");
-  doc.setTextColor(...colors.accent);
-  doc.text("Mobile E-Commerce Application", margin + 36, yPosition);
-  yPosition += 5.5;
-  addBullet("Built a mobile e-commerce app with product catalog, shopping cart, and secure checkout");
-  addBullet("Integrated Firebase authentication and real-time database for live data synchronization");
-  addBullet("Tech Stack: Java (Android), PHP, MySQL, Firebase, XML");
-  addSpace(6);
+  // KEY PROJECTS — curated to four strongest, drawn from real project stacks.
+  addSectionHeader("Key Projects");
+  addProject({
+    name: "Developer Portfolio",
+    subtitle: "React SPA with Motion, Accessibility & AI Assistant",
+    bullets: [
+      "Built a single-page React portfolio with a device- and motion-aware Framer Motion system and a WCAG-AA accessibility layer",
+      "Integrated an AI assistant grounded on a Gemini serverless function, with one-click resume export and graceful offline degradation",
+      "Tech: React, Tailwind CSS, Framer Motion, Gemini API, Vercel",
+    ],
+  });
+  addProject({
+    name: "Student Burnout Risk Predictor",
+    subtitle: "ML Classifier with FastAPI REST API",
+    bullets: [
+      "Trained a Scikit-learn classifier on study habits and AI-tool usage to tier student burnout risk",
+      "Served predictions through a Python/FastAPI REST endpoint with a plain-JS frontend; deployed live",
+      "Tech: Python, FastAPI, Scikit-learn, Pandas, NumPy",
+    ],
+  });
+  addProject({
+    name: "BrewTrack",
+    subtitle: "Web-Based POS & Inventory System",
+    bullets: [
+      "Built a point-of-sale system with real-time inventory tracking and a revenue analytics dashboard",
+      "Delivered for an actual café client and deployed live on Vercel, replacing spreadsheet-based operations",
+      "Tech: JavaScript, Supabase, PostgreSQL  •  bt-hitnotes.vercel.app",
+    ],
+  });
+  addProject({
+    name: "Ancient Crafts",
+    subtitle: "Native Android Marketplace",
+    bullets: [
+      "Built a native Android storefront giving indigenous artisans a product catalog, cart, and checkout flow",
+      "Backed by a PHP/MySQL REST API with Firebase integration for authentication and live data",
+      "Tech: Java (Android), PHP, MySQL, Firebase, XML",
+    ],
+  });
 
   // EDUCATION
-  addSectionHeader("EDUCATION");
+  addSectionHeader("Education");
+  ensureSpace(18);
   doc.setFontSize(11);
   doc.setFont(undefined, "bold");
   doc.setTextColor(...colors.dark);
@@ -177,49 +220,72 @@ export async function generateCv() {
   yPosition += 4.5;
   doc.setFontSize(9);
   doc.setTextColor(...colors.lightText);
-  doc.text("2023 - Present  •  Expected Graduation: 2026", margin, yPosition);
+  doc.text("2023 - Present (3rd Year)  •  Expected Graduation: 2026", margin, yPosition);
   yPosition += 8;
 
+  ensureSpace(14);
+  doc.setFontSize(11);
+  doc.setFont(undefined, "bold");
+  doc.setTextColor(...colors.dark);
+  doc.text("Senior High School - HUMSS Strand", margin, yPosition);
+  yPosition += 5;
+  doc.setFontSize(9.5);
+  doc.setFont(undefined, "normal");
+  doc.setTextColor(...colors.text);
+  doc.text("Matti National High School", margin, yPosition);
+  yPosition += 4.5;
+  doc.setFontSize(9);
+  doc.setTextColor(...colors.lightText);
+  doc.text("2021 - 2023", margin, yPosition);
+  yPosition += 9;
+
   // CERTIFICATIONS
-  addSectionHeader("PROFESSIONAL CERTIFICATIONS");
+  addSectionHeader("Certifications");
   const certifications = [
     "Installing and Configuring Computer Systems - TESDA National Certification (2025)",
-    "Introduction to CSS - TESDA (2025)",
     "Maintaining Computer Systems and Networks - TESDA (2025)",
     "Setting Up Computer Networks - TESDA (2025)",
     "Setting Up Computer Servers - TESDA (2025)",
+    "Introduction to CSS - TESDA (2025)",
+    "Java Intermediate - SoloLearn (2026)",
+    "Introduction to Java - SoloLearn (2026)",
   ];
   certifications.forEach((cert) => addBullet(cert, 9.5));
-  addSpace(4);
+  addSpace(5);
 
   // CORE COMPETENCIES
-  addSectionHeader("CORE COMPETENCIES");
+  addSectionHeader("Core Competencies");
   const competencies = [
-    ["Full-Stack Web Development", "Problem Solving & Debugging"],
-    ["UI/UX Design & Prototyping", "Responsive Web Design"],
-    ["Database Architecture", "RESTful API Development"],
-    ["Version Control (Git)", "Agile Methodologies"],
+    ["Full-Stack Web Development", "Mobile App Development"],
+    ["UI/UX Design & Prototyping", "Accessibility (WCAG-AA)"],
+    ["RESTful API Development", "Database Design"],
+    ["Problem Solving & Debugging", "Version Control (Git)"],
   ];
   competencies.forEach((row) => {
+    ensureSpace(7);
     doc.setFontSize(9.5);
     doc.setFont(undefined, "normal");
     doc.setTextColor(...colors.text);
     doc.setFillColor(...colors.accent);
-    doc.circle(margin + 2, yPosition - 1.5, 0.8, "F");
+    doc.rect(margin + 1.5, yPosition - 2, 1.5, 1.5, "F");
     doc.text(row[0], margin + 6, yPosition);
     if (row[1]) {
-      doc.circle(pageWidth / 2 + 5, yPosition - 1.5, 0.8, "F");
+      doc.rect(pageWidth / 2 + 5, yPosition - 2, 1.5, 1.5, "F");
       doc.text(row[1], pageWidth / 2 + 9, yPosition);
     }
     yPosition += 5;
   });
 
-  // FOOTER
-  doc.setFontSize(8);
-  doc.setTextColor(...colors.lightText);
-  doc.setFont(undefined, "italic");
-  const footerText = `Generated ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })} • github.com/Reym-Tech`;
-  doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: "center" });
+  // FOOTER — drawn on every page so multi-page exports stay attributed.
+  const pageCount = doc.internal.getNumberOfPages();
+  const footerText = `Generated ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}  •  github.com/Reym-Tech`;
+  for (let page = 1; page <= pageCount; page += 1) {
+    doc.setPage(page);
+    doc.setFontSize(8);
+    doc.setFont(undefined, "italic");
+    doc.setTextColor(...colors.lightText);
+    doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: "center" });
+  }
 
   doc.save("John_Remy_Gonzales_Resume.pdf");
 }
