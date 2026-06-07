@@ -17,9 +17,9 @@ function getInitialTheme() {
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(getInitialTheme);
 
-  // Layout (not passive) effect so the .dark class lands synchronously when the
-  // toggle runs it inside flushSync(); the theme-wave view transition snapshots
-  // <html> right after, and a late class would make the wave reveal no change.
+  // Layout (not passive) effect so the .dark class lands before paint: on the
+  // instant-swap path (reduced motion) this avoids a one-frame flash of the old
+  // theme between the state change and the class applying.
   useLayoutEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     try {

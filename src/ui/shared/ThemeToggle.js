@@ -7,6 +7,48 @@ import { useSound } from "../../SoundContext";
 import { focusLink } from "../design-system/button-styles";
 import { Moon, Sun } from "../design-system/icons";
 
+const WAVE_MS = 500;
+
+// Reveal the incoming theme through a transparent hole that grows from the tap point.
+// A full-screen overlay painted with the OUTGOING surface color covers everything;
+// the theme is swapped underneath it, then a radial-gradient mask punches an
+// expanding hole so the freshly themed page is exposed progressively inside the
+// circle. Built without the View Transitions API on purpose: VT snapshots the whole
+// page, and Chrome Android anchors that snapshot to the document top when scrolled,
+// which blinked out the sticky nav and fired the wave from the top.
+function playThemeWave(originX, originY, applyTheme) {
+  const root = document.documentElement;
+  const surface = getComputedStyle(root).getPropertyValue("--elegant-surface").trim();
+
+  // Reach past the farthest corner so the hole fully clears the viewport.
+  const radius =
+    Math.hypot(
+      Math.max(originX, window.innerWidth - originX),
+      Math.max(originY, window.innerHeight - originY),
+    ) + 2;
+
+  const overlay = document.createElement("div");
+  overlay.style.cssText =
+    `position:fixed;inset:0;z-index:9999;pointer-events:none;background:rgb(${surface});--wave-radius:0px;`;
+  const mask =
+    `radial-gradient(circle at ${originX}px ${originY}px, ` +
+    `transparent 0, transparent calc(var(--wave-radius) - 2px), #000 var(--wave-radius))`;
+  overlay.style.webkitMaskImage = mask;
+  overlay.style.maskImage = mask;
+  document.body.appendChild(overlay);
+
+  // Swap under the covering overlay (flushSync so the .dark class is live before the
+  // hole opens), then grow the hole to expose the new theme. Reading the overlay's
+  // own color first means the swap underneath is never seen.
+  flushSync(applyTheme);
+
+  const animation = overlay.animate(
+    [{ "--wave-radius": "0px" }, { "--wave-radius": `${radius}px` }],
+    { duration: WAVE_MS, easing: "ease-in-out", fill: "forwards" },
+  );
+  return animation.finished.finally(() => overlay.remove());
+}
+
 export function ThemeToggle({ className = "" }) {
   const { theme, toggleTheme } = useTheme();
   const { playSound } = useSound();
@@ -20,12 +62,7 @@ export function ThemeToggle({ className = "" }) {
     playSound(isDark ? "toggleLight" : "toggleDark");
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Skip the wave on touch devices: Chrome Android anchors the root view-transition
-    // snapshot to the document top when the page is scrolled, so the sticky nav blinks
-    // out and the wave fires from the top instead of the tap. The instant swap below is
-    // clean everywhere; the wave is mouse-centric (it originates at the click point).
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    if (!document.startViewTransition || prefersReducedMotion || isTouch) {
+    if (prefersReducedMotion) {
       toggleTheme();
       return;
     }
@@ -36,22 +73,11 @@ export function ThemeToggle({ className = "" }) {
     const rect = event.currentTarget.getBoundingClientRect();
     const originX = event.detail === 0 ? rect.left + rect.width / 2 : event.clientX;
     const originY = event.detail === 0 ? rect.top + rect.height / 2 : event.clientY;
-    const radius = Math.hypot(
-      Math.max(originX, window.innerWidth - originX),
-      Math.max(originY, window.innerHeight - originY),
-    );
-
-    const root = document.documentElement;
-    root.style.setProperty("--wave-x", `${originX}px`);
-    root.style.setProperty("--wave-y", `${originY}px`);
-    root.style.setProperty("--wave-r", `${radius}px`);
 
     isWavingRef.current = true;
-    const transition = document.startViewTransition(() => flushSync(() => toggleTheme()));
-    const stopWaving = () => {
+    playThemeWave(originX, originY, toggleTheme).finally(() => {
       isWavingRef.current = false;
-    };
-    transition.finished.then(stopWaving, stopWaving);
+    });
   };
 
   return (

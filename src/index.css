@@ -123,27 +123,12 @@
   }
 }
 
-/* Theme-toggle wave: the incoming theme is revealed as a circle expanding from the
-   click point (coords set on <html> by ThemeToggle). When View Transitions is
-   unsupported or motion is reduced, ThemeToggle skips the transition entirely and
-   the swap is instant — the no-preference gate here is belt-and-suspenders. */
-@media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-  }
-
-  ::view-transition-new(root) {
-    animation: theme-wave 500ms ease-in-out;
-  }
-
-  @keyframes theme-wave {
-    from {
-      clip-path: circle(0 at var(--wave-x, 50%) var(--wave-y, 50%));
-    }
-    to {
-      clip-path: circle(var(--wave-r, 150vmax) at var(--wave-x, 50%) var(--wave-y, 50%));
-    }
-  }
+/* Theme-toggle wave radius. ThemeToggle paints a full-screen overlay of the
+   outgoing surface color and grows a transparent hole at the tap point to reveal
+   the freshly themed page beneath. Registering the length lets the Web Animations
+   API interpolate it smoothly; unsupported browsers fall back to an instant swap. */
+@property --wave-radius {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
