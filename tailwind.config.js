@@ -2,6 +2,10 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: 'class',
+  // Gate hover: variants behind (hover: hover) so they never stick on touch devices,
+  // where a tap latches :hover until you tap elsewhere. active: still fires for tap
+  // feedback; focus-visible doesn't trigger on touch taps.
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
       fontFamily: {
