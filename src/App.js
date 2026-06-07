@@ -17,6 +17,7 @@ import { CertificationsSection } from "./ui/sections/CertificationsSection";
 import { ContactSection } from "./ui/sections/ContactSection";
 import { CrescereFAB } from "./ui/chat/CrescereFAB";
 import { ChatWidget } from "./ui/chat/ChatWidget";
+import { SoundToggle } from "./ui/shared/SoundToggle";
 
 export default function Portfolio() {
   const seenIntro = sessionStorage.getItem("intro-seen") === "1";
@@ -68,6 +69,7 @@ export default function Portfolio() {
       <CertificationsSection />
       <ContactSection />
       <Footer />
+      <SoundToggle variant="corner" className="hidden md:block" />
       <CrescereFAB
         isOpen={chatOpen}
         onOpen={() => openPanel("chat")}

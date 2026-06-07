@@ -75,7 +75,6 @@ export function NavBar({ introExiting = false, instantReveal = false }) {
                 </li>
               ))}
             </ul>
-            <SoundToggle className="hidden md:inline-flex" />
             <ThemeToggle />
             <button
               onClick={() => setSidebarOpen(true)}

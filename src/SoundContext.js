@@ -4,14 +4,15 @@ import { createSoundEngine } from "./infrastructure/audio/sound-engine";
 
 const SoundContext = createContext(null);
 
-// Default to muted: browsers block autoplay-with-sound anyway, and unsolicited
-// audio is the fastest way to lose a visitor. Only an explicit "0" (the user
-// turned sound on) counts as unmuted.
+// Default to ON: the site's only cue is a soft confirmation tick that fires on the
+// theme toggle — a user gesture. Nothing autoplays on load, so the usual
+// autoplay-with-sound objection doesn't apply here. Only an explicit "1" (the user
+// turned sound off) counts as muted.
 function getInitialMuted() {
   try {
-    return localStorage.getItem("sound-muted") !== "0";
+    return localStorage.getItem("sound-muted") === "1";
   } catch {
-    return true;
+    return false;
   }
 }
 
