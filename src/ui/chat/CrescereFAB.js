@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, useReducedMotion, useAnimationControls } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, useAnimationControls } from "framer-motion";
 
 import { focusRing } from "../design-system/button-styles";
+import { BORDER } from "../design-system/tokens";
 import { Close } from "../design-system/icons";
 import { BotMark } from "./BotMark";
 
@@ -85,6 +86,28 @@ export function CrescereFAB({
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
       )}
+
+      {/* Hover label — names the launcher for pointer users (the robot icon alone is
+          ambiguous). Sits to the left since the FAB hugs the right edge; shown only when
+          closed (open, the button is an X = close). Decorative — the button's aria-label
+          already covers assistive tech — and a desktop affordance, since touch has no hover.
+          `y: -50%` keeps it vertically centered through framer's transform, so animating
+          `x` doesn't clobber a Tailwind translate. */}
+      <AnimatePresence>
+        {fabHovered && !isOpen && (
+          <motion.span
+            aria-hidden="true"
+            style={{ top: "50%" }}
+            initial={reduceMotion ? { opacity: 0, y: "-50%" } : { opacity: 0, x: 6, y: "-50%" }}
+            animate={{ opacity: 1, x: 0, y: "-50%" }}
+            exit={reduceMotion ? { opacity: 0, y: "-50%" } : { opacity: 0, x: 6, y: "-50%" }}
+            transition={{ duration: 0.18, ease: EASE_OUT }}
+            className={`pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-none border ${BORDER} bg-elegant-surface px-2.5 py-1 text-xs font-medium text-elegant-text shadow-sm`}
+          >
+            Chat with Crescere
+          </motion.span>
+        )}
+      </AnimatePresence>
 
       {/* Bounce wrapper — carries the close-complete overshoot so it composes with the
           button's own breathing / tap scale instead of fighting its animate prop. */}
